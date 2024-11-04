@@ -9,7 +9,7 @@ export default function Home() {
     const element = document.getElementById("printable");
     if (element) {
       toPng(element, { pixelRatio: 3 }).then((dataUrl) => {
-        // sendImageToPrinter(dataUrl);
+        sendImageToPrinter(dataUrl);
 
         const link = document.createElement("a");
         link.href = dataUrl;

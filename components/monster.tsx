@@ -15,7 +15,13 @@ export default function Component() {
     CHA: 7,
   };
 
-  function StatCircle({ name, value, modifier }: any) {
+  interface StatCircleProps {
+    name: string;
+    value: number;
+    modifier: number;
+  }
+
+  function StatCircle({ name, value, modifier }: StatCircleProps) {
     const modifierDisplay = modifier >= 0 ? `+${modifier}` : modifier;
 
     return (
