@@ -3,17 +3,7 @@ import EscPosEncoder from "esc-pos-encoder";
 import sharp from "sharp";
 import { createCanvas, Image } from "canvas";
 
-async function getImage({
-  pictureUrl,
-  width,
-  height,
-  rotate = 0,
-}: {
-  pictureUrl: string;
-  width: number;
-  height: number;
-  rotate?: number;
-}) {
+async function getImage({ pictureUrl }: { pictureUrl: string }) {
   const response = await fetch(pictureUrl);
 
   if (!response.ok) {
@@ -21,10 +11,7 @@ async function getImage({
   }
 
   const imageBuffer = await response.arrayBuffer();
-  const processedImageBuffer = await sharp(imageBuffer)
-    .rotate(rotate)
-    .resize(width, height)
-    .toBuffer();
+  const processedImageBuffer = await sharp(imageBuffer).toBuffer();
 
   const img = new Image();
   img.src = processedImageBuffer;
@@ -36,13 +23,11 @@ export async function POST(request: Request) {
   try {
     const { imageUrl, options = {} } = await request.json();
 
-    const { endpoint = "http://printer.local:9100/raw-print" } = options;
+    const { endpoint = "https://printer.h2t.club/raw-print" } = options;
 
     // Process the image
     const imageBuffer = await getImage({
       pictureUrl: imageUrl,
-      width: 528,
-      height: 712,
     });
 
     // @ts-expect-error - createCanvas is not defined
@@ -51,11 +36,16 @@ export async function POST(request: Request) {
     });
 
     // Build the print job
+    const adjustedHeight = Math.ceil(imageBuffer.height / 8) * 8;
+    const adjustedWidth = Math.ceil(imageBuffer.width / 8) * 8;
+
     encoder
       .initialize()
       .align("center")
-      .text("Hello, world!")
-      .image(imageBuffer, 528, 712, "atkinson")
+      .image(imageBuffer, adjustedWidth, adjustedHeight, "atkinson")
+      .newline()
+      .newline()
+      .newline()
       .newline()
       .cut();
 
