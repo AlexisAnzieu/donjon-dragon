@@ -16,10 +16,10 @@ const categories = [
   {
     title: "Equipment",
     items: [
-      { name: "Weapons", href: "/equipment/weapons" },
-      { name: "Armor", href: "/equipment/armor" },
-      { name: "Magic Items", href: "/equipment/magic-items" },
-      { name: "Tools", href: "/equipment/tools" },
+      { name: "Weapons", href: "/equipments?weapons" },
+      { name: "Armor", href: "/equipments?armor" },
+      { name: "Magic Items", href: "/equipments?magic-items" },
+      { name: "Tools", href: "/equipments?tools" },
     ],
   },
   {
