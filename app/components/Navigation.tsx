@@ -5,37 +5,37 @@ import Link from "next/link";
 
 const categories = [
   {
-    title: "Characters",
+    title: "Personnages",
     items: [
       { name: "Classes", href: "/characters/classes" },
       { name: "Races", href: "/characters/races" },
-      { name: "Backgrounds", href: "/characters/backgrounds" },
-      { name: "Feats", href: "/characters/feats" },
+      { name: "Historique", href: "/characters/backgrounds" },
+      { name: "Dons", href: "/characters/feats" },
     ],
   },
   {
-    title: "Equipment",
+    title: "Équipement",
     items: [
-      { name: "Weapons", href: "/equipments?weapons" },
-      { name: "Armor", href: "/equipments?armor" },
-      { name: "Magic Items", href: "/equipments?magic-items" },
-      { name: "Tools", href: "/equipments?tools" },
+      { name: "Armes", href: "/equipments?weapons" },
+      { name: "Armures", href: "/equipments?armor" },
+      { name: "Objets Magiques", href: "/equipments?magic-items" },
+      { name: "Outils", href: "/equipments?tools" },
     ],
   },
   {
-    title: "Spells",
+    title: "Sorts",
     items: [
-      { name: "By Level", href: "/spells/by-level" },
-      { name: "By Class", href: "/spells/by-class" },
-      { name: "By School", href: "/spells/by-school" },
+      { name: "Par Niveau", href: "/spells/by-level" },
+      { name: "Par Classe", href: "/spells/by-class" },
+      { name: "Par École", href: "/spells/by-school" },
     ],
   },
   {
-    title: "Monsters",
+    title: "Monstres",
     items: [
-      { name: "By CR", href: "/monsters?by-cr" },
-      { name: "By Type", href: "/monsters?by-type" },
-      { name: "By Environment", href: "/monsters?by-environment" },
+      { name: "Par FP", href: "/monsters?by-cr" },
+      { name: "Par Type", href: "/monsters?by-type" },
+      { name: "Par Environnement", href: "/monsters?by-environment" },
     ],
   },
 ];
@@ -53,7 +53,7 @@ export default function DnDNavigation() {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
           <Link href="/" className="text-2xl font-bold font-serif">
-            D&D Compendium
+            H2T - Donjon & Dragon
           </Link>
 
           {/* Desktop Menu */}
@@ -92,7 +92,7 @@ export default function DnDNavigation() {
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
-              title="Open Mobile Menu"
+              title="Ouvrir le menu mobile"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50 rounded-md"
             >
