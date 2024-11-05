@@ -2,8 +2,8 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
-import MonsterComponent from "@/app/components/MonsterComponent";
 import { API_URL } from "@/lib/dd5";
+import MonsterComponent from "./MonsterComponent";
 
 export default function MonsterFilter({ monsters }: { monsters: any[] }) {
   const [filter, setFilter] = useState("");

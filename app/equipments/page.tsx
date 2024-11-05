@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { getEquipments } from "@/lib/dd5";
-import EquipmentFilter from "../components/EquipmentFilter";
+import EquipmentFilter from "../components/equipments/EquipmentFilter";
 
 export default async function Equipments() {
   const equipments = await getEquipments();
