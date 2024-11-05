@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { API_URL, getMonsters } from "@/lib/dd5";
 import MonsterComponent from "@/components/MonsterComponent";
 

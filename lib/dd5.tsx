@@ -5,6 +5,7 @@ export const getMonsters = async () => {
   const data = await response.json();
 
   const monsterList = await Promise.all(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data.results.map(async (monster: any) => {
       return getMonster(monster.index);
     })
