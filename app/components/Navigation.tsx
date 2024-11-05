@@ -53,10 +53,10 @@ export default function DnDNavigation() {
     <nav className="bg-gradient-to-r from-red-900 to-red-700 text-white shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2">
             <GiDoubleDragon className="h-8 w-8 text-white" />
             <span className="text-2xl font-bold">H2T - D&D Index</span>
-          </div>
+          </Link>
 
           {/* Desktop Menu */}
           <div className="hidden md:flex space-x-4">
