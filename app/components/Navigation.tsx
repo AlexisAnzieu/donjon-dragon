@@ -92,6 +92,7 @@ export default function DnDNavigation() {
           {/* Mobile Menu Button */}
           <div className="md:hidden">
             <button
+              title="Open Mobile Menu"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-white focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-opacity-50 rounded-md"
             >
