@@ -1,6 +1,5 @@
 "use client";
 
-import MonsterComponent from "@/components/MonsterComponent";
 import { sendImageToPrinter } from "@/lib/printer";
 import { toPng } from "html-to-image";
 
@@ -21,9 +20,7 @@ export default function Home() {
 
   return (
     <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
-      <div id="printable">
-        <MonsterComponent brightness={0.8} />
-      </div>
+      <div id="printable"></div>
 
       <button
         onClick={handlePrint}
