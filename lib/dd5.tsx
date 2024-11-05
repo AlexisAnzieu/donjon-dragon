@@ -23,3 +23,27 @@ export const getMonster = async (slug: string) => {
   }
   return response.json();
 };
+
+export const getEquipments = async () => {
+  const response = await fetch(`${API_URL}/api/equipment`);
+  const data = await response.json();
+
+  const equipmentList = await Promise.all(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data.results.map(async (equipment: any) => {
+      return getEquipment(equipment.index);
+    })
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch equipment");
+  }
+  return equipmentList;
+};
+
+export const getEquipment = async (slug: string) => {
+  const response = await fetch(`${API_URL}/api/equipment/${slug}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch equipment item");
+  }
+  return response.json();
+};
