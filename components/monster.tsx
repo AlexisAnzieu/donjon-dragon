@@ -1,11 +1,7 @@
-import {
-  GiDragonHead,
-  GiShield,
-  GiHearts,
-  GiRunningNinja,
-} from "react-icons/gi";
+/* eslint-disable @next/next/no-img-element */
+import { GiShield, GiHearts, GiRunningNinja } from "react-icons/gi";
 
-export default function Component() {
+export default function Component({ brightness = 1 }: { brightness?: number }) {
   const abilityScores = {
     STR: 19,
     DEX: 11,
@@ -41,14 +37,21 @@ export default function Component() {
     <div className="w-[300px]  bg-white text-black rounded-lg overflow-hidden shadow-lg relative border-4 border-black print:border-2 ">
       <div className="p-6 relative z-10">
         <h2 className="text-3xl font-bold text-black mb-2 text-center font-serif">
-          Gorgon
+          Magicien
         </h2>
         <p className="text-sm text-black mb-4 text-center italic">
-          Large monstrosity, unaligned
+          Harry Potter en plus grand
         </p>
 
-        <GiDragonHead className="absolute top-2 right-2 text-black w-10 h-10 " />
-
+        <img
+          src="https://cdn.leonardo.ai/users/13e54014-4c9d-430b-bf1d-8f8d9e5adc3b/generations/f1aba11d-dfde-44cc-8430-e77462d05ed3/Leonardo_Anime_XL_A_monochrome_magician_holds_a_sleek_wand_aga_0.jpg"
+          className="rounded-full mx-auto"
+          width="150"
+          height="150"
+          title="Gorgon"
+          alt="Gorgon"
+          style={{ filter: `brightness(${brightness})` }}
+        />
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">

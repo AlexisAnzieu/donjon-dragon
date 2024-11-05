@@ -8,7 +8,7 @@ export default function Home() {
   const handlePrint = async () => {
     const element = document.getElementById("printable");
     if (element) {
-      toPng(element, { pixelRatio: 3 }).then((dataUrl) => {
+      toPng(element, { pixelRatio: 2, canvasWidth: 280 }).then((dataUrl) => {
         sendImageToPrinter(dataUrl);
 
         const link = document.createElement("a");
@@ -22,7 +22,7 @@ export default function Home() {
   return (
     <div className="container mx-auto p-4 flex justify-center items-center min-h-screen">
       <div id="printable">
-        <Monster />
+        <Monster brightness={0.8} />
       </div>
 
       <button
