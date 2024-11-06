@@ -1,0 +1,85 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Monster {
+  id                     String           @id @default(uuid())
+  slug                   String           @unique
+  name                   String           @unique
+  size                   String
+  type                   String
+  alignment              String
+  armor_class            String
+  hit_points             Int
+  hit_dice               String?
+  hit_points_roll        String?
+  speed                  String
+  abilities              Abilities?       @relation(fields: [abilitiesId], references: [id])
+  actions                Action[]
+  special_abilities      SpecialAbility[]
+  description            String?
+  source                 String
+  imageUrl               String?
+  saving_throws          SavingThrows?    @relation(fields: [savingThrowsId], references: [id])
+  skills                 String[]
+  senses                 String[]
+  languages              String[]
+  damage_immunities      String[]
+  condition_immunities   String[]
+  damage_resistances     String[]
+  proficiency_bonus      String[]
+  damage_vulnerabilities String[]
+  challenge_rating       Int?
+  xp                     Int
+  abilitiesId            String?
+  savingThrowsId         String?
+}
+
+model Abilities {
+  id      String    @id @default(uuid())
+  STR     Json
+  DEX     Json
+  CON     Json
+  INT     Json
+  WIS     Json
+  CHA     Json
+  Monster Monster[]
+}
+
+model Action {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  monsterId   String
+  monster     Monster @relation(fields: [monsterId], references: [id])
+}
+
+model SpecialAbility {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  monsterId   String
+  monster     Monster @relation(fields: [monsterId], references: [id])
+}
+
+model SavingThrows {
+  id      String    @id @default(uuid())
+  STR     String?
+  DEX     String?
+  CON     String?
+  INT     String?
+  WIS     String?
+  CHA     String?
+  Monster Monster[]
+}
