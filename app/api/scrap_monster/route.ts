@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { JSDOM } from "jsdom";
 import prisma from "@/prisma/db";
+import { scrapped_monsters } from "./scrapped_data";
 
 const abilityMap = {
   FOR: "STR",
@@ -31,10 +32,10 @@ async function fetchDocument(url: string): Promise<Document> {
   return dom.window.document;
 }
 
-function extractUrls(document: Document): string[] {
-  const items = document.querySelectorAll(".item a");
-  return Array.from(items).map((item) => (item as HTMLAnchorElement).href);
-}
+// function extractUrls(document: Document): string[] {
+//   const items = document.querySelectorAll(".item a");
+//   return Array.from(items).map((item) => (item as HTMLAnchorElement).href);
+// }
 
 function extractName(document: Document): string | null {
   return document.querySelector(".jaune h1")?.textContent?.trim() || null;
@@ -89,37 +90,42 @@ function extractSpeed(document: Document): string | null {
 
 function extractAbilities(
   document: Document
-): Record<string, { value: number; modifier: string }> {
-  return Array.from(document.querySelectorAll(".carac")).reduce(
-    (acc, carac) => {
-      const text = carac.textContent?.trim();
-      const name = text?.substring(0, 3);
-      const [value, modifier] = text?.substring(3).trim().split(" ") || [];
-      const abilityKey = abilityMap[name as keyof typeof abilityMap];
-      if (abilityKey) {
-        acc[abilityKey] = { value: +value, modifier: modifier };
-      }
-      return acc;
-    },
-    {} as Record<string, { value: number; modifier: string }>
-  );
+): { name: string; value: number; modifier: string }[] {
+  return Array.from(document.querySelectorAll(".carac")).map((carac) => {
+    const text = carac.textContent?.trim();
+    const name = text?.substring(0, 3);
+    const [value, modifier] = text?.substring(3).trim().split(" ") || [];
+    const abilityKey = abilityMap[name as keyof typeof abilityMap];
+    return {
+      name: abilityKey,
+      value: +value,
+      modifier: modifier.replace(/[()]/g, ""),
+    };
+  });
 }
 
 function extractActions(document: Document): any[] {
   const actions = [];
+  const legendary_actions = [];
+  let isInLegendaryActions = false;
   let currentElement = document.querySelector(".rub");
   while (currentElement) {
     currentElement = currentElement.nextElementSibling as HTMLElement;
     if (currentElement?.classList.contains("rub")) {
-      break;
+      isInLegendaryActions = true;
+      currentElement = currentElement.nextElementSibling as HTMLElement;
     }
     const [key, ...rest] = currentElement?.textContent?.trim().split(".") || [];
     const value = rest.join(".");
     if (key && value) {
-      actions.push({ [key]: value });
+      if (!isInLegendaryActions) {
+        actions.push({ [key]: value });
+      } else {
+        legendary_actions.push({ [key]: value });
+      }
     }
   }
-  return actions;
+  return [actions, legendary_actions];
 }
 
 function extractAdditionalAttributes(document: Document): Record<string, any> {
@@ -211,7 +217,7 @@ function extractMonsterData(document: Document): any {
   const hitPoints = extractHitPoints(document);
   const speed = extractSpeed(document);
   const abilities = extractAbilities(document);
-  const actions = extractActions(document);
+  const [actions, legendary_actions] = extractActions(document);
   const additionalAttributes = extractAdditionalAttributes(document);
   const description = extractDescription(document);
   const source = extractSource(document);
@@ -231,6 +237,7 @@ function extractMonsterData(document: Document): any {
     speed,
     abilities,
     actions,
+    legendary_actions,
     special_abilities,
     description,
     source,
@@ -240,10 +247,12 @@ function extractMonsterData(document: Document): any {
 }
 
 export async function GET() {
-  const document = await fetchDocument(
-    "https://www.aidedd.org/dnd-filters/monstres.php"
-  );
-  const urls = extractUrls(document);
+  // const document = await fetchDocument(
+  //   "https://www.aidedd.org/dnd-filters/monstres.php"
+  // );
+  // const urls = extractUrls(document);
+  const urls = scrapped_monsters.slice(0, 50);
+
   const results = [];
 
   for (const url of urls.slice(0, 1000)) {
@@ -266,6 +275,7 @@ export async function GET() {
           actions,
           special_abilities,
           saving_throws,
+          legendary_actions,
           ...monster
         } = monsterData;
 
@@ -274,6 +284,12 @@ export async function GET() {
             ...monster,
             abilities: {
               create: abilities,
+            },
+            legendary_actions: {
+              create: legendary_actions.map((action: any) => ({
+                name: Object.keys(action)[0],
+                description: Object.values(action)[0],
+              })),
             },
             actions: {
               create: actions.map((action: any) => ({

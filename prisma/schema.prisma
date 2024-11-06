@@ -14,9 +14,9 @@ datasource db {
 }
 
 model Monster {
-  id                     String           @id @default(uuid())
-  slug                   String           @unique
-  name                   String           @unique
+  id                     String            @id @default(uuid())
+  slug                   String            @unique
+  name                   String            @unique
   size                   String
   type                   String
   alignment              String
@@ -25,13 +25,13 @@ model Monster {
   hit_dice               String?
   hit_points_roll        String?
   speed                  String
-  abilities              Abilities?       @relation(fields: [abilitiesId], references: [id])
+  abilities              Ability[]
   actions                Action[]
   special_abilities      SpecialAbility[]
   description            String?
   source                 String
   imageUrl               String?
-  saving_throws          SavingThrows?    @relation(fields: [savingThrowsId], references: [id])
+  saving_throws          SavingThrows?     @relation(fields: [savingThrowsId], references: [id])
   skills                 String[]
   senses                 String[]
   languages              String[]
@@ -44,20 +44,27 @@ model Monster {
   xp                     Int
   abilitiesId            String?
   savingThrowsId         String?
+  legendary_actions      LegendaryAction[]
 }
 
-model Abilities {
-  id      String    @id @default(uuid())
-  STR     Json
-  DEX     Json
-  CON     Json
-  INT     Json
-  WIS     Json
-  CHA     Json
-  Monster Monster[]
+model Ability {
+  id        String  @id @default(uuid())
+  name      String
+  value     Int
+  modifier  String
+  monsterId String
+  monster   Monster @relation(fields: [monsterId], references: [id])
 }
 
 model Action {
+  id          String  @id @default(uuid())
+  name        String
+  description String
+  monsterId   String
+  monster     Monster @relation(fields: [monsterId], references: [id])
+}
+
+model LegendaryAction {
   id          String  @id @default(uuid())
   name        String
   description String
