@@ -37,12 +37,12 @@ export default function Character() {
             />
           )}
           {selectedClass && (
-            <p className="mt-6 text-center text-xl">
+            <div className="mt-6 text-center text-2xl">
               Tu es un{" "}
-              <span className="text-primary font-bold">
+              <span className="text-primary font-extrabold text-3xl">
                 {selectedRace} {selectedClass}
               </span>
-            </p>
+            </div>
           )}
           <div className="mt-6 text-center">
             <button
