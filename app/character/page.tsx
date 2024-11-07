@@ -10,7 +10,7 @@ export default function Character() {
     {
       name: "Elfe",
       description:
-        "Êtres gracieux et longévifs avec une profonde connexion à la nature et à la magie. Connus pour leurs sens aiguisés et leur maîtrise de l'arc et de la lame.",
+        "Les elfes sont des êtres gracieux et longévifs, souvent considérés comme les gardiens de la nature et de la magie. Ils possèdent une connexion profonde avec les forêts et les créatures qui y vivent, et leur longévité leur permet d'accumuler une grande sagesse au fil des siècles. Les elfes sont connus pour leurs sens aiguisés, leur agilité et leur maîtrise de l'arc et de la lame. Ils vivent souvent dans des communautés cachées au cœur des bois, où ils pratiquent des arts anciens et des rituels mystiques. Leur culture est riche en traditions et en légendes, et ils vénèrent des divinités liées à la nature et aux étoiles.",
       classes: [
         {
           name: "Barde - Chanteur des Astres",
@@ -63,7 +63,7 @@ export default function Character() {
     {
       name: "Halfelin",
       description:
-        "Petites gens agiles avec un amour pour le confort et un talent pour la discrétion. Leur attitude joyeuse et leur chance les sortent souvent de situations dangereuses.",
+        "Les halfelins, également connus sous le nom de hobbits, sont des petites gens agiles et joyeuses, réputées pour leur amour du confort et de la bonne chère. Ils vivent généralement dans des villages pittoresques et paisibles, entourés de champs fertiles et de jardins bien entretenus. Les halfelins sont des êtres discrets et chanceux, souvent capables de se sortir des situations les plus périlleuses grâce à leur ingéniosité et leur bonne fortune. Leur taille réduite et leur agilité naturelle en font des experts en furtivité et en évasion. Malgré leur apparence innocente, les halfelins possèdent un courage indomptable et une loyauté sans faille envers leurs proches.",
       classes: [
         {
           name: "Barde - Conteur de Village",
@@ -120,7 +120,7 @@ export default function Character() {
     {
       name: "Humain",
       description:
-        "Polyvalents et ambitieux, les humains sont la race la plus adaptable et la plus répandue. Leur détermination et leur créativité mènent à de grandes réalisations.",
+        "Les humains sont la race la plus polyvalente et la plus répandue dans le monde. Leur adaptabilité et leur ambition leur permettent de s'épanouir dans presque tous les environnements et de réaliser de grandes choses. Les humains sont connus pour leur détermination, leur créativité et leur capacité à surmonter les obstacles. Ils forment des sociétés complexes et diversifiées, allant des royaumes prospères aux cités-états indépendantes. Les humains sont également des explorateurs et des aventuriers, toujours en quête de nouvelles connaissances et de nouvelles terres à découvrir. Leur diversité culturelle et leurs talents variés en font des alliés précieux et des adversaires redoutables.",
       classes: [
         {
           name: "Barde - Troubadour des Royaumes",
@@ -177,7 +177,7 @@ export default function Character() {
     {
       name: "Nain",
       description:
-        "Gens robustes et solides avec une passion pour l'artisanat et la bataille. Leur résilience et leur force en font des alliés et des ennemis redoutables.",
+        "Les nains sont des êtres robustes et solides, réputés pour leur passion pour l'artisanat et la bataille. Ils vivent principalement dans des forteresses souterraines, creusées dans les montagnes, où ils exploitent les richesses minérales et forgent des armes et des armures de qualité exceptionnelle. Les nains sont des guerriers redoutables, dotés d'une grande résilience et d'une force physique impressionnante. Leur culture est marquée par un profond respect pour les ancêtres et les traditions, et ils vénèrent des divinités liées à la terre et au feu. Les nains sont également des buveurs et des fêtards, appréciant les festins et les récits épiques de leurs exploits passés.",
       classes: [
         {
           name: "Barde - Chanteur des Cavernes",
@@ -256,7 +256,7 @@ export default function Character() {
               <h2 className="text-2xl font-bold text-primary mb-2">
                 {race.name}
               </h2>
-              <div className="h-32 overflow-y-auto">
+              <div className="h-50 overflow-y-auto">
                 <p className="text-gray-600">{race.description}</p>
               </div>
             </div>
