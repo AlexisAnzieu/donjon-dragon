@@ -1,5 +1,5 @@
 import { getMonsters } from "@/lib/dd5";
-import MonsterFilter from "../components/monsters/MonsterFilter";
+// import MonsterFilter from "../components/monsters/MonsterFilter";
 import type { Monster } from "../api/monsters/route";
 
 export default async function Monsters() {
@@ -13,7 +13,7 @@ export default async function Monsters() {
 
   return (
     <div className="container mx-auto p-4 min-h-screen">
-      <MonsterFilter monsters={monsters} />
+      {/* <MonsterFilter monsters={monsters} /> */}
     </div>
   );
 }
