@@ -39,7 +39,7 @@ export default function ClassSelection({
               <h3 className="text-xl font-bold text-primary mb-2">
                 {cls.name}
               </h3>
-              <div className="h-32 overflow-y-auto">
+              <div className="h-25 overflow-y-auto">
                 <p className="text-gray-600">{cls.description}</p>
               </div>
             </div>
