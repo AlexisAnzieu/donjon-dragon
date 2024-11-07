@@ -25,7 +25,13 @@ export default function Quiz({
     Roublard: 0,
   });
 
+  const [scoreHistory, setScoreHistory] = useState<Record<string, number>[]>(
+    []
+  );
+
   const handleAnswer = (answerScores: Record<string, number>) => {
+    setScoreHistory((prevHistory) => [...prevHistory, scores]);
+
     setScores((prevScores) => {
       const newScores = { ...prevScores };
       Object.entries(answerScores).forEach(([key, value]) => {
@@ -53,12 +59,42 @@ export default function Quiz({
     }
   };
 
+  const handlePrevious = () => {
+    if (currentQuestion > 0) {
+      setScores(scoreHistory[scoreHistory.length - 1]);
+      setScoreHistory((prevHistory) => prevHistory.slice(0, -1));
+      setCurrentQuestion(currentQuestion - 1);
+    }
+  };
+
   return (
     <div className="max-w-2xl mx-auto">
       <h1 className="text-3xl font-bold mb-6 text-center text-primary">
         Découvre ton personnage
       </h1>
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md p-6 relative">
+        {currentQuestion > 0 && (
+          <button
+            className="top-4 pb-6 bg-primary hover:bg-secondary hover:text-red-700 transition-all duration-300 transform flex items-center"
+            onClick={handlePrevious}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              className="w-5 h-5 "
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            {"Question précédente"}
+          </button>
+        )}
         <h2 className="text-xl mb-4">
           Question {currentQuestion + 1}: {questions[currentQuestion].question}
         </h2>
