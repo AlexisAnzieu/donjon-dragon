@@ -96,14 +96,17 @@ export default function MonsterComponent(monster: Monster) {
         <p className="text-sm text-black mb-4 text-center italic">
           {monster.size} {monster.type}, {monster.alignment}
         </p>
-
-        <img
-          src={monster.imageUrl || ""}
-          className="rounded-full mx-auto m-5"
-          width="150"
-          height="150"
-          alt={monster.name}
-        />
+        {monster.imageUrl && (
+          <>
+            <img
+              src={monster.imageUrl}
+              className="rounded-full mx-auto m-5"
+              width="150"
+              height="150"
+              alt={monster.name}
+            />
+          </>
+        )}
         <div className="space-y-2 mb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
