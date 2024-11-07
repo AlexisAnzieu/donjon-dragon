@@ -100,13 +100,15 @@ export default function Quiz({
         </h2>
         <div className="space-y-4">
           {questions[currentQuestion].answers.map((answer, index) => (
-            <button
-              key={index}
-              className="w-full p-3 text-left rounded bg-gray-50 hover:bg-primary hover:text-red-700 transition-colors"
+            <div
               onClick={() => handleAnswer(answer.scores)}
+              key={index}
+              className="p-4 bg-gray-100 rounded-lg shadow-md hover:bg-primary hover:text-red-700 transition-all duration-300 hover:cursor-pointer"
             >
-              {answer.text}
-            </button>
+              <div className="w-full text-left text-lg font-semibold">
+                {answer.text}
+              </div>
+            </div>
           ))}
         </div>
       </div>
