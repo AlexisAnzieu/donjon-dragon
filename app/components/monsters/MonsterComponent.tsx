@@ -23,6 +23,70 @@ export default function MonsterComponent(monster: Monster) {
     );
   }
 
+  function Section({
+    title,
+    children,
+  }: {
+    title: string;
+    children: React.ReactNode;
+  }) {
+    return (
+      <div className="mt-4">
+        <h3 className="text-lg font-bold text-black mb-2">{title}</h3>
+        {children}
+      </div>
+    );
+  }
+
+  function ListSection({ title, items }: { title: string; items: string[] }) {
+    return (
+      <Section title={title}>
+        <p>{items.join(", ")}</p>
+      </Section>
+    );
+  }
+
+  function SavingThrows({
+    savingThrows,
+  }: {
+    savingThrows: Record<string, string | null>;
+  }) {
+    return (
+      <Section title="Jets de Sauvegarde">
+        <ul className="list-disc list-inside">
+          {savingThrows.STR && <li>Force: {savingThrows.STR}</li>}
+          {savingThrows.DEX && <li>Dextérité: {savingThrows.DEX}</li>}
+          {savingThrows.CON && <li>Constitution: {savingThrows.CON}</li>}
+          {savingThrows.INT && <li>Intelligence: {savingThrows.INT}</li>}
+          {savingThrows.WIS && <li>Sagesse: {savingThrows.WIS}</li>}
+          {savingThrows.CHA && <li>Charisme: {savingThrows.CHA}</li>}
+        </ul>
+      </Section>
+    );
+  }
+
+  function AbilitiesSection({
+    title,
+    abilities,
+  }: {
+    title: string;
+    abilities: { name: string; description: string }[];
+  }) {
+    return (
+      <Section title={title}>
+        {abilities.map((ability) => (
+          <div
+            key={ability.name}
+            className="bg-gray-100 border border-black rounded p-2 mb-2"
+          >
+            <h4 className="text-sm font-bold">{ability.name}</h4>
+            <p className="text-xs">{ability.description}</p>
+          </div>
+        ))}
+      </Section>
+    );
+  }
+
   return (
     <div className="w-[300px] bg-white text-black rounded-lg overflow-hidden shadow-lg relative border-4 border-black print:border-2">
       <div className="p-6 relative z-10">
@@ -74,48 +138,75 @@ export default function MonsterComponent(monster: Monster) {
           ))}
         </div>
 
-        <div className="mt-4">
-          <h3 className="text-lg font-bold text-black mb-2">
-            Capacités Spéciales
-          </h3>
-          {monster.special_abilities.map((ability) => (
-            <div
-              key={ability.name}
-              className="bg-gray-100 border border-black rounded p-2 mb-2"
-            >
-              <h4 className="text-sm font-bold">{ability.name}</h4>
-              <p className="text-xs">{ability.description}</p>
-            </div>
-          ))}
-        </div>
+        {monster.special_abilities.length > 0 && (
+          <AbilitiesSection
+            title="Capacités Spéciales"
+            abilities={monster.special_abilities}
+          />
+        )}
 
-        <div className="mt-4">
-          <h3 className="text-lg font-bold text-black mb-2">Actions</h3>
-          {monster.actions.map((action) => (
-            <div
-              key={action.name}
-              className="bg-gray-100 border border-black rounded p-2 mb-2"
-            >
-              <h4 className="text-sm font-bold">{action.name}</h4>
-              <p className="text-xs">{action.description}</p>
-            </div>
-          ))}
-        </div>
+        {monster.actions.length > 0 && (
+          <AbilitiesSection title="Actions" abilities={monster.actions} />
+        )}
 
-        <div className="mt-4">
-          <h3 className="text-lg font-bold text-black mb-2">
-            Actions Légendaires
-          </h3>
-          {monster.legendary_actions.map((legendaryAction) => (
-            <div
-              key={legendaryAction.name}
-              className="bg-gray-100 border border-black rounded p-2 mb-2"
-            >
-              <h4 className="text-sm font-bold">{legendaryAction.name}</h4>
-              <p className="text-xs">{legendaryAction.description}</p>
-            </div>
-          ))}
-        </div>
+        {monster.legendary_actions.length > 0 && (
+          <AbilitiesSection
+            title="Actions Légendaires"
+            abilities={monster.legendary_actions}
+          />
+        )}
+
+        {monster.saving_throws &&
+          Object.keys(monster.saving_throws).length > 0 && (
+            <SavingThrows savingThrows={monster.saving_throws} />
+          )}
+
+        {monster.skills.length > 0 && (
+          <ListSection title="Compétences" items={monster.skills} />
+        )}
+
+        {monster.senses.length > 0 && (
+          <ListSection title="Sens" items={monster.senses} />
+        )}
+
+        {monster.languages.length > 0 && (
+          <ListSection title="Langues" items={monster.languages} />
+        )}
+
+        {monster.damage_immunities.length > 0 && (
+          <ListSection
+            title="Immunités aux Dégâts"
+            items={monster.damage_immunities}
+          />
+        )}
+
+        {monster.condition_immunities.length > 0 && (
+          <ListSection
+            title="Immunités aux Conditions"
+            items={monster.condition_immunities}
+          />
+        )}
+
+        {monster.damage_resistances.length > 0 && (
+          <ListSection
+            title="Résistances aux Dégâts"
+            items={monster.damage_resistances}
+          />
+        )}
+
+        {monster.damage_vulnerabilities.length > 0 && (
+          <ListSection
+            title="Vulnérabilités aux Dégâts"
+            items={monster.damage_vulnerabilities}
+          />
+        )}
+
+        {monster.proficiency_bonus.length > 0 && (
+          <ListSection
+            title="Bonus de Compétence"
+            items={monster.proficiency_bonus}
+          />
+        )}
       </div>
     </div>
   );

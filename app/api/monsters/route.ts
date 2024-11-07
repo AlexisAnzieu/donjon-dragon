@@ -7,6 +7,7 @@ export type Monster = Prisma.MonsterGetPayload<{
     special_abilities: true;
     actions: true;
     legendary_actions: true;
+    saving_throws: true;
   };
 }>;
 
@@ -17,6 +18,7 @@ export async function GET() {
       special_abilities: true,
       actions: true,
       legendary_actions: true,
+      saving_throws: true,
     },
   });
 
