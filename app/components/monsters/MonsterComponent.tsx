@@ -1,6 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
 import { Monster } from "@/app/api/monsters/route";
-import { GiShield, GiHearts, GiRunningNinja } from "react-icons/gi";
+import {
+  GiShield,
+  GiHearts,
+  GiRunningNinja,
+  GiStarMedal,
+} from "react-icons/gi";
 
 export default function MonsterComponent(monster: Monster) {
   interface StatCircleProps {
@@ -139,6 +144,21 @@ export default function MonsterComponent(monster: Monster) {
               modifier={a.modifier}
             />
           ))}
+        </div>
+
+        <div className="flex items-center justify-center space-x-4 mb-4">
+          <div className="flex items-center">
+            <GiStarMedal className="w-6 h-6 text-black mr-2" />
+            <span className="text-sm font-semibold text-black">
+              XP: {monster.xp}
+            </span>
+          </div>
+          <div className="flex items-center">
+            <GiStarMedal className="w-6 h-6 text-black mr-2" />
+            <span className="text-sm font-semibold text-black">
+              CR: {monster.challenge_rating}
+            </span>
+          </div>
         </div>
 
         {monster.special_abilities.length > 0 && (
