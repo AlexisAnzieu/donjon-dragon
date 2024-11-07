@@ -1,5 +1,8 @@
 export const API_URL = "https://www.dnd5eapi.co";
-const baseUrl = "https://donjon-dragon.vercel.app/";
+const baseUrl =
+  process.env.NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.BASE_URL;
 
 export const getMonsters = async () => {
   const response = await fetch(`${baseUrl}/api/monsters`);
@@ -9,6 +12,14 @@ export const getMonsters = async () => {
     throw new Error("Failed to fetch monsters");
   }
   return data;
+};
+
+export const getMonster = async (slug: string) => {
+  const response = await fetch(`/api/monsters/${slug}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch monster");
+  }
+  return response.json();
 };
 
 export const getEquipments = async () => {
