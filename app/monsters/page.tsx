@@ -1,6 +1,6 @@
-import { getMonsters } from "@/lib/dd5";
-import MonsterFilter from "../components/monsters/MonsterFilter";
-import type { Monster } from "../api/monsters/route";
+// import { getMonsters } from "@/lib/dd5";
+// import MonsterFilter from "../components/monsters/MonsterFilter";
+// import type { Monster } from "../api/monsters/route";
 
 export default async function Monsters() {
   // const monsters: Monster[] = await getMonsters();
