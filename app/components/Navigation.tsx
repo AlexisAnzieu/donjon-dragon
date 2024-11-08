@@ -6,8 +6,11 @@ import { GiDoubleDragon } from "react-icons/gi";
 
 const categories = [
   {
-    title: "Personnages",
-    items: [{ name: "Répond au quiz", href: "/character-quiz" }],
+    title: "Personnage",
+    items: [
+      { name: "Répondre au quiz", href: "/character-quiz" },
+      { name: "Construire ", href: "/character-build" },
+    ],
   },
   {
     title: "Monstres",
