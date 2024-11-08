@@ -40,8 +40,18 @@ function CharacterBuildContent() {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 px-8 py-3">
-      <div className="flex flex-col-reverse lg:flex-row">
-        <div className="w-full lg:w-2/3">
+      <div
+        className={`flex ${
+          !selectedClass && !selectedRace
+            ? "flex-col"
+            : "flex-col-reverse lg:flex-row"
+        } transition-all duration-500 ease-in-out`}
+      >
+        <div
+          className={`w-full ${
+            !selectedClass && !selectedRace ? "" : "lg:w-2/3"
+          } transition-all duration-500 ease-in-out`}
+        >
           <RaceSelection
             races={races}
             selectedRace={selectedRace}
@@ -55,7 +65,13 @@ function CharacterBuildContent() {
             />
           )}
         </div>
-        <div className="w-full lg:w-1/3 lg:sticky lg:top-0 h-screen flex flex-col ">
+        <div
+          className={`w-full ${
+            !selectedClass && !selectedRace
+              ? "lg:w-0"
+              : "lg:w-1/3 lg:sticky lg:top-0 h-screen flex flex-col"
+          } transition-all duration-500 ease-in-out`}
+        >
           {selectedRace && (
             <div className="mt-6 text-center text-2xl">
               Tu es un{" "}
