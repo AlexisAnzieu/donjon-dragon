@@ -1,16 +1,16 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { races } from "./races";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
-export default function CharacterBuild() {
-  const params = new URLSearchParams(document.location.search);
-  const characterClass = params.get("characterClass");
-  const race = params.get("race");
+function CharacterBuildContent() {
+  const searchParams = useSearchParams();
+  const characterClass = searchParams.get("characterClass");
+  const race = searchParams.get("race");
 
   const [selectedRace, setSelectedRace] = useState<string | null>(race);
   const [selectedClass, setSelectedClass] = useState<string | null>(
@@ -20,6 +20,7 @@ export default function CharacterBuild() {
   const router = useRouter();
 
   useEffect(() => {
+    const params = new URLSearchParams();
     if (selectedRace) params.set("race", selectedRace);
     if (selectedClass) params.set("characterClass", selectedClass);
     router.replace(`?${params.toString()}`, {
@@ -104,5 +105,13 @@ export default function CharacterBuild() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function CharacterBuild() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <CharacterBuildContent />
+    </Suspense>
   );
 }
