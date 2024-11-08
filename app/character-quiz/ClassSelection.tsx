@@ -1,7 +1,6 @@
 interface Class {
   name: string;
   description: string;
-  abilities: string[];
 }
 
 interface Race {

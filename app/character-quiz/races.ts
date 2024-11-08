@@ -8,47 +8,26 @@ export const races = [
         name: "Barde",
         description:
           "Ce barde elfique est un poète céleste, communiant avec les étoiles et les constellations. Ils chantent des chants anciens qui influencent le destin de leurs alliés et ennemis.",
-        abilities: [
-          "Influence du Destin",
-          "Chants de Bonne Fortune",
-          "Alignement Astral",
-        ],
       },
       {
         name: "Clerc",
         description:
           "Clerc dédié aux anciens esprits de la forêt, protégeant la nature et les créatures qui y résident.",
-        abilities: [
-          "Invocation de l'Esprit Forestier",
-          "Soins de la Terre",
-          "Bénédiction de la Nature",
-        ],
       },
       {
         name: "Magicien",
         description:
           "Les elfes illusionnistes maîtrisent l'art de la tromperie magique, rendant leurs illusions presque réelles.",
-        abilities: [
-          "Voile d'Invisibilité",
-          "Création d'Illusions Réelles",
-          "Charme Illusoire",
-        ],
       },
       {
         name: "Guerrier",
         description:
           "Guerrier qui s'entraîne sous la lumière de la lune, utilisant des techniques de combat gracieuses et rapides.",
-        abilities: ["Danse de Lune", "Lame de Lumière", "Reflet Lunaire"],
       },
       {
         name: "Roublard",
         description:
           "Maître de la furtivité, ce roublard se fond dans les ombres et attaque ses ennemis de manière furtive.",
-        abilities: [
-          "Pas de l'Ombre",
-          "Dissimulation Nocturne",
-          "Assaut Furtif",
-        ],
       },
     ],
   },
@@ -61,47 +40,26 @@ export const races = [
         name: "Barde",
         description:
           "Un barde halfelin qui tisse des histoires captivantes et ensorcelle ses auditeurs.",
-        abilities: [
-          "Histoire Envoûtante",
-          "Récit de Courage",
-          "Chants de Sérénité",
-        ],
       },
       {
         name: "Clerc",
         description:
           "Clerc halfelin dévoué aux esprits de la terre et des récoltes, offrant protection et abondance.",
-        abilities: [
-          "Bénédiction des Moissons",
-          "Sérénité Terrestre",
-          "Mur de Blé",
-        ],
       },
       {
         name: "Magicien",
         description:
           "Magicien de rue, utilisant des tours de passe-passe et des sorts astucieux pour distraire et tromper.",
-        abilities: [
-          "Sort de Diversion",
-          "Illusion Mineure",
-          "Changement Mineur d'Apparence",
-        ],
       },
       {
         name: "Guerrier",
         description:
           "Guerrier halfelin au grand cœur qui protège les siens et se bat pour la paix de son village.",
-        abilities: [
-          "Force des Racines",
-          "Charge Compacte",
-          "Détermination Protectrice",
-        ],
       },
       {
         name: "Roublard",
         description:
           "Roublard discret qui sait se faufiler partout et connaît les secrets des ruelles.",
-        abilities: ["Pas Silencieux", "Dextérité Agile", "Discrétion Absolue"],
       },
     ],
   },
@@ -114,17 +72,11 @@ export const races = [
         name: "Barde",
         description:
           "Barde charismatique qui traverse les royaumes en chantant des histoires et en inspirant les foules.",
-        abilities: ["Charisme Captivant", "Chanson de Force", "Poème de Paix"],
       },
       {
         name: "Clerc",
         description:
           "Clerc humain consacré aux dieux protecteurs, prodiguant des bénédictions divines et des soins miraculeux.",
-        abilities: [
-          "Lumière Divine",
-          "Guérison Sacrée",
-          "Protection Spirituelle",
-        ],
       },
       {
         name: "Magicien",
@@ -140,21 +92,11 @@ export const races = [
         name: "Guerrier",
         description:
           "Guerrier d'exception, réputé pour ses exploits militaires et son courage au combat.",
-        abilities: [
-          "Maîtrise des Armes",
-          "Résistance Acharnée",
-          "Charge Puissante",
-        ],
       },
       {
         name: "Roublard",
         description:
           "Roublard humain expert en infiltration, manipulation, et acquisition d'informations confidentielles.",
-        abilities: [
-          "Espionnage Subtil",
-          "Déguisement Parfait",
-          "Manipulation Psychologique",
-        ],
       },
     ],
   },
@@ -167,51 +109,26 @@ export const races = [
         name: "Barde",
         description:
           "Barde nain qui chante dans les profondeurs, faisant résonner sa voix dans les cavernes et ravivant le courage de ses alliés.",
-        abilities: [
-          "Écho de la Montagne",
-          "Chanson de Courage",
-          "Récit Ancestral",
-        ],
       },
       {
         name: "Clerc",
         description:
           "Clerc qui invoque les esprits des ancêtres nains pour guider et protéger son clan.",
-        abilities: [
-          "Invocation des Ancêtres",
-          "Protection Spirituelle",
-          "Bénédiction d'Endurance",
-        ],
       },
       {
         name: "Magicien",
         description:
           "Magicien spécialisé dans les runes magiques, gravant des enchantements dans les armes et armures.",
-        abilities: [
-          "Gravure Runique",
-          "Armure de Runes",
-          "Invocation de Runes de Feu",
-        ],
       },
       {
         name: "Guerrier",
         description:
           "Guerrier robuste, formé pour défendre les halls ancestraux de ses ancêtres contre toute menace.",
-        abilities: [
-          "Mur de Boucliers",
-          "Résistance Inébranlable",
-          "Force de Roc",
-        ],
       },
       {
         name: "Roublard",
         description:
           "Roublard expert en sabotage et en intrusion dans les tunnels et forteresses souterraines.",
-        abilities: [
-          "Sabotage des Mécanismes",
-          "Connaissance des Tunnels",
-          "Expertise en Démolition",
-        ],
       },
     ],
   },
