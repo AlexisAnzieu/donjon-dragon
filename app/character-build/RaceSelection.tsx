@@ -13,17 +13,18 @@ interface RaceSelectionProps {
   races: Race[];
   selectedRace: string | null;
   setSelectedRace: (race: string | null) => void;
-  setSelectedClass: (cls: string | null) => void;
 }
 
 export default function RaceSelection({
   races,
   selectedRace,
   setSelectedRace,
-  setSelectedClass,
 }: RaceSelectionProps) {
   return (
     <>
+      <h2 className="text-2xl font-bold mt-6 text-center text-primary">
+        Ta Race
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto pt-6">
         {races.map((race) => (
           <div
@@ -33,7 +34,6 @@ export default function RaceSelection({
             }`}
             onClick={() => {
               setSelectedRace(race.name);
-              setSelectedClass(null);
             }}
           >
             <div className="p-4">
