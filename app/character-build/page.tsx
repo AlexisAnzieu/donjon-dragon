@@ -44,7 +44,7 @@ function CharacterBuildContent() {
   const selectedRaceData = races.find((race) => race.name === selectedRace);
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 px-8 py-3">
+    <div className="min-h-screen bg-gray-100 text-gray-800 px-8 pt-3 pb-32">
       <div
         className={`flex ${
           !selectedClass && !selectedRace
