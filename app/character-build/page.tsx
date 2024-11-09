@@ -6,6 +6,7 @@ import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
@@ -15,6 +16,11 @@ function CharacterBuildContent() {
   const [selectedRace, setSelectedRace] = useState<string | null>(race);
   const [selectedClass, setSelectedClass] = useState<string | null>(
     characterClass
+  );
+
+  const hasAnsweredQuiz = selectedRace && selectedClass;
+  const [activeStep, setActiveStep] = useState<number | null>(
+    hasAnsweredQuiz ? 3 : 1
   );
 
   const router = useRouter();
@@ -35,6 +41,32 @@ function CharacterBuildContent() {
   const handleClassChange = (characterClass: string | null) => {
     setSelectedClass(characterClass);
   };
+  const renderStep = (
+    stepNumber: number,
+    title: string,
+    content: React.ReactNode,
+    isFilled: boolean = false
+  ) => {
+    const isActive = activeStep === stepNumber;
+    return (
+      <div className="mb-4 border rounded-lg overflow-hidden">
+        <button
+          className={`w-full p-4 text-left font-semibold ${
+            isFilled ? "bg-green-100" : "bg-red-100"
+          } focus:outline-none flex justify-between items-center`}
+          onClick={() => setActiveStep(isActive ? null : stepNumber)}
+        >
+          <span>{title}</span>
+          {isActive ? (
+            <ChevronUpIcon className="w-5 h-5" />
+          ) : (
+            <ChevronDownIcon className="w-5 h-5" />
+          )}
+        </button>
+        {isActive && <div className="p-4 bg-white">{content}</div>}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 px-8 pt-3 pb-32">
@@ -51,7 +83,7 @@ function CharacterBuildContent() {
           } transition-all duration-500 ease-in-out`}
         >
           {!selectedClass && !selectedRace && (
-            <div className="flex flex-col justify-center items-center mt-6 text-center">
+            <div className="flex flex-col justify-center items-center m-6 text-center">
               Tu ne sais pas par où commencer ?{" "}
               <Link href="/character-quiz">
                 <span className="text-primary font-bold underline hover:text-red-700">
@@ -60,16 +92,25 @@ function CharacterBuildContent() {
               </Link>
             </div>
           )}
-          <RaceSelection
-            selectedRace={selectedRace}
-            setSelectedRace={handleRaceChange}
-          />
-          {selectedRace && (
-            <ClassSelection
-              selectedClass={selectedClass}
-              setSelectedClass={handleClassChange}
-            />
+          {renderStep(
+            1,
+            "1. Choisis une Race",
+            <RaceSelection
+              selectedRace={selectedRace}
+              setSelectedRace={handleRaceChange}
+            />,
+            !!selectedRace
           )}
+          {selectedRace &&
+            renderStep(
+              2,
+              "2. Choisis une Classe",
+              <ClassSelection
+                selectedClass={selectedClass}
+                setSelectedClass={handleClassChange}
+              />,
+              !!selectedClass
+            )}
         </div>
         <div
           className={`w-full ${
