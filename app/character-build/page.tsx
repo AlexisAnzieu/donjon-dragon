@@ -4,7 +4,6 @@ import Image from "next/image";
 import { useState, useEffect, Suspense } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
-import { races } from "./races";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 
@@ -37,8 +36,6 @@ function CharacterBuildContent() {
     setSelectedClass(characterClass);
   };
 
-  const selectedRaceData = races.find((race) => race.name === selectedRace);
-
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 px-8 pt-3 pb-32">
       <div
@@ -64,13 +61,11 @@ function CharacterBuildContent() {
             </div>
           )}
           <RaceSelection
-            races={races}
             selectedRace={selectedRace}
             setSelectedRace={handleRaceChange}
           />
           {selectedRace && (
             <ClassSelection
-              selectedRaceData={selectedRaceData}
               selectedClass={selectedClass}
               setSelectedClass={handleClassChange}
             />

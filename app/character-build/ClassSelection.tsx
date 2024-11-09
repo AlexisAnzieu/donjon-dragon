@@ -1,22 +1,11 @@
-interface Class {
-  name: string;
-  description: string;
-}
-
-interface Race {
-  name: string;
-  description: string;
-  classes: Class[];
-}
+import { classes } from "./races";
 
 interface ClassSelectionProps {
-  selectedRaceData: Race | undefined;
   selectedClass: string | null;
   setSelectedClass: (cls: string | null) => void;
 }
 
 export default function ClassSelection({
-  selectedRaceData,
   selectedClass,
   setSelectedClass,
 }: ClassSelectionProps) {
@@ -26,7 +15,7 @@ export default function ClassSelection({
         Ta classe
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-4">
-        {selectedRaceData?.classes.map((cls) => (
+        {classes.map((cls) => (
           <div
             key={cls.name}
             className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 ${

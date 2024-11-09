@@ -1,22 +1,11 @@
-interface Race {
-  name: string;
-  description: string;
-  classes: Class[];
-}
-
-interface Class {
-  name: string;
-  description: string;
-}
+import { races } from "./races";
 
 interface RaceSelectionProps {
-  races: Race[];
   selectedRace: string | null;
   setSelectedRace: (race: string | null) => void;
 }
 
 export default function RaceSelection({
-  races,
   selectedRace,
   setSelectedRace,
 }: RaceSelectionProps) {
