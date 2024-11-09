@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useRef } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { races } from "./races";
 import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
@@ -18,6 +19,7 @@ function CharacterBuildContent() {
   );
 
   const router = useRouter();
+  const classSelectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -30,6 +32,9 @@ function CharacterBuildContent() {
 
   const handleRaceChange = (race: string | null) => {
     setSelectedRace(race);
+    if (race && classSelectionRef.current) {
+      classSelectionRef.current.scrollIntoView({ behavior: "smooth" });
+    }
   };
 
   const handleClassChange = (characterClass: string | null) => {
@@ -52,6 +57,16 @@ function CharacterBuildContent() {
             !selectedClass && !selectedRace ? "" : "lg:w-2/3"
           } transition-all duration-500 ease-in-out`}
         >
+          {!selectedClass && !selectedRace && (
+            <div className="flex flex-col justify-center items-center mt-6 text-center">
+              Tu ne sais pas par où commencer ?{" "}
+              <Link href="/character-quiz">
+                <span className="text-primary font-bold underline hover:text-red-700">
+                  Réponds aux 10 questions !
+                </span>
+              </Link>
+            </div>
+          )}
           <RaceSelection
             races={races}
             selectedRace={selectedRace}
@@ -66,6 +81,7 @@ function CharacterBuildContent() {
           )}
         </div>
         <div
+          ref={classSelectionRef}
           className={`w-full ${
             !selectedClass && !selectedRace
               ? "lg:w-0"
@@ -81,20 +97,6 @@ function CharacterBuildContent() {
             </div>
           )}
           <div className="flex flex-col items-center mt-6">
-            {!selectedClass && !selectedRace && (
-              <div className="flex flex-col justify-center items-center mt-6 text-center">
-                <button
-                  className="bg-primary text-white py-2 text-2xl px-4 rounded shadow-lg transform transition-transform hover:scale-105 bg-red-700"
-                  onClick={() => {
-                    setSelectedRace(null);
-                    setSelectedClass(null);
-                    router.push(`?`);
-                  }}
-                >
-                  ou fait le test ?
-                </button>
-              </div>
-            )}
             {selectedRace && (
               <Image
                 className="rounded-full border-4 border-red-700 shadow-xl"

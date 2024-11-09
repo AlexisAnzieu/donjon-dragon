@@ -65,31 +65,39 @@ export default function Quiz() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 p-8">
       <div className="max-w-2xl mx-auto min-h-screen bg-gray-100 text-gray-800 p-8">
-        <h1 className="text-3xl font-bold mb-6 text-center text-primary">
+        <h1 className="text-3xl font-bold mb-2 text-center text-primary">
           Découvre ton personnage
         </h1>
+        <h2 className="text-xl font-semibold mb-6 text-center text-secondary">
+          en répondant aux 10 questions
+        </h2>
         <div className="bg-white rounded-lg shadow-md p-6 relative">
           {currentQuestion > 0 && (
-            <button
-              className="top-4 pb-6 bg-primary hover:bg-secondary hover:text-red-700 transition-all duration-300 transform flex items-center"
-              onClick={handlePrevious}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="w-5 h-5 "
+            <>
+              <div className="absolute top-4 right-4 text-gray-500">
+                {currentQuestion} / {questions.length}
+              </div>
+              <button
+                className="top-4 pb-6 bg-primary hover:bg-secondary hover:text-red-700 transition-all duration-300 transform flex items-center"
+                onClick={handlePrevious}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-              {"Question précédente"}
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  className="w-5 h-5 "
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+                {"Question précédente"}
+              </button>
+            </>
           )}
           <h2 className="text-xl mb-4">
             Question {currentQuestion + 1}:{" "}
