@@ -11,9 +11,7 @@ export default function RaceSelection({
 }: RaceSelectionProps) {
   return (
     <>
-      <h2 className="text-2xl font-bold mt-6 text-center text-primary">
-        Ta Race
-      </h2>
+      <h2 className="text-2xl font-bold mt-6 text-center text-primary">Race</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto pt-6">
         {races.map((race) => (
           <div
