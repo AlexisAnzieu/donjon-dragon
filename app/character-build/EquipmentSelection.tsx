@@ -1,6 +1,6 @@
 "use client";
 
-const CLASS_EQUIPMENT = {
+const CLASS_EQUIPMENT: Record<ClassType, ClassEquipment> = {
   Guerrier: {
     weapons: ["Épée longue", "Hache de bataille", "Lance et bouclier"],
     armor: ["Cotte de mailles", "Armure de cuir"],
@@ -24,8 +24,17 @@ const CLASS_EQUIPMENT = {
   },
 };
 
+type ClassType = "Guerrier" | "Rôdeur" | "Magicien" | "Clerc";
+
+type ClassEquipment = {
+  weapons: string[];
+  armor?: string[];
+  equipment?: string[];
+  packs: string[];
+};
+
 type EquipmentSelectionProps = {
-  selectedClass: string | null;
+  selectedClass: ClassType | null;
   selectedEquipment: string[];
   onEquipmentChange: (equipment: string[]) => void;
 };

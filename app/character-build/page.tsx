@@ -13,7 +13,6 @@ import AbilityScores, {
   RollDetail,
 } from "./AbilityScores";
 import BackgroundSelection from "./BackgroundSelection";
-import EquipmentSelection from "./EquipmentSelection";
 import { classes } from "./races";
 
 function CharacterBuildContent() {
@@ -72,7 +71,6 @@ function CharacterBuildContent() {
 
   const [abilityScores, setAbilityScores] = useState(DEFAULT_ABILITY_SCORES);
   const [background, setBackground] = useState<string | null>(null);
-  const [equipment, setEquipment] = useState<string[]>([]);
   const [details] = useState({
     name: "",
     alignment: "",
@@ -200,18 +198,6 @@ function CharacterBuildContent() {
                 onBackgroundChange={setBackground}
               />,
               !!background
-            )}
-
-          {background &&
-            renderStep(
-              5,
-              "5. Choisir l'équipement",
-              <EquipmentSelection
-                selectedClass={selectedClass}
-                selectedEquipment={equipment}
-                onEquipmentChange={setEquipment}
-              />,
-              equipment.length > 0
             )}
         </div>
         <div
