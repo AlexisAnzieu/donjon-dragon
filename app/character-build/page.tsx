@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useEffect, Suspense, useRef } from "react";
+import { useState, useEffect, Suspense } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { races } from "./races";
@@ -19,7 +19,6 @@ function CharacterBuildContent() {
   );
 
   const router = useRouter();
-  const classSelectionRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -32,9 +31,6 @@ function CharacterBuildContent() {
 
   const handleRaceChange = (race: string | null) => {
     setSelectedRace(race);
-    if (race && classSelectionRef.current) {
-      classSelectionRef.current.scrollIntoView({ behavior: "smooth" });
-    }
   };
 
   const handleClassChange = (characterClass: string | null) => {
@@ -81,42 +77,43 @@ function CharacterBuildContent() {
           )}
         </div>
         <div
-          ref={classSelectionRef}
           className={`w-full ${
             !selectedClass && !selectedRace
               ? "lg:w-0"
               : "lg:w-1/3 lg:sticky lg:top-0 h-screen flex flex-col"
-          } transition-all duration-500 ease-in-out`}
+          } transition-all duration-500 ease-in-out pt-10`}
         >
-          {selectedRace && (
-            <div className="mt-6 text-center text-2xl">
-              Tu es un{" "}
-              <span className="text-primary font-extrabold text-3xl">
-                {selectedRace} {selectedClass}
-              </span>
-            </div>
-          )}
-          <div className="flex flex-col items-center mt-6">
+          <div className="flex flex-col items-center mt-6 text-center">
             {selectedRace && (
-              <Image
-                className="rounded-full border-4 border-red-700 shadow-xl"
-                height={300}
-                width={300}
-                src={`/img/race/${selectedRace}.jpg`}
-                alt="Character Image"
-              />
-            )}
-            {selectedClass && (
-              <div className="mt-4 text-center">
-                <h3 className="text-xl font-bold">Characteristics</h3>
-                <ul className="list-disc list-inside">
-                  <li>Strength: 10</li>
-                  <li>Dexterity: 12</li>
-                  <li>Constitution: 14</li>
-                  <li>Intelligence: 16</li>
-                  <li>Wisdom: 18</li>
-                  <li>Charisma: 20</li>
-                </ul>
+              <div className="bg-white shadow-lg rounded-lg p-6 min-w-96">
+                <div className="mb-2 text-2xl">
+                  Tu es un{" "}
+                  <span className="text-primary font-extrabold text-3xl">
+                    {selectedRace} {selectedClass}
+                  </span>
+                </div>
+                <div className="flex justify-center">
+                  <Image
+                    className="rounded-full border-4 border-red-700 shadow-xl"
+                    height={200}
+                    width={200}
+                    src={`/img/race/${selectedRace}.jpg`}
+                    alt="Character Image"
+                  />
+                </div>
+                {selectedClass && (
+                  <div className="mt-4 text-center">
+                    <h3 className="text-xl font-bold">Characteristics</h3>
+                    <ul className="list-disc list-inside">
+                      <li>Strength: 10</li>
+                      <li>Dexterity: 12</li>
+                      <li>Constitution: 14</li>
+                      <li>Intelligence: 16</li>
+                      <li>Wisdom: 18</li>
+                      <li>Charisma: 20</li>
+                    </ul>
+                  </div>
+                )}
               </div>
             )}
           </div>

@@ -63,15 +63,15 @@ export default function Quiz() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 p-8">
-      <div className="max-w-2xl mx-auto min-h-screen bg-gray-100 text-gray-800 p-8">
-        <h1 className="text-3xl font-bold mb-2 text-center text-primary">
+    <div className="min-h-screen bg-gray-100 text-gray-800 p-4 sm:p-8">
+      <div className="max-w-2xl mx-auto min-h-screen bg-gray-100 text-gray-800 p-4 sm:p-8">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-center text-primary">
           Découvre ton personnage
         </h1>
-        <h2 className="text-xl font-semibold mb-6 text-center text-secondary">
+        <h2 className="text-lg sm:text-xl font-semibold mb-6 text-center text-secondary">
           en répondant aux 10 questions
         </h2>
-        <div className="bg-white rounded-lg shadow-md p-6 relative">
+        <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 relative">
           {currentQuestion > 0 && (
             <>
               <div className="absolute top-4 right-4 text-gray-500">
@@ -99,7 +99,7 @@ export default function Quiz() {
               </button>
             </>
           )}
-          <h2 className="text-xl mb-4">
+          <h2 className="text-lg sm:text-xl mb-4">
             Question {currentQuestion + 1}:{" "}
             {questions[currentQuestion].question}
           </h2>
@@ -110,7 +110,7 @@ export default function Quiz() {
                 key={index}
                 className="p-4 bg-gray-100 rounded-lg shadow-md hover:bg-primary hover:text-red-700 transition-all duration-300 hover:cursor-pointer"
               >
-                <div className="w-full text-left text-lg font-semibold">
+                <div className="w-full text-left text-base sm:text-lg font-semibold">
                   {answer.text}
                 </div>
               </div>
