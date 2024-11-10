@@ -181,7 +181,7 @@ function CharacterBuildContent() {
             !!background) && (
             <Step
               stepNumber={4}
-              title="4. Choisir l'historique"
+              title="4. Choisis ton historique"
               content={
                 <BackgroundSelection
                   selectedBackground={background}

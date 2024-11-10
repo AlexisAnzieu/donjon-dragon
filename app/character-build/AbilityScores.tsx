@@ -54,13 +54,16 @@ const InfoPanel = () => (
   <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 max-w-4xl mx-auto">
     <div className="flex items-center">
       <div className="text-sm text-blue-700">
-        Chaque{" "}
+        Les{" "}
         <TooltipText text="caractéristique">
           <Stats />
         </TooltipText>{" "}
-        est déterminée en lançant 4 dés à 6 faces (4d6), en retirant le plus bas
-        et en additionnant les trois autres. Les bonus raciaux sont ensuite
-        appliqués.
+        sont les attributs fondamentaux qui définissent votre personnage.
+        Couvrant les aspects physiques et mentaux, elles déterminent ses
+        capacités naturelles dans toutes les situations de jeu. Chaque action,
+        du combat à la négociation, dépend de ces caractéristiques. Plus le
+        score est élevé, plus votre personnage excelle dans ce domaine
+        particulier.
       </div>
     </div>
   </div>

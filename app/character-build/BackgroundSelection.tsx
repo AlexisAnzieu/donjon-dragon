@@ -28,9 +28,9 @@ const BACKGROUNDS: Background[] = [
     skills: ["Performance", "Acrobatie"],
     tools: ["Outils de peintre", "Instruments de musique au choix"],
     equipment: [
-      "Œuvre d'art personnelle",
+      "Instrument de musique",
       "Tenue de spectacle",
-      "Bourse de 15 pièces d'argent",
+      "Bourse de 15 pièces d'or",
     ],
     description:
       "Vous avez captivé les foules et attiré le regard de nombreux admirateurs et mécènes. Votre art vous permet de gagner le soutien financier ou moral de ceux qui apprécient votre travail, et de recevoir l’hospitalité dans les cercles artistiques.",
@@ -42,7 +42,7 @@ const BACKGROUNDS: Background[] = [
     equipment: [
       "Pied de biche",
       "Vêtements sombres avec capuche",
-      "Bourse de 15 pièces de cuivre",
+      "Bourse de 15 pièces d'or",
     ],
     description:
       "À travers des activités illicites, vous avez développé des relations étroites dans le monde du crime. Vous pouvez obtenir des informations sur les réseaux criminels locaux et accéder à des ressources pour mener à bien vos activités.",
@@ -52,9 +52,9 @@ const BACKGROUNDS: Background[] = [
     tools: ["Langue supplémentaire"],
     skills: ["Arcane", "Histoire"],
     equipment: [
-      "Livre de recherche",
-      "Lettre de recommandation",
-      "Habits de voyage",
+      "Bouteille d'encre",
+      "Plume",
+      "Petit couteau",
       "Bourse de 10 pièces d'or",
     ],
     description:
@@ -66,9 +66,9 @@ const BACKGROUNDS: Background[] = [
     tools: ["Véhicules terrestres", "Jeu au choix"],
     equipment: [
       "Insigne de grade",
-      "Trophée pris sur un ennemi",
-      "Tenue militaire",
-      "Bourse de 10 pièces d'argent",
+      "Une dague pris sur un ennemi",
+      "Jeu de cartes",
+      "Bourse de 10 pièces d'or",
     ],
     description:
       "Vous avez servi dans les rangs d’une armée et avez établi des liens durables avec vos camarades. Vous pouvez compter sur l’aide de soldats alliés pour des informations, du soutien logistique, ou même une assistance en combat.",
