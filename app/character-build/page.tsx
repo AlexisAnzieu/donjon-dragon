@@ -139,11 +139,11 @@ function CharacterBuildContent() {
           !selectedClass && !selectedRace
             ? "flex-col"
             : "flex-col-reverse lg:flex-row"
-        } transition-all duration-500 ease-in-out`}
+        } transition-all duration-500 ease-in-out pl-6`}
       >
         <div
           className={`w-full ${
-            !selectedClass && !selectedRace ? "" : "lg:w-2/3"
+            !selectedClass && !selectedRace ? "p-28" : "lg:w-2/3"
           } transition-all duration-500 ease-in-out py-6`}
         >
           {!selectedClass && !selectedRace && (
@@ -204,67 +204,76 @@ function CharacterBuildContent() {
           className={`w-full ${
             !selectedClass && !selectedRace
               ? "lg:w-0"
-              : "lg:w-1/3 lg:sticky lg:top-0 h-screen flex flex-col"
+              : "lg:w-1/3 flex flex-col"
           } transition-all duration-500 ease-in-out pt-10`}
         >
-          <div className="flex flex-col items-center mt-6 text-center">
-            {selectedRace && (
-              <div className="bg-white shadow-lg rounded-lg p-6 min-w-96">
-                <div className="mb-2 text-2xl">
-                  Tu es un{" "}
-                  <span className="text-primary font-extrabold text-3xl">
-                    {selectedRace} {selectedClass}
-                  </span>
-                </div>
-                <div className="flex justify-center">
-                  <Image
-                    className="rounded-full border-4 border-red-700 shadow-xl"
-                    height={200}
-                    width={200}
-                    src={`/img/race/${selectedRace}.jpg`}
-                    alt="Character Image"
-                  />
-                </div>
-                {selectedClass && areAbilitiesCalculated && (
-                  <div className="mt-4">
-                    <h4 className="font-bold text-lg">
-                      Points de vie: {calculateHP()}
-                    </h4>
+          <div className="sticky top-0">
+            <div className="flex flex-col items-center mt-6 text-center">
+              {selectedRace && (
+                <div className="bg-white shadow-lg rounded-lg p-6 min-w-96">
+                  <div className="mb-2 text-2xl">
+                    Tu es un{" "}
+                    <span className="text-primary font-extrabold text-3xl">
+                      {selectedRace} {selectedClass}
+                    </span>
                   </div>
-                )}
-                {areAbilitiesCalculated && (
-                  <>
-                    <h3 className="text-xl font-bold pt-5">Caractéristiques</h3>
-                    <ul className="list-disc list-inside">
-                      {Object.entries(abilityScores).map(([ability, score]) => {
-                        const modifier = Math.floor((score - 10) / 2);
-                        const sign = modifier >= 0 ? "+" : "";
+                  <div className="flex justify-center">
+                    <Image
+                      className="rounded-full border-4 border-red-700 shadow-xl"
+                      height={200}
+                      width={200}
+                      src={`/img/race/${selectedRace}.jpg`}
+                      alt="Character Image"
+                    />
+                  </div>
+                  {selectedClass && areAbilitiesCalculated && (
+                    <div className="mt-4">
+                      <h4 className="font-bold text-lg">
+                        Points de vie: {calculateHP()}
+                      </h4>
+                    </div>
+                  )}
+                  {areAbilitiesCalculated && (
+                    <>
+                      <h3 className="text-xl font-bold pt-5">
+                        Caractéristiques
+                      </h3>
+                      <ul className="list-disc list-inside">
+                        {Object.entries(abilityScores).map(
+                          ([ability, score]) => {
+                            const modifier = Math.floor((score - 10) / 2);
+                            const sign = modifier >= 0 ? "+" : "";
 
-                        return (
-                          <li key={ability}>
-                            {ability.charAt(0).toUpperCase() + ability.slice(1)}{" "}
-                            : {score} ({sign}
-                            {modifier})
-                          </li>
-                        );
-                      })}
-                    </ul>
+                            return (
+                              <li key={ability}>
+                                {ability.charAt(0).toUpperCase() +
+                                  ability.slice(1)}{" "}
+                                : {score} ({sign}
+                                {modifier})
+                              </li>
+                            );
+                          }
+                        )}
+                      </ul>
 
-                    {background && (
-                      <div className="mt-2">
-                        <h4 className="font-bold">Historique: {background}</h4>
-                      </div>
-                    )}
-                    {details.name && (
-                      <div className="mt-2">
-                        <h4 className="font-bold">Nom: {details.name}</h4>
-                        <p>Alignement: {details.alignment}</p>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            )}
+                      {background && (
+                        <div className="mt-2">
+                          <h4 className="font-bold">
+                            Historique: {background}
+                          </h4>
+                        </div>
+                      )}
+                      {details.name && (
+                        <div className="mt-2">
+                          <h4 className="font-bold">Nom: {details.name}</h4>
+                          <p>Alignement: {details.alignment}</p>
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
