@@ -110,17 +110,15 @@ function CharacterBuildContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 px-8 pt-3 pb-32">
+    <div className="min-h-screen bg-gray-100 text-gray-800 px-4 sm:px-8 pt-3 pb-32">
       <div
         className={`flex ${
-          !selectedClass && !selectedRace
-            ? "flex-col"
-            : "flex-col-reverse lg:flex-row"
-        } transition-all duration-500 ease-in-out pl-6`}
+          !selectedClass && !selectedRace ? "flex-col" : "flex-col lg:flex-row"
+        } transition-all duration-500 ease-in-out pl-2 sm:pl-6`}
       >
         <div
           className={`w-full ${
-            !selectedClass && !selectedRace ? "p-28" : "lg:w-2/3"
+            !selectedClass && !selectedRace ? "p-4 sm:p-28" : "lg:w-2/3"
           } transition-all duration-500 ease-in-out py-6`}
         >
           {!selectedClass && !selectedRace && (
@@ -203,11 +201,11 @@ function CharacterBuildContent() {
               : "lg:w-1/3 flex flex-col"
           } transition-all duration-500 ease-in-out`}
         >
-          <div className="sticky top-0  pt-10 pl-7">
+          <div className=" pt-4 sm:pt-10 pl-2 sm:pl-7">
             {selectedRace && (
-              <div className="bg-white shadow-2xl rounded-lg p-6 min-w-96 ">
+              <div className="bg-white shadow-2xl rounded-lg p-4 sm:p-6 w-full sm:min-w-96">
                 {/* Character Header */}
-                <div className="mb-6 text-center">
+                <div className="mb-4 sm:mb-6 text-center">
                   <h2 className="text-3xl font-medieval">
                     <span className="text-primary font-extrabold">
                       {selectedRace} {selectedClass}
@@ -215,7 +213,7 @@ function CharacterBuildContent() {
                   </h2>
                   <div className="relative my-4">
                     <Image
-                      className="rounded-full border-4 border-red-700 shadow-2xl mx-auto"
+                      className="rounded-full border-4 border-red-700 shadow-2xl mx-auto w-32 h-32 sm:w-[200px] sm:h-[200px]"
                       height={200}
                       width={200}
                       src={`/img/race/${selectedRace}.jpg`}
@@ -233,11 +231,11 @@ function CharacterBuildContent() {
 
                 {/* Ability Scores */}
                 {areAbilitiesCalculated && (
-                  <div className="mt-8">
-                    <h3 className="text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
+                  <div className="mt-6 sm:mt-8">
+                    <h3 className="text-lg sm:text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
                       Caractéristiques
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4">
                       {Object.entries(abilityScores).map(([ability, score]) => {
                         const modifier = Math.floor((score - 10) / 2);
                         const sign = modifier >= 0 ? "+" : "";
@@ -266,11 +264,11 @@ function CharacterBuildContent() {
 
                 {/* Background Section */}
                 {background && (
-                  <div className="mt-6">
-                    <h3 className="text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
+                  <div className="mt-4 sm:mt-6">
+                    <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2">
                       {background.name}
                     </h3>
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       {[
                         {
                           label: "Compétences",
@@ -308,7 +306,7 @@ function CharacterBuildContent() {
 
                 {/* Character Details */}
                 {details.name && (
-                  <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+                  <div className="mt-4 sm:mt-6 bg-gray-50 p-3 sm:p-4 rounded-lg">
                     <h3 className="font-bold mb-2">Détails du personnage</h3>
                     <div className="space-y-1 text-sm">
                       <p>
