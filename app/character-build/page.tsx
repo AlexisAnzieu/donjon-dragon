@@ -6,7 +6,6 @@ import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import AbilityScores, {
   AbilityScoreKey,
   DEFAULT_ABILITY_SCORES,
@@ -14,6 +13,7 @@ import AbilityScores, {
 } from "./AbilityScores";
 import BackgroundSelection from "./BackgroundSelection";
 import { classes } from "./races";
+import Step from "./Step";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
@@ -101,37 +101,6 @@ function CharacterBuildContent() {
     return Math.floor((abilityScore - 10) / 2);
   };
 
-  const renderStep = (
-    stepNumber: number,
-    title: string,
-    content: React.ReactNode,
-    isFilled: boolean = false
-  ) => {
-    const isActive = activeStep === stepNumber;
-    return (
-      <div
-        className={`mb-4 border  rounded-lg overflow-hidden ${
-          isFilled ? "border-green-500" : ""
-        }`}
-      >
-        <button
-          className={`w-full p-4 text-left font-semibold ${
-            isFilled ? "bg-green-100" : ""
-          } focus:outline-none flex justify-between items-center`}
-          onClick={() => setActiveStep(isActive ? null : stepNumber)}
-        >
-          <span>{title}</span>
-          {isActive ? (
-            <ChevronUpIcon className="w-5 h-5" />
-          ) : (
-            <ChevronDownIcon className="w-5 h-5" />
-          )}
-        </button>
-        {isActive && <div className="p-4 bg-white">{content}</div>}
-      </div>
-    );
-  };
-
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 px-8 pt-3 pb-32">
       <div
@@ -156,49 +125,67 @@ function CharacterBuildContent() {
               </Link>
             </div>
           )}
-          {renderStep(
-            1,
-            "1. Choisis une Race",
-            <RaceSelection
-              selectedRace={selectedRace}
-              setSelectedRace={handleRaceChange}
-            />,
-            !!selectedRace
+          <Step
+            stepNumber={1}
+            title="1. Choisis une Race"
+            content={
+              <RaceSelection
+                selectedRace={selectedRace}
+                setSelectedRace={handleRaceChange}
+              />
+            }
+            isFilled={!!selectedRace}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          />
+          {selectedRace && (
+            <Step
+              stepNumber={2}
+              title="2. Choisis une Classe"
+              content={
+                <ClassSelection
+                  selectedClass={selectedClass}
+                  setSelectedClass={handleClassChange}
+                />
+              }
+              isFilled={!!selectedClass}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
           )}
-          {selectedRace &&
-            renderStep(
-              2,
-              "2. Choisis une Classe",
-              <ClassSelection
-                selectedClass={selectedClass}
-                setSelectedClass={handleClassChange}
-              />,
-              !!selectedClass
-            )}
-          {selectedClass &&
-            renderStep(
-              3,
-              "3. Calcul tes caractéristiques",
-              <AbilityScores
-                scores={abilityScores}
-                onScoresChange={onScoresChange}
-                race={selectedRace}
-                rollDetails={rollDetails}
-                onRollDetailsChange={setRollDetails}
-              />,
-              areAbilitiesCalculated
-            )}
-
-          {Object.values(abilityScores).some((score) => score !== 10) &&
-            renderStep(
-              4,
-              "4. Choisir l'historique",
-              <BackgroundSelection
-                selectedBackground={background}
-                onBackgroundChange={setBackground}
-              />,
-              !!background
-            )}
+          {selectedClass && (
+            <Step
+              stepNumber={3}
+              title="3. Calcul tes caractéristiques"
+              content={
+                <AbilityScores
+                  scores={abilityScores}
+                  onScoresChange={onScoresChange}
+                  race={selectedRace}
+                  rollDetails={rollDetails}
+                  onRollDetailsChange={setRollDetails}
+                />
+              }
+              isFilled={areAbilitiesCalculated}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+          )}
+          {Object.values(abilityScores).some((score) => score !== 10) && (
+            <Step
+              stepNumber={4}
+              title="4. Choisir l'historique"
+              content={
+                <BackgroundSelection
+                  selectedBackground={background}
+                  onBackgroundChange={setBackground}
+                />
+              }
+              isFilled={!!background}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+          )}
         </div>
         <div
           className={`w-full ${
