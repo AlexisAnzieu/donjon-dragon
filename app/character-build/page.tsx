@@ -11,7 +11,7 @@ import AbilityScores, {
   DEFAULT_ABILITY_SCORES,
   RollDetail,
 } from "./AbilityScores";
-import BackgroundSelection from "./BackgroundSelection";
+import BackgroundSelection, { Background } from "./BackgroundSelection";
 import { classes } from "./races";
 import Step from "./Step";
 
@@ -47,15 +47,23 @@ function CharacterBuildContent() {
     setAreAbilitiesCalculated(false);
     setAbilityScores(DEFAULT_ABILITY_SCORES);
     setSelectedRace(race);
+    if (race) setActiveStep(2); // Advance to class selection
   };
 
   const handleClassChange = (characterClass: string | null) => {
     setSelectedClass(characterClass);
+    if (characterClass) setActiveStep(3); // Advance to ability scores
   };
 
   const onScoresChange = (scores: Record<AbilityScoreKey, number>) => {
     setAreAbilitiesCalculated(true);
     setAbilityScores(scores);
+    setActiveStep(4); // Advance to background selection
+  };
+
+  const handleBackgroundChange = (newBackground: Background | null) => {
+    setBackground(newBackground);
+    if (newBackground) setActiveStep(5); // Advance to next step (if any)
   };
 
   const [rollDetails, setRollDetails] = useState<
@@ -70,7 +78,7 @@ function CharacterBuildContent() {
   );
 
   const [abilityScores, setAbilityScores] = useState(DEFAULT_ABILITY_SCORES);
-  const [background, setBackground] = useState<string | null>(null);
+  const [background, setBackground] = useState<Background | null>(null);
   const [details] = useState({
     name: "",
     alignment: "",
@@ -171,14 +179,15 @@ function CharacterBuildContent() {
               setActiveStep={setActiveStep}
             />
           )}
-          {Object.values(abilityScores).some((score) => score !== 10) && (
+          {(Object.values(abilityScores).some((score) => score !== 10) ||
+            !!background) && (
             <Step
               stepNumber={4}
               title="4. Choisir l'historique"
               content={
                 <BackgroundSelection
                   selectedBackground={background}
-                  onBackgroundChange={setBackground}
+                  onBackgroundChange={handleBackgroundChange}
                 />
               }
               isFilled={!!background}
@@ -192,75 +201,128 @@ function CharacterBuildContent() {
             !selectedClass && !selectedRace
               ? "lg:w-0"
               : "lg:w-1/3 flex flex-col"
-          } transition-all duration-500 ease-in-out pt-10`}
+          } transition-all duration-500 ease-in-out`}
         >
-          <div className="sticky top-0">
-            <div className="flex flex-col items-center mt-6 text-center">
-              {selectedRace && (
-                <div className="bg-white shadow-lg rounded-lg p-6 min-w-96">
-                  <div className="mb-2 text-2xl">
-                    Tu es un{" "}
-                    <span className="text-primary font-extrabold text-3xl">
+          <div className="sticky top-0  pt-10 pl-7">
+            {selectedRace && (
+              <div className="bg-white shadow-2xl rounded-lg p-6 min-w-96 ">
+                {/* Character Header */}
+                <div className="mb-6 text-center">
+                  <h2 className="text-3xl font-medieval">
+                    <span className="text-primary font-extrabold">
                       {selectedRace} {selectedClass}
                     </span>
-                  </div>
-                  <div className="flex justify-center">
+                  </h2>
+                  <div className="relative my-4">
                     <Image
-                      className="rounded-full border-4 border-red-700 shadow-xl"
+                      className="rounded-full border-4 border-red-700 shadow-2xl mx-auto"
                       height={200}
                       width={200}
                       src={`/img/race/${selectedRace}.jpg`}
                       alt="Character Image"
                     />
+                    {selectedClass && areAbilitiesCalculated && (
+                      <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+                        <div className="bg-red-700 text-white px-4 py-1 rounded-full shadow-lg">
+                          <span className="font-bold">HP: {calculateHP()}</span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  {selectedClass && areAbilitiesCalculated && (
-                    <div className="mt-4">
-                      <h4 className="font-bold text-lg">
-                        Points de vie: {calculateHP()}
-                      </h4>
-                    </div>
-                  )}
-                  {areAbilitiesCalculated && (
-                    <>
-                      <h3 className="text-xl font-bold pt-5">
-                        Caractéristiques
-                      </h3>
-                      <ul className="list-disc list-inside">
-                        {Object.entries(abilityScores).map(
-                          ([ability, score]) => {
-                            const modifier = Math.floor((score - 10) / 2);
-                            const sign = modifier >= 0 ? "+" : "";
-
-                            return (
-                              <li key={ability}>
-                                {ability.charAt(0).toUpperCase() +
-                                  ability.slice(1)}{" "}
-                                : {score} ({sign}
-                                {modifier})
-                              </li>
-                            );
-                          }
-                        )}
-                      </ul>
-
-                      {background && (
-                        <div className="mt-2">
-                          <h4 className="font-bold">
-                            Historique: {background}
-                          </h4>
-                        </div>
-                      )}
-                      {details.name && (
-                        <div className="mt-2">
-                          <h4 className="font-bold">Nom: {details.name}</h4>
-                          <p>Alignement: {details.alignment}</p>
-                        </div>
-                      )}
-                    </>
-                  )}
                 </div>
-              )}
-            </div>
+
+                {/* Ability Scores */}
+                {areAbilitiesCalculated && (
+                  <div className="mt-8">
+                    <h3 className="text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
+                      Caractéristiques
+                    </h3>
+                    <div className="grid grid-cols-2 gap-4">
+                      {Object.entries(abilityScores).map(([ability, score]) => {
+                        const modifier = Math.floor((score - 10) / 2);
+                        const sign = modifier >= 0 ? "+" : "";
+                        return (
+                          <div
+                            key={ability}
+                            className="bg-gray-50 p-3 rounded-lg text-center"
+                          >
+                            <div className="text-sm text-gray-600 uppercase">
+                              {ability.charAt(0).toUpperCase() +
+                                ability.slice(1)}
+                            </div>
+                            <div className="text-xl font-bold text-red-700">
+                              {score}
+                            </div>
+                            <div className="text-sm font-medium">
+                              ({sign}
+                              {modifier})
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                {/* Background Section */}
+                {background && (
+                  <div className="mt-6">
+                    <h3 className="text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
+                      {background.name}
+                    </h3>
+                    <div className="space-y-4">
+                      {[
+                        {
+                          label: "Compétences",
+                          value: background.skills,
+                          icon: "🎯",
+                        },
+                        {
+                          label: "Équipement",
+                          value: background.equipment,
+                          icon: "⚔️",
+                        },
+                        ...(background.tools
+                          ? [
+                              {
+                                label: "Maitrise",
+                                value: background.tools,
+                                icon: "🛠️",
+                              },
+                            ]
+                          : []),
+                      ].map(({ label, value, icon }) => (
+                        <div key={label} className="bg-gray-50 p-3 rounded-lg">
+                          <div className="flex items-center gap-2 font-semibold mb-1">
+                            <span>{icon}</span>
+                            <span>{label}</span>
+                          </div>
+                          <p className="text-sm text-gray-700">
+                            {value.join(", ")}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Character Details */}
+                {details.name && (
+                  <div className="mt-6 bg-gray-50 p-4 rounded-lg">
+                    <h3 className="font-bold mb-2">Détails du personnage</h3>
+                    <div className="space-y-1 text-sm">
+                      <p>
+                        <span className="font-medium">Nom:</span> {details.name}
+                      </p>
+                      <p>
+                        <span className="font-medium">Alignement:</span>{" "}
+                        {details.alignment}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>
