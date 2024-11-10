@@ -97,13 +97,18 @@ function CharacterBuildContent() {
 
     const baseHP = classData.hitPointDice;
     const constitutionModifier = calculateModifier(abilityScores.constitution);
-    const modifierSymbol = constitutionModifier >= 0 ? "+" : "-";
 
-    return `${
-      baseHP + constitutionModifier
-    } (${baseHP} ${modifierSymbol} ${Math.abs(
-      constitutionModifier
-    )} Constitution)`;
+    return baseHP + constitutionModifier;
+  };
+
+  const calculateAC = () => {
+    if (!abilityScores.dextérité) return 10;
+    const dexModifier = Math.floor((abilityScores.dextérité - 10) / 2);
+    return 10 + dexModifier;
+  };
+
+  const calculateInitiative = () => {
+    return Math.floor((abilityScores.dextérité - 10) / 2);
   };
 
   const calculateModifier = (abilityScore: number): number => {
@@ -210,6 +215,8 @@ function CharacterBuildContent() {
               abilityScores={abilityScores}
               background={background}
               calculateHP={calculateHP}
+              calculateAC={calculateAC}
+              calculateInitiative={calculateInitiative}
               details={details}
             />
           </div>

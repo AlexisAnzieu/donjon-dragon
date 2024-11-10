@@ -22,7 +22,9 @@ export default function TooltipText({ text, children }: TooltipTextProps) {
         className="invisible group-hover:visible opacity-0 group-hover:opacity-100 transition text-white p-2 rounded absolute text-sm z-10 max-w-3xl"
         style={{ top: position.y + 10, left: position.x + 10 }}
       >
-        {children}
+        <div className="bg-white text-black p-6 border-2 border-blue-600 rounded-xl">
+          {children}
+        </div>
       </span>
     </span>
   );

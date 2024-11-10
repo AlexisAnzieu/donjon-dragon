@@ -49,7 +49,7 @@ export default function ClassSelection({
               </div>
             </div>
             <div className="p-4 bg-gray-100 mt-auto">
-              <p className="text-sm text-gray-700">1d{cls.hitPointDice}</p>
+              <p className="text-sm text-gray-700">{cls.hitPointDice} PV</p>
             </div>
           </div>
         ))}

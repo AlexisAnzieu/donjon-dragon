@@ -3,6 +3,7 @@ import { Background } from "../BackgroundSelection";
 import { AbilityScoreKey } from "../AbilityScores";
 import { GiSkills, GiSwordman, GiToolbox } from "react-icons/gi";
 import { Race } from "../races";
+import TooltipText from "@/app/components/TooltipText";
 
 interface CharacterSheetProps {
   selectedRace: Race | null;
@@ -10,7 +11,9 @@ interface CharacterSheetProps {
   areAbilitiesCalculated: boolean;
   abilityScores: Record<AbilityScoreKey, number>;
   background: Background | null;
-  calculateHP: () => string | null;
+  calculateHP: () => number | null;
+  calculateAC: () => number;
+  calculateInitiative: () => number;
   details: {
     name: string;
     alignment: string;
@@ -28,6 +31,8 @@ export default function CharacterSheet({
   abilityScores,
   background,
   calculateHP,
+  calculateAC,
+  calculateInitiative,
   details,
 }: CharacterSheetProps) {
   if (!selectedRace) return null;
@@ -50,11 +55,51 @@ export default function CharacterSheet({
             alt="Character Image"
           />
           {selectedClass && areAbilitiesCalculated && (
-            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2">
+            <div className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
               <div className="bg-red-700 text-white px-4 py-1 rounded-full shadow-lg">
-                <span className="font-bold">HP: {calculateHP()}</span>
+                <span className="font-bold">PV: {calculateHP()}</span>
               </div>
             </div>
+          )}
+        </div>
+        <div className="flex justify-center gap-4 mt-6">
+          <div className="flex-1 max-w-[120px] bg-gray-50 rounded-lg p-3 text-center">
+            <TooltipText text="Vitesse">
+              <div>
+                Détermine la distance que votre personnage peut parcourir en un
+                tour
+              </div>
+            </TooltipText>
+            <div className="text-red-700 text-xl font-bold">
+              {selectedRace.speed}
+            </div>
+          </div>
+
+          {areAbilitiesCalculated && (
+            <>
+              <div className="flex-1 max-w-[120px] bg-gray-50 rounded-lg p-3 text-center">
+                <TooltipText text="CA">
+                  <div>
+                    {` Classe d'Armure, une mesure de la capacité d'un personnage à
+                    éviter d'être touché lors d'un combat.`}
+                  </div>
+                </TooltipText>
+                <div className="text-red-700 text-xl font-bold">
+                  {calculateAC()}
+                </div>
+              </div>
+
+              <div className="flex-1 max-w-[120px] bg-gray-50 rounded-lg p-3 text-center">
+                <TooltipText text="Initiative">
+                  <div>
+                    {` L'initiative détermine l'ordre des tours de combat.`}
+                  </div>
+                </TooltipText>
+                <div className="text-red-700 text-xl font-bold">
+                  {calculateInitiative()}
+                </div>
+              </div>
+            </>
           )}
         </div>
       </div>
