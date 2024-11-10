@@ -1,9 +1,11 @@
 import Image from "next/image";
 import { Background } from "../BackgroundSelection";
 import { AbilityScoreKey } from "../AbilityScores";
+import { GiSkills, GiSwordman, GiToolbox } from "react-icons/gi";
+import { Race } from "../races";
 
 interface CharacterSheetProps {
-  selectedRace: string | null;
+  selectedRace: Race | null;
   selectedClass: string | null;
   areAbilitiesCalculated: boolean;
   abilityScores: Record<AbilityScoreKey, number>;
@@ -36,7 +38,7 @@ export default function CharacterSheet({
       <div className="mb-4 sm:mb-6 text-center">
         <h2 className="text-3xl font-medieval">
           <span className="text-primary font-extrabold">
-            {selectedRace} {selectedClass}
+            {selectedRace.name} {selectedClass}
           </span>
         </h2>
         <div className="relative my-4">
@@ -44,7 +46,7 @@ export default function CharacterSheet({
             className="rounded-full border-4 border-red-700 shadow-2xl mx-auto w-32 h-32 sm:w-[200px] sm:h-[200px]"
             height={200}
             width={200}
-            src={`/img/race/${selectedRace}.jpg`}
+            src={`/img/race/${selectedRace.name}.jpg`}
             alt="Character Image"
           />
           {selectedClass && areAbilitiesCalculated && (
@@ -95,15 +97,29 @@ export default function CharacterSheet({
           </h3>
           <div className="space-y-3 sm:space-y-4">
             {[
-              { label: "Compétences", value: background.skills, icon: "🎯" },
-              { label: "Équipement", value: background.equipment, icon: "⚔️" },
+              {
+                label: "Compétences",
+                value: background.skills,
+                icon: <GiSkills />,
+              },
+              {
+                label: "Équipement",
+                value: background.equipment,
+                icon: <GiSwordman />,
+              },
               ...(background.tools
-                ? [{ label: "Maitrise", value: background.tools, icon: "🛠️" }]
+                ? [
+                    {
+                      label: "Maitrise",
+                      value: background.tools,
+                      icon: <GiToolbox />,
+                    },
+                  ]
                 : []),
             ].map(({ label, value, icon }) => (
               <div key={label} className="bg-gray-50 p-3 rounded-lg">
                 <div className="flex items-center gap-2 font-semibold mb-1">
-                  <span>{icon}</span>
+                  {icon}
                   <span>{label}</span>
                 </div>
                 <p className="text-sm text-gray-700">{value.join(", ")}</p>

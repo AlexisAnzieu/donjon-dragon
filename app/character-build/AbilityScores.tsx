@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
-import { races } from "./races";
+import { Race } from "./races"; // Make sure to import Race type
 import TooltipText from "../components/TooltipText";
 import Stats from "../components/Stats";
 
@@ -17,7 +16,7 @@ export type AbilityScoreKey =
 type AbilityScoresProps = {
   scores: Record<AbilityScoreKey, number>;
   onScoresChange: (scores: Record<AbilityScoreKey, number>) => void;
-  race: string | null;
+  race: Race | null; // Changed from string | null
   rollDetails: Record<AbilityScoreKey, RollDetail | null>;
   onRollDetailsChange: (
     details: Record<AbilityScoreKey, RollDetail | null>
@@ -122,11 +121,6 @@ export default function AbilityScores({
   rollDetails,
   onRollDetailsChange,
 }: AbilityScoresProps) {
-  const selectedRace = useMemo(
-    () => (race ? races.find((r) => r.name === race) : null),
-    [race]
-  );
-
   const rollAbility = () => {
     const rolls = rollMultipleDice(4, 6).sort((a, b) => b - a);
     const total = rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0);
@@ -142,16 +136,16 @@ export default function AbilityScores({
       newScores[ability as AbilityScoreKey] = rollResult.total;
       newRollDetails[ability as AbilityScoreKey] = {
         ...rollResult,
-        racialBonus: selectedRace?.abilityScores?.[ability as AbilityScoreKey]
-          ? `${selectedRace.abilityScores[ability as AbilityScoreKey]} (race ${
-              selectedRace.name
+        racialBonus: race?.abilityScores?.[ability as AbilityScoreKey]
+          ? `${race.abilityScores[ability as AbilityScoreKey]} (race ${
+              race.name
             })`
           : undefined,
       };
     });
 
-    if (selectedRace?.abilityScores) {
-      Object.entries(selectedRace.abilityScores).forEach(([ability, bonus]) => {
+    if (race?.abilityScores) {
+      Object.entries(race.abilityScores).forEach(([ability, bonus]) => {
         if (ability in newScores) {
           newScores[ability as AbilityScoreKey] += bonus;
         }

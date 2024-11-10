@@ -1,34 +1,43 @@
+import {
+  GiMuscleUp,
+  GiRunningNinja,
+  GiShield,
+  GiBrain,
+  GiOwl,
+  GiDramaMasks,
+} from "react-icons/gi";
+
 export default function Stats({ bonus }: { bonus?: string }) {
   const stats = [
     {
       label: "Force",
       description: "Puissance physique et combat au corps à corps",
-      icon: "💪",
+      icon: <GiMuscleUp color="black" className="text-3xl" />,
     },
     {
       label: "Dextérité",
       description: "Agilité, réflexes et précision",
-      icon: "🏃‍♂️",
+      icon: <GiRunningNinja color="black" className="text-3xl" />,
     },
     {
       label: "Constitution",
       description: "Endurance et résistance physique",
-      icon: "🛡️",
+      icon: <GiShield color="black" className="text-3xl" />,
     },
     {
       label: "Intelligence",
       description: "Raisonnement, mémoire et connaissances",
-      icon: "🧠",
+      icon: <GiBrain color="black" className="text-3xl" />,
     },
     {
       label: "Sagesse",
       description: "Perception, intuition et volonté",
-      icon: "🦉",
+      icon: <GiOwl color="black" className="text-3xl" />,
     },
     {
       label: "Charisme",
       description: "Force de personnalité et leadership",
-      icon: "🎭",
+      icon: <GiDramaMasks color="black" className="text-3xl" />,
     },
   ];
 

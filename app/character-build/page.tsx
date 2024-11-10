@@ -11,18 +11,19 @@ import AbilityScores, {
   RollDetail,
 } from "./AbilityScores";
 import BackgroundSelection, { Background } from "./BackgroundSelection";
-import { classes } from "./races";
+import { classes, Race, races } from "./races";
 import Step from "./Step";
 import CharacterSheet from "./components/CharacterSheet";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
   const characterClass = searchParams.get("characterClass");
-  const race = searchParams.get("race");
+  const raceParam = searchParams.get("race");
+  const race = races.find((r) => r.name === raceParam) || null;
   const [areAbilitiesCalculated, setAreAbilitiesCalculated] =
     useState<boolean>(false);
 
-  const [selectedRace, setSelectedRace] = useState<string | null>(race);
+  const [selectedRace, setSelectedRace] = useState<Race | null>(race);
   const [selectedClass, setSelectedClass] = useState<string | null>(
     characterClass
   );
@@ -36,14 +37,14 @@ function CharacterBuildContent() {
 
   useEffect(() => {
     const params = new URLSearchParams();
-    if (selectedRace) params.set("race", selectedRace);
+    if (selectedRace) params.set("race", selectedRace.name);
     if (selectedClass) params.set("characterClass", selectedClass);
     router.replace(`?${params.toString()}`, {
       scroll: false,
     });
   }, [selectedRace, selectedClass, router]);
 
-  const handleRaceChange = (race: string | null) => {
+  const handleRaceChange = (race: Race | null) => {
     setAreAbilitiesCalculated(false);
     setAbilityScores(DEFAULT_ABILITY_SCORES);
     setSelectedRace(race);

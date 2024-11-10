@@ -1,9 +1,9 @@
-export const races = [
+export const races: Race[] = [
   {
     name: "Elfe",
     description:
       "Les elfes sont des êtres gracieux et longévifs, souvent considérés comme les gardiens de la nature et de la magie. Ils possèdent une connexion profonde avec les forêts et les créatures qui y vivent, et leur longévité leur permet d'accumuler une grande sagesse au fil des siècles.",
-    bonus: "+2 Dextérité 🏃‍♂️",
+    bonus: "+2 Dextérité",
     abilityScores: {
       dextérité: 2,
     },
@@ -13,7 +13,7 @@ export const races = [
     name: "Halfelin",
     description:
       "Les halfelins, également connus sous le nom de hobbits, sont des petites gens agiles et joyeuses, réputées pour leur amour du confort et de la bonne chère. Ils vivent généralement dans des villages pittoresques et paisibles, entourés de champs fertiles et de jardins bien entretenus.",
-    bonus: "+2 Dextérité 🏃‍♂️",
+    bonus: "+2 Dextérité",
     abilityScores: {
       dextérité: 2,
     },
@@ -38,13 +38,22 @@ export const races = [
     name: "Nain",
     description:
       "Les nains sont des êtres robustes et solides, réputés pour leur passion pour l'artisanat et la bataille. Ils vivent principalement dans des forteresses souterraines, creusées dans les montagnes, où ils exploitent les richesses minérales et forgent des armes et des armures de qualité exceptionnelle.",
-    bonus: "+2 Constitution 🛡️",
+    bonus: "+2 Constitution",
     abilityScores: {
       constitution: 2,
     },
     speed: "7.5m",
   },
 ];
+export type Race = {
+  name: string;
+  description: string;
+  bonus: string;
+  abilityScores: {
+    [key: string]: number;
+  };
+  speed: string;
+};
 
 export const classes = [
   {

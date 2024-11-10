@@ -1,10 +1,10 @@
-import { races } from "./races";
+import { Race, races } from "./races";
 import TooltipText from "../components/TooltipText";
 import Stats from "../components/Stats";
 
 interface RaceSelectionProps {
-  selectedRace: string | null;
-  setSelectedRace: (race: string | null) => void;
+  selectedRace: Race | null;
+  setSelectedRace: (race: Race | null) => void;
 }
 
 export default function RaceSelection({
@@ -29,10 +29,10 @@ export default function RaceSelection({
           <div
             key={race.name}
             className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col h-full ${
-              selectedRace === race.name ? "ring-2 ring-primary" : ""
+              selectedRace?.name === race.name ? "ring-2 ring-primary" : ""
             }`}
             onClick={() => {
-              setSelectedRace(race.name);
+              setSelectedRace(race);
             }}
           >
             <div className="p-4 flex-grow flex flex-col">
