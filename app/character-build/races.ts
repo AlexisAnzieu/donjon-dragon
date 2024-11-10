@@ -7,6 +7,7 @@ export const races = [
     abilityScores: {
       dextérité: 2,
     },
+    speed: "9m",
   },
   {
     name: "Halfelin",
@@ -16,6 +17,7 @@ export const races = [
     abilityScores: {
       dextérité: 2,
     },
+    speed: "7.5m",
   },
   {
     name: "Humain",
@@ -30,6 +32,7 @@ export const races = [
       sagesse: 1,
       charisme: 1,
     },
+    speed: "9m",
   },
   {
     name: "Nain",
@@ -39,6 +42,7 @@ export const races = [
     abilityScores: {
       constitution: 2,
     },
+    speed: "7.5m",
   },
 ];
 
