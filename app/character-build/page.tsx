@@ -11,21 +11,24 @@ import AbilityScores, {
   RollDetail,
 } from "./AbilityScores";
 import BackgroundSelection, { Background } from "./BackgroundSelection";
-import { classes, Race, races } from "./races";
+import { Class, classes, Race, races } from "./races";
 import Step from "./Step";
 import CharacterSheet from "./components/CharacterSheet";
 import EquipmentSelection from "./EquipmentSelection";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
-  const characterClass = searchParams.get("characterClass");
+  const characterClassParam = searchParams.get("characterClass");
+  const characterClass =
+    classes.find((cls) => cls.name === characterClassParam) || null;
+
   const raceParam = searchParams.get("race");
   const race = races.find((r) => r.name === raceParam) || null;
   const [areAbilitiesCalculated, setAreAbilitiesCalculated] =
     useState<boolean>(false);
 
   const [selectedRace, setSelectedRace] = useState<Race | null>(race);
-  const [selectedClass, setSelectedClass] = useState<string | null>(
+  const [selectedClass, setSelectedClass] = useState<Class | null>(
     characterClass
   );
 
@@ -39,7 +42,7 @@ function CharacterBuildContent() {
   useEffect(() => {
     const params = new URLSearchParams();
     if (selectedRace) params.set("race", selectedRace.name);
-    if (selectedClass) params.set("characterClass", selectedClass);
+    if (selectedClass) params.set("characterClass", selectedClass.name);
     router.replace(`?${params.toString()}`, {
       scroll: false,
     });
@@ -52,7 +55,7 @@ function CharacterBuildContent() {
     if (race) setActiveStep(2); // Advance to class selection
   };
 
-  const handleClassChange = (characterClass: string | null) => {
+  const handleClassChange = (characterClass: Class | null) => {
     setSelectedClass(characterClass);
     setSelectedEquipment(null); // Reset equipment
     if (characterClass) setActiveStep(3); // Advance to ability scores
@@ -98,7 +101,7 @@ function CharacterBuildContent() {
   const calculateHP = () => {
     if (!selectedClass || !abilityScores.constitution) return null;
 
-    const classData = classes.find((cls) => cls.name === selectedClass);
+    const classData = classes.find((cls) => cls.name === selectedClass.name);
     if (!classData) return null;
 
     const baseHP = classData.hitPointDice;
@@ -218,7 +221,8 @@ function CharacterBuildContent() {
               }
               isFilled={
                 selectedEquipment?.length ===
-                classes.find((c) => c.name === selectedClass)?.equipment.length
+                classes.find((c) => c.name === selectedClass?.name)?.equipment
+                  .length
               }
               activeStep={activeStep}
               setActiveStep={setActiveStep}

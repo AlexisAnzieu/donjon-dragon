@@ -1,8 +1,8 @@
 import React from "react";
-import { classes } from "@/app/character-build/races";
+import { Class, classes } from "@/app/character-build/races";
 
 interface EquipmentComponentProps {
-  selectedClass: string | null;
+  selectedClass: Class | null;
   selectedEquipment: string[] | null;
   setSelectedEquipment: (equipment: string[] | null) => void;
 }
@@ -57,7 +57,7 @@ const EquipmentSelection: React.FC<EquipmentComponentProps> = ({
   setSelectedEquipment,
 }) => {
   const equipmentData = classes.find(
-    (c) => c.name === selectedClass
+    (c) => c.name === selectedClass?.name
   )?.equipment;
 
   const defaultEquipment = React.useMemo(

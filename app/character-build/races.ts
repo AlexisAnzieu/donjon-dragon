@@ -60,8 +60,14 @@ export type Class = {
   description: string;
   hitPointDice: number;
   equipment: string[][];
+  proficiencies: {
+    armures: string[];
+    armes: string[];
+    outils: string[];
+    sauvegardes: string[];
+    compétences: string[];
+  };
 };
-
 export const classes: Class[] = [
   {
     name: "Barde",
@@ -75,6 +81,19 @@ export const classes: Class[] = [
       ["Armure de cuir"],
       ["Dague"],
     ],
+    proficiencies: {
+      armures: ["Armures légères"],
+      armes: [
+        "Armes courantes",
+        "Arbalète de poing",
+        "Épée courte",
+        "Épée longue",
+        "Rapière",
+      ],
+      outils: ["Trois instruments de musique au choix"],
+      sauvegardes: ["Dextérité", "Charisme"],
+      compétences: ["Trois compétences au choix"],
+    },
   },
   {
     name: "Clerc",
@@ -89,6 +108,19 @@ export const classes: Class[] = [
       ["Bouclier"],
       ["Symbole sacré"],
     ],
+    proficiencies: {
+      armures: ["Armures légères", "Armures intermédiaires", "Boucliers"],
+      armes: ["Armes courantes"],
+      outils: ["Aucun"],
+      sauvegardes: ["Sagesse", "Charisme"],
+      compétences: [
+        "Histoire",
+        "Intuition",
+        "Médecine",
+        "Persuasion",
+        "Religion",
+      ],
+    },
   },
   {
     name: "Magicien",
@@ -101,6 +133,19 @@ export const classes: Class[] = [
       ["Paquetage d'érudit", "Paquetage d'explorateur"],
       ["Grimoire"],
     ],
+    proficiencies: {
+      armures: ["Aucune"],
+      armes: ["Dagues", "Dards", "Bâton", "Frondes"],
+      outils: ["Aucun"],
+      sauvegardes: ["Intelligence", "Sagesse"],
+      compétences: [
+        "Arcane",
+        "Histoire",
+        "Intuition",
+        "Investigation",
+        "Religion",
+      ],
+    },
   },
   {
     name: "Guerrier",
@@ -113,6 +158,24 @@ export const classes: Class[] = [
       ["Arbalète légère et 20 carreaux", "Deux hachettes"],
       ["Paquetage d'exploration souterraine", "Paquetage d'explorateur"],
     ],
+    proficiencies: {
+      armures: [
+        "Armures légères",
+        "Armures intermédiaires",
+        "Armures lourdes",
+        "Boucliers",
+      ],
+      armes: ["Armes courantes", "Armes de guerre"],
+      outils: ["Aucun"],
+      sauvegardes: ["Force", "Constitution"],
+      compétences: [
+        "Acrobaties",
+        "Athlétisme",
+        "Intimidation",
+        "Perception",
+        "Survie",
+      ],
+    },
   },
   {
     name: "Roublard",
@@ -129,5 +192,18 @@ export const classes: Class[] = [
       ],
       ["Armure de cuir", "Deux dagues", "Outils de voleur"],
     ],
+    proficiencies: {
+      armures: ["Armures légères"],
+      armes: ["Arbalète de poing", "Épée courte", "Épée longue", "Rapière"],
+      outils: ["Outils de voleur"],
+      sauvegardes: ["Dextérité", "Intelligence"],
+      compétences: [
+        "Acrobaties",
+        "Discrétion",
+        "Escamotage",
+        "Investigation",
+        "Perception",
+      ],
+    },
   },
 ];

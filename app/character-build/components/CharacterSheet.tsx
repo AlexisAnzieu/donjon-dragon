@@ -2,12 +2,12 @@ import Image from "next/image";
 import { Background } from "../BackgroundSelection";
 import { AbilityScoreKey } from "../AbilityScores";
 import { GiSkills, GiSwordman, GiToolbox } from "react-icons/gi";
-import { Race } from "../races";
+import { Class, Race } from "../races";
 import TooltipText from "@/app/components/TooltipText";
 
 interface CharacterSheetProps {
   selectedRace: Race | null;
-  selectedClass: string | null;
+  selectedClass: Class | null;
   areAbilitiesCalculated: boolean;
   abilityScores: Record<AbilityScoreKey, number>;
   background: Background | null;
@@ -45,7 +45,7 @@ export default function CharacterSheet({
       <div className="mb-4 sm:mb-6 text-center">
         <h2 className="text-3xl font-medieval">
           <span className="text-primary font-extrabold">
-            {selectedRace.name} {selectedClass}
+            {selectedRace.name} {selectedClass?.name}
           </span>
         </h2>
         <div className="relative my-4">
@@ -105,6 +105,29 @@ export default function CharacterSheet({
           )}
         </div>
       </div>
+
+      {selectedClass && (
+        <div className="mt-4 sm:mt-6">
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2">
+            Maitrises
+          </h3>
+          <div className="space-y-3 sm:space-y-4">
+            {Object.entries(selectedClass.proficiencies).map(
+              ([key, proficiencies]) => (
+                <div key={key} className="bg-gray-50 p-3 rounded-lg">
+                  <div className="flex items-center gap-2 font-semibold mb-1">
+                    <GiSkills />
+                    <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    {proficiencies.join(", ")}
+                  </p>
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Ability Scores */}
       {areAbilitiesCalculated && (

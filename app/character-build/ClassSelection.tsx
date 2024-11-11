@@ -1,10 +1,11 @@
+import { GiHeartPlus, GiArmorVest, GiSwordsPower } from "react-icons/gi";
 import Stats from "../components/Stats";
 import TooltipText from "../components/TooltipText";
-import { classes } from "./races";
+import { Class, classes } from "./races";
 
 interface ClassSelectionProps {
-  selectedClass: string | null;
-  setSelectedClass: (cls: string | null) => void;
+  selectedClass: Class | null;
+  setSelectedClass: (cls: Class | null) => void;
 }
 
 export default function ClassSelection({
@@ -34,10 +35,10 @@ export default function ClassSelection({
           <div
             key={cls.name}
             className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col h-full ${
-              selectedClass === cls.name ? "ring-2 ring-primary" : ""
+              selectedClass?.name === cls.name ? "ring-2 ring-primary" : ""
             }`}
             onClick={() => {
-              setSelectedClass(cls.name);
+              setSelectedClass(cls);
             }}
           >
             <div className="p-4 flex-grow flex flex-col">
@@ -48,8 +49,33 @@ export default function ClassSelection({
                 <p className="text-gray-600">{cls.description}</p>
               </div>
             </div>
-            <div className="p-4 bg-gray-100 mt-auto">
-              <p className="text-sm text-gray-700">{cls.hitPointDice} PV</p>
+            <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 mt-auto border-t border-gray-200">
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <GiHeartPlus className="w-5 h-5 mr-2" />
+                  <p className="text-sm font-medium text-gray-700">
+                    {cls.hitPointDice} Points de Vie
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <GiArmorVest className="w-5 h-5 mr-2" />
+                  <p className="text-sm font-medium text-gray-700">
+                    {"Maitrise d'armure: "}
+                    <span className="text-gray-600">
+                      {cls.proficiencies.armures.join(", ")}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <GiSwordsPower className="w-5 h-5 mr-2" />
+                  <p className="text-sm font-medium text-gray-700">
+                    {"Maitrise d'armes: "}
+                    <span className="text-gray-600">
+                      {cls.proficiencies.armes.join(", ")}
+                    </span>
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         ))}
