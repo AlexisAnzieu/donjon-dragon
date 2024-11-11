@@ -22,6 +22,7 @@ interface CharacterSheetProps {
     bonds: string;
     flaws: string;
   };
+  selectedEquipment: string[] | null;
 }
 
 export default function CharacterSheet({
@@ -34,6 +35,7 @@ export default function CharacterSheet({
   calculateAC,
   calculateInitiative,
   details,
+  selectedEquipment,
 }: CharacterSheetProps) {
   if (!selectedRace) return null;
 
@@ -147,11 +149,6 @@ export default function CharacterSheet({
                 value: background.skills,
                 icon: <GiSkills />,
               },
-              {
-                label: "Équipement",
-                value: background.equipment,
-                icon: <GiSwordman />,
-              },
               ...(background.tools
                 ? [
                     {
@@ -170,6 +167,56 @@ export default function CharacterSheet({
                 <p className="text-sm text-gray-700">{value.join(", ")}</p>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* Equipment Section */}
+      {background && (
+        <div className="mt-4 sm:mt-6">
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2 flex items-center justify-center gap-2">
+            <GiSwordman />
+            Équipements
+          </h3>
+          <div className="space-y-4">
+            {background?.equipment && (
+              <div className="bg-gray-50 p-4 rounded-lg shadow-sm ">
+                <div className="font-semibold mb-2">{`Équipements d'historique`}</div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {background.equipment?.map(
+                    (equipment, index) =>
+                      equipment && (
+                        <div
+                          key={index}
+                          className="flex items-center bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100"
+                        >
+                          <span className="text-sm text-gray-700">
+                            {equipment}
+                          </span>
+                        </div>
+                      )
+                  )}
+                </div>
+              </div>
+            )}
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <div className="font-semibold mb-3 ">Équipements de classe</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {selectedEquipment?.map(
+                  (equipment, index) =>
+                    equipment && (
+                      <div
+                        key={index}
+                        className="flex items-center bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100"
+                      >
+                        <span className="text-sm text-gray-700">
+                          {equipment}
+                        </span>
+                      </div>
+                    )
+                )}
+              </div>
+            </div>
           </div>
         </div>
       )}

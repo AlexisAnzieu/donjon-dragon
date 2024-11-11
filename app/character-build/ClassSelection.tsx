@@ -16,11 +16,11 @@ export default function ClassSelection({
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 max-w-4xl mx-auto">
         <div className="flex items-center">
           <div className="text-sm text-blue-700">
-            Ta classe définit ton dé de vie, qui sert à calculer tes points de
-            vie (PV) de départ. Chaque classe utilise un dé différent : les
-            mages lancent un dé à 8 faces (1d8), les guerriers un dé à 10 faces
-            (1d10), etc. Tes PV de départ sont égaux au maximum du dé + ton
-            bonus de{" "}
+            Ta classe définit le choix de tes équipement de départ et ton dé de
+            vie, qui sert à calculer tes points de vie (PV) de départ. Chaque
+            classe utilise un dé différent : les mages lancent un dé à 8 faces
+            (1d8), les guerriers un dé à 10 faces (1d10), etc. Tes PV de départ
+            sont égaux au maximum du dé + ton bonus de{" "}
             <TooltipText text="Constitution">
               <Stats bonus="Constitution" />
             </TooltipText>{" "}

@@ -1,83 +1,125 @@
-"use client";
+import React from "react";
+import { classes } from "@/app/character-build/races";
 
-const CLASS_EQUIPMENT: Record<ClassType, ClassEquipment> = {
-  Guerrier: {
-    weapons: ["Épée longue", "Hache de bataille", "Lance et bouclier"],
-    armor: ["Cotte de mailles", "Armure de cuir"],
-    packs: ["Pack d'exploration", "Pack d'aventurier"],
-  },
-  Rôdeur: {
-    weapons: ["Arc long", "Épées courtes (2)", "Épée longue"],
-    armor: ["Armure de cuir", "Armure d'écailles"],
-    packs: ["Pack d'exploration", "Pack de survie"],
-  },
-  Magicien: {
-    weapons: ["Dague", "Bâton", "Arbalète légère"],
-    equipment: ["Focaliseur arcanique", "Grimoire"],
-    packs: ["Pack d'érudit", "Pack d'explorateur"],
-  },
-  Clerc: {
-    weapons: ["Masse", "Marteau de guerre", "Arbalète légère"],
-    armor: ["Cotte de mailles", "Armure d'écailles"],
-    equipment: ["Symbole sacré", "Bouclier"],
-    packs: ["Pack de prêtre", "Pack d'explorateur"],
-  },
-};
+interface EquipmentComponentProps {
+  selectedClass: string | null;
+  selectedEquipment: string[] | null;
+  setSelectedEquipment: (equipment: string[] | null) => void;
+}
 
-type ClassType = "Guerrier" | "Rôdeur" | "Magicien" | "Clerc";
+interface EquipmentChoiceProps {
+  choices: string[];
+  choiceIndex: number;
+  selectedItem: string | undefined;
+  onSelect: (choiceIndex: number, item: string) => void;
+}
 
-type ClassEquipment = {
-  weapons: string[];
-  armor?: string[];
-  equipment?: string[];
-  packs: string[];
-};
+const EquipmentChoice: React.FC<EquipmentChoiceProps> = ({
+  choices,
+  choiceIndex,
+  selectedItem,
+  onSelect,
+}) => (
+  <div className="transform hover:scale-[1.01] transition-all duration-300">
+    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200 shadow-md hover:shadow-lg transition-all">
+      <h3 className="text-lg font-semibold text-slate-800 mb-4">
+        Lot nº{choiceIndex + 1}
+      </h3>
+      <div className="space-y-2">
+        {choices.map((item, itemIndex) => (
+          <div
+            key={itemIndex}
+            onClick={() => onSelect(choiceIndex, item)}
+            className={`p-3 rounded-lg transition-all duration-200 cursor-pointer
+              ${
+                selectedItem === item
+                  ? "bg-blue-50 border-l-4 border-blue-400"
+                  : "bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50"
+              }`}
+          >
+            <p
+              className={`font-medium ${
+                selectedItem === item ? "text-blue-700" : "text-slate-600"
+              }`}
+            >
+              {item}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
-type EquipmentSelectionProps = {
-  selectedClass: ClassType | null;
-  selectedEquipment: string[];
-  onEquipmentChange: (equipment: string[]) => void;
-};
-
-export default function EquipmentSelection({
+const EquipmentSelection: React.FC<EquipmentComponentProps> = ({
   selectedClass,
   selectedEquipment,
-  onEquipmentChange,
-}: EquipmentSelectionProps) {
-  if (!selectedClass || !CLASS_EQUIPMENT[selectedClass]) return null;
+  setSelectedEquipment,
+}) => {
+  const equipmentData = classes.find(
+    (c) => c.name === selectedClass
+  )?.equipment;
 
-  const toggleEquipment = (item: string) => {
-    if (selectedEquipment.includes(item)) {
-      onEquipmentChange(selectedEquipment.filter((e) => e !== item));
-    } else {
-      onEquipmentChange([...selectedEquipment, item]);
+  const defaultEquipment = React.useMemo(
+    () => equipmentData?.filter((e) => e.length === 1).map((e) => e[0]) ?? [],
+    [equipmentData]
+  );
+
+  React.useEffect(() => {
+    if (defaultEquipment && !selectedEquipment) {
+      setSelectedEquipment(defaultEquipment);
     }
+  }, [setSelectedEquipment, defaultEquipment, selectedEquipment]);
+
+  const handleEquipmentSelection = (
+    choiceIndex: number,
+    selectedItem: string
+  ) => {
+    const newEquipment = [...(selectedEquipment || [])];
+    newEquipment[choiceIndex + defaultEquipment.length] = selectedItem;
+    setSelectedEquipment(newEquipment);
   };
 
   return (
-    <div className="space-y-6">
-      {Object.entries(CLASS_EQUIPMENT[selectedClass]).map(
-        ([category, items]) => (
-          <div key={category} className="space-y-2">
-            <h3 className="font-bold capitalize">{category}</h3>
-            <div className="grid grid-cols-2 gap-2">
-              {items.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => toggleEquipment(item)}
-                  className={`p-2 rounded ${
-                    selectedEquipment.includes(item)
-                      ? "bg-primary text-white"
-                      : "bg-gray-100 hover:bg-gray-200"
-                  }`}
+    <div className="overflow-hidden h-full p-8">
+      <div className="space-y-8 max-w-6xl mx-auto">
+        {!!defaultEquipment.length && (
+          <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-slate-200">
+            <h3 className="text-xl font-bold text-slate-800">
+              Équipement par défaut de classe
+            </h3>
+
+            <div className="flex pt-5 gap-5">
+              {defaultEquipment.map((item, index) => (
+                <div
+                  key={index}
+                  className="p-3 rounded-lg transition-all duration-200  bg-slate-50 border border-slate-200 "
                 >
-                  {item}
-                </button>
+                  <p className="font-medium">{item}</p>
+                </div>
               ))}
             </div>
           </div>
-        )
-      )}
+        )}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {equipmentData?.map((choices, choiceIndex) =>
+            choices.length > 1 ? (
+              <EquipmentChoice
+                key={choiceIndex}
+                choices={choices}
+                choiceIndex={choiceIndex}
+                selectedItem={
+                  selectedEquipment?.[choiceIndex + defaultEquipment.length]
+                }
+                onSelect={handleEquipmentSelection}
+              />
+            ) : null
+          )}
+        </div>
+      </div>
     </div>
   );
-}
+};
+
+export default EquipmentSelection;

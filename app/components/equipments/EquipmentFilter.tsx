@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import EquipmentComponent from "./EquipmentComponent";
 
 interface Equipment {
   id: number;
@@ -41,7 +40,7 @@ const EquipmentFilter: React.FC<EquipmentFilterProps> = ({ equipments }) => {
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 w-full">
         {filteredEquipments.map((equipment) => (
           <div key={equipment.id} className="mb-4 p-4   ">
-            <EquipmentComponent equipmentData={equipment} />
+            {/* <EquipmentComponent equipmentData={equipment} /> */}
           </div>
         ))}
       </div>

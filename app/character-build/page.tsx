@@ -14,6 +14,7 @@ import BackgroundSelection, { Background } from "./BackgroundSelection";
 import { classes, Race, races } from "./races";
 import Step from "./Step";
 import CharacterSheet from "./components/CharacterSheet";
+import EquipmentSelection from "./EquipmentSelection";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
@@ -53,6 +54,7 @@ function CharacterBuildContent() {
 
   const handleClassChange = (characterClass: string | null) => {
     setSelectedClass(characterClass);
+    setSelectedEquipment(null); // Reset equipment
     if (characterClass) setActiveStep(3); // Advance to ability scores
   };
 
@@ -89,6 +91,10 @@ function CharacterBuildContent() {
     flaws: "",
   });
 
+  const [selectedEquipment, setSelectedEquipment] = useState<string[] | null>(
+    null
+  );
+
   const calculateHP = () => {
     if (!selectedClass || !abilityScores.constitution) return null;
 
@@ -116,7 +122,7 @@ function CharacterBuildContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 px-4 sm:px-8 pt-3 pb-32">
+    <div className="min-h-screen bg-gray-100 text-gray-800 px-4 sm:px-8 pt-3 ">
       <div
         className={`flex ${
           !selectedClass && !selectedRace ? "flex-col" : "flex-col lg:flex-row"
@@ -124,7 +130,7 @@ function CharacterBuildContent() {
       >
         <div
           className={`w-full ${
-            !selectedClass && !selectedRace ? "p-4 sm:p-28" : "lg:w-2/3"
+            !selectedClass && !selectedRace ? "p-4" : "lg:w-2/3"
           } transition-all duration-500 ease-in-out py-6`}
         >
           {!selectedClass && !selectedRace && (
@@ -199,6 +205,25 @@ function CharacterBuildContent() {
               setActiveStep={setActiveStep}
             />
           )}
+          {background && (
+            <Step
+              stepNumber={5}
+              title="5. Choisis tes équipements"
+              content={
+                <EquipmentSelection
+                  selectedClass={selectedClass}
+                  selectedEquipment={selectedEquipment}
+                  setSelectedEquipment={setSelectedEquipment}
+                />
+              }
+              isFilled={
+                selectedEquipment?.length ===
+                classes.find((c) => c.name === selectedClass)?.equipment.length
+              }
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+          )}
         </div>
         <div
           className={`w-full ${
@@ -218,6 +243,7 @@ function CharacterBuildContent() {
               calculateAC={calculateAC}
               calculateInitiative={calculateInitiative}
               details={details}
+              selectedEquipment={selectedEquipment}
             />
           </div>
         </div>

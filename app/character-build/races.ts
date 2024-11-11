@@ -55,35 +55,79 @@ export type Race = {
   speed: string;
 };
 
-export const classes = [
+export type Class = {
+  name: string;
+  description: string;
+  hitPointDice: number;
+  equipment: string[][];
+};
+
+export const classes: Class[] = [
   {
     name: "Barde",
     description:
       "Le barde utilise la musique et la poésie pour inspirer ses alliés et déstabiliser ses ennemis.",
     hitPointDice: 8,
+    equipment: [
+      ["Rapière", "épée longue", "arme courante au choix"],
+      ["Paquetage de diplomate", "paquetage d'artiste"],
+      ["Luth", "instrument de musique au choix"],
+      ["Armure de cuir"],
+      ["Dague"],
+    ],
   },
   {
     name: "Clerc",
     description:
       "Le clerc est un serviteur divin qui utilise la magie sacrée pour soigner et protéger.",
     hitPointDice: 8,
+    equipment: [
+      ["Masse d'armes", "marteau de guerre (si maîtrise)"],
+      ["Armure d'écailles", "armure de cuir", "cotte de mailles (si maîtrise)"],
+      ["Arbalète légère et 20 carreaux", "une arme courante au choix"],
+      ["Paquetage d'ecclésiastique", "paquetage d'explorateur"],
+      ["Bouclier"],
+      ["Symbole sacré"],
+    ],
   },
   {
     name: "Magicien",
     description:
       "Le magicien maîtrise les arcanes et utilise des sorts puissants pour contrôler les forces magiques.",
     hitPointDice: 6,
+    equipment: [
+      ["Bâton de combat", "Dague"],
+      ["Sacoche à composantes", "Focaliseur arcanique"],
+      ["Paquetage d'érudit", "Paquetage d'explorateur"],
+      ["Grimoire"],
+    ],
   },
   {
     name: "Guerrier",
     description:
       "Le guerrier est un combattant expert, entraîné dans diverses techniques de combat et d'armement.",
     hitPointDice: 10,
+    equipment: [
+      ["Cotte de mailles", "Armure de cuir, arc long et 20 flèches"],
+      ["Une arme de guerre et un bouclier", "Deux armes de guerre"],
+      ["Arbalète légère et 20 carreaux", "Deux hachettes"],
+      ["Paquetage d'exploration souterraine", "Paquetage d'explorateur"],
+    ],
   },
   {
     name: "Roublard",
     description:
       "Le roublard est un maître de la furtivité et de la tromperie, spécialisé dans les attaques sournoises.",
     hitPointDice: 8,
+    equipment: [
+      ["Rapière", "épée courte"],
+      ["Arc court et carquois de 20 flèches", "épée courte"],
+      [
+        "Paquetage de cambrioleur",
+        "paquetage d'exploration souterraine",
+        "paquetage d'explorateur",
+      ],
+      ["Armure de cuir", "Deux dagues", "Outils de voleur"],
+    ],
   },
 ];
