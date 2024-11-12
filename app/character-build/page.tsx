@@ -120,13 +120,13 @@ function CharacterBuildContent() {
     if (!selectedEquipment) return totalAC;
 
     const hasMailArmor = selectedEquipment.some((item) =>
-      item.toLowerCase().includes("cotte de mailles")
+      item?.toLowerCase().includes("cotte de mailles")
     );
     const hasLeatherArmor = selectedEquipment.some((item) =>
-      item.toLowerCase().includes("armure de cuir")
+      item?.toLowerCase().includes("armure de cuir")
     );
     const hasShield = selectedEquipment.some((item) =>
-      item.toLowerCase().includes("bouclier")
+      item?.toLowerCase().includes("bouclier")
     );
 
     if (hasMailArmor) {

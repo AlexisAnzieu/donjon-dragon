@@ -111,6 +111,17 @@ export default function CharacterSheet({
           <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2">
             Maitrises
           </h3>
+          {background && (
+            <div className="bg-gray-50 p-3 rounded-lg">
+              <div className="flex items-center gap-2 font-semibold mb-1">
+                <GiSkills />
+                <span>Maitrise {background.name}</span>
+              </div>
+              <p className="text-sm text-gray-700">
+                {background.tools?.join(", ")}
+              </p>
+            </div>
+          )}
           <div className="space-y-3 sm:space-y-4">
             {Object.entries(selectedClass.proficiencies).map(
               ([key, proficiencies]) => (
@@ -172,15 +183,6 @@ export default function CharacterSheet({
                 value: background.skills,
                 icon: <GiSkills />,
               },
-              ...(background.tools
-                ? [
-                    {
-                      label: "Maitrise",
-                      value: background.tools,
-                      icon: <GiToolbox />,
-                    },
-                  ]
-                : []),
             ].map(({ label, value, icon }) => (
               <div key={label} className="bg-gray-50 p-3 rounded-lg">
                 <div className="flex items-center gap-2 font-semibold mb-1">
@@ -204,7 +206,9 @@ export default function CharacterSheet({
           <div className="space-y-4">
             {background?.equipment && (
               <div className="bg-gray-50 p-4 rounded-lg shadow-sm ">
-                <div className="font-semibold mb-2">{`Équipements d'historique`}</div>
+                <div className="font-semibold mb-2">
+                  Équipements {background.name}
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {background.equipment?.map(
                     (equipment, index) =>
@@ -223,7 +227,9 @@ export default function CharacterSheet({
               </div>
             )}
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <div className="font-semibold mb-3 ">Équipements de classe</div>
+              <div className="font-semibold mb-3 ">
+                Équipements {selectedClass?.name}
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {selectedEquipment?.map(
                   (equipment, index) =>
