@@ -11,7 +11,7 @@ import AbilityScores, {
   RollDetail,
 } from "./AbilityScores";
 import BackgroundSelection, { Background } from "./BackgroundSelection";
-import { Class, classes, Race, races, equipmentData } from "./races";
+import { Class, classes, Race, races } from "./races";
 import Step from "./Step";
 import CharacterSheet from "./components/CharacterSheet";
 import EquipmentSelection from "./EquipmentSelection";
