@@ -27,7 +27,7 @@ const BACKGROUNDS: Background[] = [
   },
   {
     name: "Artiste",
-    skills: ["Performance", "Acrobatie"],
+    skills: ["Représentation", "Acrobaties"],
     tools: ["Outils de peintre", "Instruments de musique au choix"],
     equipment: [
       "Instrument de musique",
@@ -52,7 +52,7 @@ const BACKGROUNDS: Background[] = [
   {
     name: "Sage",
     tools: ["Langue supplémentaire"],
-    skills: ["Arcane", "Histoire"],
+    skills: ["Arcanes", "Histoire"],
     equipment: [
       "Bouteille d'encre",
       "Plume",
