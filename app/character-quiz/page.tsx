@@ -49,7 +49,7 @@ export default function Quiz() {
         .reduce((a, b) => (a[1] > b[1] ? a : b))[0];
 
       router.push(
-        `/character-build?race=${recommendedRace}&characterClass=${recommendedClass}`
+        `/character/edit?race=${recommendedRace}&characterClass=${recommendedClass}`
       );
     }
   };

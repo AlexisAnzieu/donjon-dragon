@@ -9,7 +9,7 @@ const categories = [
     title: "Personnage",
     items: [
       { name: "Répondre au quiz", href: "/character-quiz" },
-      { name: "Construire ", href: "/character-build" },
+      { name: "Construire ", href: "/character/edit" },
     ],
   },
   {

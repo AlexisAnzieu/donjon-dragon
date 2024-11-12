@@ -1,6 +1,6 @@
 import React from "react";
-import { classes } from "@/app/character-build/races";
 import { useCharacter } from "./characterContext";
+import { classes } from "./races";
 
 interface EquipmentChoiceProps {
   choices: string[];

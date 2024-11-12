@@ -1,6 +1,6 @@
 import { GiHeartPlus, GiArmorVest, GiSwordsPower } from "react-icons/gi";
-import Stats from "../components/Stats";
-import TooltipText from "../components/TooltipText";
+import Stats from "../../components/Stats";
+import TooltipText from "../../components/TooltipText";
 import { classes } from "./races";
 import { useCharacter } from "./characterContext";
 

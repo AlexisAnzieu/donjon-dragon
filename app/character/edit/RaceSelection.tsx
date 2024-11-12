@@ -1,6 +1,6 @@
 import { races } from "./races";
-import TooltipText from "../components/TooltipText";
-import Stats from "../components/Stats";
+import TooltipText from "../../components/TooltipText";
+import Stats from "../../components/Stats";
 import { useCharacter } from "./characterContext";
 
 export default function RaceSelection() {
