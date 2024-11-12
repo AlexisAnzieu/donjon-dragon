@@ -1,32 +1,54 @@
+import { Background } from "./BackgroundSelection";
 import { Class } from "./races";
-import { useEffect } from "react";
 
 interface SkillSelectionProps {
   selectedClass: Class;
   selectedSkills: string[];
   onSkillsChange: (skills: string[]) => void;
+  background: Background;
 }
 
 export default function SkillSelection({
   selectedClass,
   selectedSkills,
   onSkillsChange,
+  background,
 }: SkillSelectionProps) {
-  useEffect(() => {
-    // Reset skills if they exceed the new class's limit
-    if (selectedSkills.length > selectedClass.skills.canSelect) {
-      onSkillsChange([]);
-    }
-  }, [selectedClass, selectedSkills.length, onSkillsChange]);
+  const isSkillSelected = (skill: string) =>
+    selectedSkills.includes(skill) || background.skills.includes(skill);
+
+  const isSkillDisabled = (skill: string) =>
+    background.skills.includes(skill) ||
+    (!selectedSkills.includes(skill) &&
+      selectedSkills.length >= selectedClass.skills.canSelect);
+
+  const getSkillCardClassName = (skill: string) => {
+    const baseClasses =
+      "bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105";
+    const selectableClass = isSkillSelected(skill) ? "ring-2 ring-primary" : "";
+    const disabledClass = isSkillDisabled(skill)
+      ? "opacity-50 cursor-not-allowed"
+      : "";
+    const cursorClass = background.skills.includes(skill)
+      ? "cursor-not-allowed"
+      : "cursor-pointer";
+
+    return `${baseClasses} ${selectableClass}  ${cursorClass} ${disabledClass}`;
+  };
+
+  const canSelectMoreSkills = () =>
+    selectedSkills.length < selectedClass.skills.canSelect;
 
   const handleSkillToggle = (skill: string) => {
-    const isSelected = selectedSkills.includes(skill);
+    if (background.skills.includes(skill)) return;
 
-    if (isSelected) {
-      onSkillsChange(selectedSkills.filter((s) => s !== skill));
-    } else if (selectedSkills.length < selectedClass.skills.canSelect) {
-      onSkillsChange([...selectedSkills, skill]);
-    }
+    const isCurrentlySelected = selectedSkills.includes(skill);
+    if (!isCurrentlySelected && !canSelectMoreSkills()) return;
+
+    const updatedSkills = isCurrentlySelected
+      ? selectedSkills.filter((s) => s !== skill)
+      : [...selectedSkills, skill];
+    onSkillsChange(updatedSkills);
   };
 
   return (
@@ -35,26 +57,26 @@ export default function SkillSelection({
         <div className="flex items-center">
           <div className="text-sm text-blue-700">
             Choisis {selectedClass.skills.canSelect} compétences qui définiront
-            les domaines dans lesquels ton personnage excelle.
+            les domaines dans lesquels ton personnage excelle. Certaines sont
+            déjà cochés car ils sont déjà inclus dans ton historique.
           </div>
         </div>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-4">
         {selectedClass.skills.choices.map((skill) => (
           <div
             key={skill}
-            className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 ${
-              selectedSkills.includes(skill) ? "ring-2 ring-primary" : ""
-            } ${
-              !selectedSkills.includes(skill) &&
-              selectedSkills.length >= selectedClass.skills.canSelect
-                ? "opacity-50 cursor-not-allowed"
-                : ""
-            }`}
-            onClick={() => handleSkillToggle(skill)}
+            className={getSkillCardClassName(skill)}
+            onClick={() =>
+              !background.skills.includes(skill) && handleSkillToggle(skill)
+            }
           >
             <div className="p-4 flex-grow flex flex-col">
-              <h2 className="text-xl font-bold text-primary mb-2">{skill}</h2>
+              <h2 className="text-xl font-bold text-primary mb-2">
+                {skill}
+                {background.skills.includes(skill) && ` (${background.name})`}
+              </h2>
             </div>
           </div>
         ))}

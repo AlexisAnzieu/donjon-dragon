@@ -108,43 +108,6 @@ export default function CharacterSheet({
         </div>
       </div>
 
-      {selectedClass && (
-        <div className="mt-4 sm:mt-6">
-          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2">
-            Maitrises
-          </h3>
-          {background && (
-            <div className="bg-gray-50 p-4 rounded-lg">
-              <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
-                <span>Maitrise {background.name}</span>
-              </div>
-              <p className="text-sm text-gray-700">
-                {background.tools?.join(", ")}
-              </p>
-            </div>
-          )}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
-              <span>Maitrise {selectedClass.name}</span>
-            </div>
-            <div className="space-y-3">
-              {Object.entries(selectedClass.proficiencies).map(
-                ([key, proficiencies]) => (
-                  <div key={key}>
-                    <span className="text-sm font-medium text-gray-600 mb-1">
-                      {key.charAt(0).toUpperCase() + key.slice(1)} :{" "}
-                    </span>
-                    <span className="text-sm text-gray-700">
-                      {proficiencies.join(", ")}
-                    </span>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Ability Scores */}
       {areAbilitiesCalculated && (
         <>
@@ -186,7 +149,9 @@ export default function CharacterSheet({
                 const baseScore =
                   abilityScores[ability.ability as AbilityScoreKey];
                 const modifier = Math.floor((baseScore - 10) / 2);
-                const hasProficiency = selectedSkills.includes(ability.name);
+                const hasProficiency =
+                  selectedSkills.includes(ability.name) ||
+                  background?.skills.includes(ability.name);
                 const finalModifier = hasProficiency ? modifier + 2 : modifier;
                 const sign = finalModifier >= 0 ? "+" : "";
                 return (
@@ -243,20 +208,39 @@ export default function CharacterSheet({
         </div>
       )}
 
-      {/* Background Section */}
-      {background && (
+      {selectedClass && (
         <div className="mt-4 sm:mt-6">
           <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2">
-            Compétences
+            Maitrises
           </h3>
-
+          {background && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
+                <span>Maitrise {background.name}</span>
+              </div>
+              <p className="text-sm text-gray-700">
+                {background.tools?.join(", ")}
+              </p>
+            </div>
+          )}
           <div className="bg-gray-50 p-4 rounded-lg">
             <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
-              <span>Compétences {background.name}</span>
+              <span>Maitrise {selectedClass.name}</span>
             </div>
-            <p className="text-sm text-gray-700">
-              {background.skills?.join(", ")}
-            </p>
+            <div className="space-y-3">
+              {Object.entries(selectedClass.proficiencies).map(
+                ([key, proficiencies]) => (
+                  <div key={key}>
+                    <span className="text-sm font-medium text-gray-600 mb-1">
+                      {key.charAt(0).toUpperCase() + key.slice(1)} :{" "}
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {proficiencies.join(", ")}
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
           </div>
         </div>
       )}
