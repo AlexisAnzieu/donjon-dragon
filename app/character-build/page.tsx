@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, useCallback } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -110,7 +110,7 @@ function CharacterBuildContent() {
     return baseHP + constitutionModifier;
   };
 
-  const calculateAC = () => {
+  const calculateAC = useCallback(() => {
     const baseAC = 10;
     if (!abilityScores.dextérité) return baseAC;
 
@@ -142,11 +142,11 @@ function CharacterBuildContent() {
     }
 
     return totalAC;
-  };
+  }, [selectedEquipment, abilityScores.dextérité]);
 
   useEffect(() => {
     calculateAC();
-  }, [selectedEquipment, abilityScores.dextérité]);
+  }, [selectedEquipment, abilityScores.dextérité, calculateAC]);
 
   const calculateInitiative = () => {
     return Math.floor((abilityScores.dextérité - 10) / 2);

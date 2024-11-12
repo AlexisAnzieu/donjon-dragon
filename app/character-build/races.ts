@@ -64,8 +64,11 @@ export type Class = {
     armures: string[];
     armes: string[];
     outils: string[];
-    sauvegardes: string[];
-    compétences: string[];
+  };
+  sauvegardes: string[];
+  skills: {
+    canSelect: number;
+    choices: string[];
   };
 };
 
@@ -120,8 +123,19 @@ export const classes: Class[] = [
         "Rapière",
       ],
       outils: ["Trois instruments de musique au choix"],
-      sauvegardes: ["Dextérité", "Charisme"],
-      compétences: ["Trois compétences au choix"],
+    },
+    sauvegardes: ["dextérité", "charisme"],
+    skills: {
+      canSelect: 3,
+      choices: [
+        "Acrobaties",
+        "Athlétisme",
+        "Discrétion",
+        "Histoire",
+        "Intuition",
+        "Représentation",
+        "Persuasion",
+      ],
     },
   },
   {
@@ -141,14 +155,11 @@ export const classes: Class[] = [
       armures: ["Armures légères", "Armures intermédiaires", "Boucliers"],
       armes: ["Armes courantes"],
       outils: ["Aucun"],
-      sauvegardes: ["Sagesse", "Charisme"],
-      compétences: [
-        "Histoire",
-        "Intuition",
-        "Médecine",
-        "Persuasion",
-        "Religion",
-      ],
+    },
+    sauvegardes: ["sagesse", "charisme"],
+    skills: {
+      canSelect: 2,
+      choices: ["Histoire", "Intuition", "Médecine", "Persuasion", "Religion"],
     },
   },
   {
@@ -166,12 +177,16 @@ export const classes: Class[] = [
       armures: ["Aucune"],
       armes: ["Dagues", "Dards", "Bâton", "Frondes"],
       outils: ["Aucun"],
-      sauvegardes: ["Intelligence", "Sagesse"],
-      compétences: [
-        "Arcane",
+    },
+    sauvegardes: ["intelligence", "sagesse"],
+    skills: {
+      canSelect: 2,
+      choices: [
+        "Arcanes",
         "Histoire",
         "Intuition",
         "Investigation",
+        "Médecine",
         "Religion",
       ],
     },
@@ -196,11 +211,17 @@ export const classes: Class[] = [
       ],
       armes: ["Armes courantes", "Armes de guerre"],
       outils: ["Aucun"],
-      sauvegardes: ["Force", "Constitution"],
-      compétences: [
+    },
+    sauvegardes: ["force", "constitution"],
+    skills: {
+      canSelect: 2,
+      choices: [
         "Acrobaties",
         "Athlétisme",
+        "Dressage",
+        "Histoire",
         "Intimidation",
+        "Intuition",
         "Perception",
         "Survie",
       ],
@@ -223,16 +244,52 @@ export const classes: Class[] = [
     ],
     proficiencies: {
       armures: ["Armures légères"],
-      armes: ["Arbalète de poing", "Épée courte", "Épée longue", "Rapière"],
+      armes: [
+        "Arbalète de poing",
+        "Épée courte",
+        "Épée longue",
+        "Rapière",
+        "Armes courantes",
+      ],
       outils: ["Outils de voleur"],
-      sauvegardes: ["Dextérité", "Intelligence"],
-      compétences: [
+    },
+    sauvegardes: ["dextérité", "intelligence"],
+    skills: {
+      canSelect: 4,
+      choices: [
         "Acrobaties",
+        "Athlétisme",
         "Discrétion",
         "Escamotage",
+        "Intimidation",
+        "Intuition",
         "Investigation",
         "Perception",
+        "Persuasion",
+        "Représentation",
+        "Tromperie",
       ],
     },
   },
 ];
+
+export const skills = {
+  acrobaties: { name: "Acrobaties", ability: "dextérité" },
+  arcanes: { name: "Arcanes", ability: "intelligence" },
+  athlétisme: { name: "Athlétisme", ability: "force" },
+  discrétion: { name: "Discrétion", ability: "dextérité" },
+  dressage: { name: "Dressage", ability: "sagesse" },
+  escamotage: { name: "Escamotage", ability: "dextérité" },
+  histoire: { name: "Histoire", ability: "intelligence" },
+  intimidation: { name: "Intimidation", ability: "charisme" },
+  investigation: { name: "Investigation", ability: "intelligence" },
+  médecine: { name: "Médecine", ability: "sagesse" },
+  nature: { name: "Nature", ability: "intelligence" },
+  perception: { name: "Perception", ability: "sagesse" },
+  perspicacité: { name: "Perspicacité", ability: "sagesse" },
+  persuasion: { name: "Persuasion", ability: "charisme" },
+  religion: { name: "Religion", ability: "intelligence" },
+  représentation: { name: "Représentation", ability: "charisme" },
+  supercherie: { name: "Supercherie", ability: "charisme" },
+  survie: { name: "Survie", ability: "sagesse" },
+};

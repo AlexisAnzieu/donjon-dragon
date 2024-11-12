@@ -1,8 +1,8 @@
 import Image from "next/image";
 import { Background } from "../BackgroundSelection";
 import { AbilityScoreKey } from "../AbilityScores";
-import { GiSkills, GiSwordman, GiToolbox } from "react-icons/gi";
-import { Class, Race } from "../races";
+import { GiSwordman } from "react-icons/gi";
+import { Class, Race, skills } from "../races";
 import TooltipText from "@/app/components/TooltipText";
 
 interface CharacterSheetProps {
@@ -112,9 +112,8 @@ export default function CharacterSheet({
             Maitrises
           </h3>
           {background && (
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <div className="flex items-center gap-2 font-semibold mb-1">
-                <GiSkills />
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
                 <span>Maitrise {background.name}</span>
               </div>
               <p className="text-sm text-gray-700">
@@ -122,46 +121,114 @@ export default function CharacterSheet({
               </p>
             </div>
           )}
-          <div className="space-y-3 sm:space-y-4">
-            {Object.entries(selectedClass.proficiencies).map(
-              ([key, proficiencies]) => (
-                <div key={key} className="bg-gray-50 p-3 rounded-lg">
-                  <div className="flex items-center gap-2 font-semibold mb-1">
-                    <GiSkills />
-                    <span>{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
+              <span>Maitrise {selectedClass.name}</span>
+            </div>
+            <div className="space-y-3">
+              {Object.entries(selectedClass.proficiencies).map(
+                ([key, proficiencies]) => (
+                  <div key={key}>
+                    <span className="text-sm font-medium text-gray-600 mb-1">
+                      {key.charAt(0).toUpperCase() + key.slice(1)} :{" "}
+                    </span>
+                    <span className="text-sm text-gray-700">
+                      {proficiencies.join(", ")}
+                    </span>
                   </div>
-                  <p className="text-sm text-gray-700">
-                    {proficiencies.join(", ")}
-                  </p>
-                </div>
-              )
-            )}
+                )
+              )}
+            </div>
           </div>
         </div>
       )}
 
       {/* Ability Scores */}
       {areAbilitiesCalculated && (
-        <div className="mt-6 sm:mt-8">
-          <h3 className="text-lg sm:text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
-            Caractéristiques
+        <>
+          <div className="mt-6 sm:mt-8">
+            <h3 className="text-lg sm:text-xl font-bold mb-4 text-center border-b-2 border-red-700 pb-2">
+              Caractéristiques
+            </h3>
+            <div className="grid grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4">
+              {Object.entries(abilityScores).map(([ability, score]) => {
+                const modifier = Math.floor((score - 10) / 2);
+                const sign = modifier >= 0 ? "+" : "";
+                return (
+                  <div
+                    key={ability}
+                    className="bg-gray-50 p-3 rounded-lg text-center"
+                  >
+                    <div className="text-sm text-gray-600 uppercase">
+                      {ability.charAt(0).toUpperCase() + ability.slice(1)}
+                    </div>
+                    <div className="text-xl font-bold text-red-700">
+                      {score}
+                    </div>
+                    <div className="text-sm font-medium">
+                      ({sign}
+                      {modifier})
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="mt-4">
+            <h3 className="text-lg font-bold mb-3 text-center border-b-2 border-red-700 pb-2">
+              Compétences
+            </h3>
+            <div className="grid grid-cols-4 gap-1">
+              {Object.entries(skills).map(([skill, ability]) => {
+                const baseScore =
+                  abilityScores[ability.ability as AbilityScoreKey];
+                const modifier = Math.floor((baseScore - 10) / 2);
+                const sign = modifier >= 0 ? "+" : "";
+                return (
+                  <div
+                    key={skill}
+                    className="bg-gray-50 p-2 rounded-lg text-center"
+                  >
+                    <div className="text-xs text-gray-600 uppercase truncate">
+                      {skill.charAt(0).toUpperCase() + skill.slice(1)}
+                    </div>
+                    <div className="text-sm font-bold text-red-700">
+                      {sign}
+                      {modifier}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+
+      {selectedClass && (
+        <div className="mt-4">
+          <h3 className="text-lg font-bold mb-3 text-center border-b-2 border-red-700 pb-2">
+            Jets de Sauvegarde
           </h3>
-          <div className="grid grid-cols-3 sm:grid-cols-2 gap-2 sm:gap-4">
+          <div className="grid grid-cols-6 gap-1">
             {Object.entries(abilityScores).map(([ability, score]) => {
-              const modifier = Math.floor((score - 10) / 2);
+              const baseModifier = Math.floor((score - 10) / 2);
+              const hasBonus = selectedClass.sauvegardes.includes(ability);
+              const modifier = hasBonus ? baseModifier + 2 : baseModifier;
               const sign = modifier >= 0 ? "+" : "";
               return (
                 <div
                   key={ability}
-                  className="bg-gray-50 p-3 rounded-lg text-center"
+                  className={`bg-gray-50 p-2 rounded-lg text-center ${
+                    hasBonus ? "border border-red-700" : ""
+                  }`}
                 >
-                  <div className="text-sm text-gray-600 uppercase">
+                  <div className="text-xs text-gray-600 uppercase truncate">
                     {ability.charAt(0).toUpperCase() + ability.slice(1)}
                   </div>
-                  <div className="text-xl font-bold text-red-700">{score}</div>
-                  <div className="text-sm font-medium">
-                    ({sign}
-                    {modifier})
+                  <div className="text-sm font-bold text-red-700">
+                    {sign}
+                    {modifier}
                   </div>
                 </div>
               );
@@ -174,24 +241,16 @@ export default function CharacterSheet({
       {background && (
         <div className="mt-4 sm:mt-6">
           <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2">
-            {background.name}
+            Compétences
           </h3>
-          <div className="space-y-3 sm:space-y-4">
-            {[
-              {
-                label: "Compétences",
-                value: background.skills,
-                icon: <GiSkills />,
-              },
-            ].map(({ label, value, icon }) => (
-              <div key={label} className="bg-gray-50 p-3 rounded-lg">
-                <div className="flex items-center gap-2 font-semibold mb-1">
-                  {icon}
-                  <span>{label}</span>
-                </div>
-                <p className="text-sm text-gray-700">{value.join(", ")}</p>
-              </div>
-            ))}
+
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center gap-2 font-semibold mb-3 border-b border-gray-200 pb-2">
+              <span>Compétences {background.name}</span>
+            </div>
+            <p className="text-sm text-gray-700">
+              {background.skills?.join(", ")}
+            </p>
           </div>
         </div>
       )}
