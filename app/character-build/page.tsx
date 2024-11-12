@@ -41,6 +41,7 @@ function CharacterBuildContent() {
     if (classFromParam) handleClassChange(classFromParam);
     if (raceFromParam) handleRaceChange(raceFromParam);
     if (classFromParam && raceFromParam) setActiveStep(3);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
