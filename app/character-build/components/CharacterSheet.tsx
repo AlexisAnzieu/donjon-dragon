@@ -37,7 +37,7 @@ export default function CharacterSheet({
   calculateInitiative,
   details,
   selectedEquipment,
-  selectedSkills, // Add this new prop
+  selectedSkills,
 }: CharacterSheetProps) {
   if (!selectedRace) return null;
 
@@ -45,11 +45,14 @@ export default function CharacterSheet({
     <div className="bg-white shadow-2xl rounded-lg p-4 sm:p-6 w-full sm:min-w-96">
       {/* Character Header */}
       <div className="mb-4 sm:mb-6 text-center">
-        <h2 className="text-3xl font-medieval">
+        <h2 className="text-3xl ">
           <span className="text-primary font-extrabold">
             {selectedRace.name} {selectedClass?.name}
           </span>
         </h2>
+        {background && (
+          <h3 className="text-xl text-gray-700">{background.name}</h3>
+        )}
         <div className="relative my-4">
           <Image
             className="rounded-full border-4 border-red-700 shadow-2xl mx-auto w-32 h-32 sm:w-[200px] sm:h-[200px]"

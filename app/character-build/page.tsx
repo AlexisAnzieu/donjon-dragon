@@ -76,6 +76,7 @@ function CharacterBuildContent() {
 
   const handleBackgroundChange = (newBackground: Background | null) => {
     setBackground(newBackground);
+    setSelectedSkills([]); // Reset skills when background changes
     if (newBackground) setActiveStep(4); // Now moves to skills selection
   };
 
