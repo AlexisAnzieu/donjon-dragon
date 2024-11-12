@@ -76,21 +76,21 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     if (characterClass) setActiveStep(3); // Advance to background selection
   };
 
+  const handleBackgroundChange = (newBackground: Background | null) => {
+    setBackground(newBackground);
+    setSelectedSkills([]); // Reset skills when background changes
+    if (newBackground) setActiveStep(4); // Now moves to skills selection
+  };
+
   const handleSkillChange = (skills: string[]) => {
     setSelectedSkills(skills);
-    if (skills.length === selectedClass?.skills.canSelect) setActiveStep(4);
+    if (skills.length === selectedClass?.skills.canSelect) setActiveStep(5);
   };
 
   const handleScoresChange = (scores: Record<AbilityScoreKey, number>) => {
     setAreAbilitiesCalculated(true);
     setAbilityScores(scores);
-    setActiveStep(5);
-  };
-
-  const handleBackgroundChange = (newBackground: Background | null) => {
-    setBackground(newBackground);
-    setSelectedSkills([]); // Reset skills when background changes
-    if (newBackground) setActiveStep(4); // Now moves to skills selection
+    setActiveStep(6);
   };
 
   const calculateModifier = (abilityScore: number): number => {
