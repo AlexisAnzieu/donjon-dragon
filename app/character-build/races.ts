@@ -68,6 +68,35 @@ export type Class = {
     compétences: string[];
   };
 };
+
+export type Equipment = {
+  name: string;
+  effects?: {
+    ac: number;
+  };
+};
+
+export const equipmentData: Record<string, Equipment> = {
+  "Armure de cuir": {
+    name: "armure de cuir",
+    effects: {
+      ac: 1,
+    },
+  },
+  "Cotte de mailles": {
+    name: "cotte de mailles",
+    effects: {
+      ac: 16,
+    },
+  },
+  Bouclier: {
+    name: "bouclier",
+    effects: {
+      ac: 2,
+    },
+  },
+};
+
 export const classes: Class[] = [
   {
     name: "Barde",

@@ -11,7 +11,7 @@ import AbilityScores, {
   RollDetail,
 } from "./AbilityScores";
 import BackgroundSelection, { Background } from "./BackgroundSelection";
-import { Class, classes, Race, races } from "./races";
+import { Class, classes, Race, races, equipmentData } from "./races";
 import Step from "./Step";
 import CharacterSheet from "./components/CharacterSheet";
 import EquipmentSelection from "./EquipmentSelection";
@@ -111,10 +111,42 @@ function CharacterBuildContent() {
   };
 
   const calculateAC = () => {
-    if (!abilityScores.dextérité) return 10;
-    const dexModifier = Math.floor((abilityScores.dextérité - 10) / 2);
-    return 10 + dexModifier;
+    const baseAC = 10;
+    if (!abilityScores.dextérité) return baseAC;
+
+    const dexModifier = calculateModifier(abilityScores.dextérité);
+    let totalAC = baseAC + dexModifier;
+
+    if (!selectedEquipment) return totalAC;
+
+    const hasMailArmor = selectedEquipment.some((item) =>
+      item.toLowerCase().includes("cotte de mailles")
+    );
+    const hasLeatherArmor = selectedEquipment.some((item) =>
+      item.toLowerCase().includes("armure de cuir")
+    );
+    const hasShield = selectedEquipment.some((item) =>
+      item.toLowerCase().includes("bouclier")
+    );
+
+    if (hasMailArmor) {
+      totalAC = 16;
+    }
+
+    if (hasLeatherArmor) {
+      totalAC++;
+    }
+
+    if (hasShield) {
+      totalAC += 2;
+    }
+
+    return totalAC;
   };
+
+  useEffect(() => {
+    calculateAC();
+  }, [selectedEquipment, abilityScores.dextérité]);
 
   const calculateInitiative = () => {
     return Math.floor((abilityScores.dextérité - 10) / 2);
@@ -236,7 +268,7 @@ function CharacterBuildContent() {
               : "lg:w-1/3 flex flex-col"
           } transition-all duration-500 ease-in-out`}
         >
-          <div className="pt-4 sm:pt-10 pl-2 sm:pl-7">
+          <div className="pt-4 sm:pt-10 pl-2 sm:pl-7 pb-10">
             <CharacterSheet
               selectedRace={selectedRace}
               selectedClass={selectedClass}
