@@ -1,44 +1,24 @@
 import Image from "next/image";
-import { Background } from "../BackgroundSelection";
 import { AbilityScoreKey } from "../AbilityScores";
 import { GiSwordman } from "react-icons/gi";
-import { Class, Race, skills } from "../races";
+import { skills } from "../races";
 import TooltipText from "@/app/components/TooltipText";
+import { useCharacter } from "../characterContext";
 
-interface CharacterSheetProps {
-  selectedRace: Race | null;
-  selectedClass: Class | null;
-  areAbilitiesCalculated: boolean;
-  abilityScores: Record<AbilityScoreKey, number>;
-  background: Background | null;
-  calculateHP: () => number | null;
-  calculateAC: () => number;
-  calculateInitiative: () => number;
-  details: {
-    name: string;
-    alignment: string;
-    personality: string;
-    ideals: string;
-    bonds: string;
-    flaws: string;
-  };
-  selectedEquipment: string[] | null;
-  selectedSkills: string[]; // Add this new prop
-}
+function CharacterSheet() {
+  const {
+    selectedRace,
+    selectedClass,
+    areAbilitiesCalculated,
+    abilityScores,
+    background,
+    calculateHP,
+    calculateAC,
+    calculateInitiative,
+    selectedEquipment,
+    selectedSkills,
+  } = useCharacter();
 
-export default function CharacterSheet({
-  selectedRace,
-  selectedClass,
-  areAbilitiesCalculated,
-  abilityScores,
-  background,
-  calculateHP,
-  calculateAC,
-  calculateInitiative,
-  details,
-  selectedEquipment,
-  selectedSkills,
-}: CharacterSheetProps) {
   if (!selectedRace) return null;
 
   return (
@@ -301,22 +281,8 @@ export default function CharacterSheet({
           </div>
         </div>
       )}
-
-      {/* Character Details */}
-      {details.name && (
-        <div className="mt-4 sm:mt-6 bg-gray-50 p-3 sm:p-4 rounded-lg">
-          <h3 className="font-bold mb-2">Détails du personnage</h3>
-          <div className="space-y-1 text-sm">
-            <p>
-              <span className="font-medium">Nom:</span> {details.name}
-            </p>
-            <p>
-              <span className="font-medium">Alignement:</span>{" "}
-              {details.alignment}
-            </p>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
+
+export default CharacterSheet;

@@ -1,16 +1,11 @@
-import { Race, races } from "./races";
+import { races } from "./races";
 import TooltipText from "../components/TooltipText";
 import Stats from "../components/Stats";
+import { useCharacter } from "./characterContext";
 
-interface RaceSelectionProps {
-  selectedRace: Race | null;
-  setSelectedRace: (race: Race | null) => void;
-}
+export default function RaceSelection() {
+  const { handleRaceChange, selectedRace } = useCharacter();
 
-export default function RaceSelection({
-  selectedRace,
-  setSelectedRace,
-}: RaceSelectionProps) {
   return (
     <>
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 max-w-4xl mx-auto">
@@ -32,7 +27,7 @@ export default function RaceSelection({
               selectedRace?.name === race.name ? "ring-2 ring-primary" : ""
             }`}
             onClick={() => {
-              setSelectedRace(race);
+              handleRaceChange(race);
             }}
           >
             <div className="p-4 flex-grow flex flex-col">

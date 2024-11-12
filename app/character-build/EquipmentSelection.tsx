@@ -1,11 +1,6 @@
 import React from "react";
-import { Class, classes } from "@/app/character-build/races";
-
-interface EquipmentComponentProps {
-  selectedClass: Class | null;
-  selectedEquipment: string[] | null;
-  setSelectedEquipment: (equipment: string[] | null) => void;
-}
+import { classes } from "@/app/character-build/races";
+import { useCharacter } from "./characterContext";
 
 interface EquipmentChoiceProps {
   choices: string[];
@@ -51,11 +46,10 @@ const EquipmentChoice: React.FC<EquipmentChoiceProps> = ({
   </div>
 );
 
-const EquipmentSelection: React.FC<EquipmentComponentProps> = ({
-  selectedClass,
-  selectedEquipment,
-  setSelectedEquipment,
-}) => {
+function EquipmentSelection() {
+  const { selectedClass, selectedEquipment, setSelectedEquipment } =
+    useCharacter();
+
   const equipmentData = classes.find(
     (c) => c.name === selectedClass?.name
   )?.equipment;
@@ -120,6 +114,6 @@ const EquipmentSelection: React.FC<EquipmentComponentProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default EquipmentSelection;

@@ -1,26 +1,16 @@
-import { Background } from "./BackgroundSelection";
-import { Class } from "./races";
+import { useCharacter } from "./characterContext";
 
-interface SkillSelectionProps {
-  selectedClass: Class;
-  selectedSkills: string[];
-  onSkillsChange: (skills: string[]) => void;
-  background: Background;
-}
+export default function SkillSelection() {
+  const { selectedClass, selectedSkills, background, handleSkillChange } =
+    useCharacter();
 
-export default function SkillSelection({
-  selectedClass,
-  selectedSkills,
-  onSkillsChange,
-  background,
-}: SkillSelectionProps) {
   const isSkillSelected = (skill: string) =>
-    selectedSkills.includes(skill) || background.skills.includes(skill);
+    selectedSkills.includes(skill) || background?.skills.includes(skill);
 
   const isSkillDisabled = (skill: string) =>
-    background.skills.includes(skill) ||
+    background?.skills.includes(skill) ||
     (!selectedSkills.includes(skill) &&
-      selectedSkills.length >= selectedClass.skills.canSelect);
+      selectedSkills.length >= (selectedClass?.skills?.canSelect || 0));
 
   const getSkillCardClassName = (skill: string) => {
     const baseClasses =
@@ -29,7 +19,7 @@ export default function SkillSelection({
     const disabledClass = isSkillDisabled(skill)
       ? "opacity-50 cursor-not-allowed"
       : "";
-    const cursorClass = background.skills.includes(skill)
+    const cursorClass = background?.skills.includes(skill)
       ? "cursor-not-allowed"
       : "cursor-pointer";
 
@@ -37,10 +27,10 @@ export default function SkillSelection({
   };
 
   const canSelectMoreSkills = () =>
-    selectedSkills.length < selectedClass.skills.canSelect;
+    selectedSkills.length < (selectedClass?.skills?.canSelect || 0);
 
   const handleSkillToggle = (skill: string) => {
-    if (background.skills.includes(skill)) return;
+    if (background?.skills.includes(skill)) return;
 
     const isCurrentlySelected = selectedSkills.includes(skill);
     if (!isCurrentlySelected && !canSelectMoreSkills()) return;
@@ -48,7 +38,7 @@ export default function SkillSelection({
     const updatedSkills = isCurrentlySelected
       ? selectedSkills.filter((s) => s !== skill)
       : [...selectedSkills, skill];
-    onSkillsChange(updatedSkills);
+    handleSkillChange(updatedSkills);
   };
 
   return (
@@ -56,7 +46,7 @@ export default function SkillSelection({
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 max-w-4xl mx-auto">
         <div className="flex items-center">
           <div className="text-sm text-blue-700">
-            Choisis {selectedClass.skills.canSelect} compétences qui définiront
+            Choisis {selectedClass?.skills.canSelect} compétences qui définiront
             les domaines dans lesquels ton personnage excelle. Certaines sont
             déjà cochés car ils sont déjà inclus dans ton historique.
           </div>
@@ -64,18 +54,18 @@ export default function SkillSelection({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mt-4">
-        {selectedClass.skills.choices.map((skill) => (
+        {selectedClass?.skills.choices.map((skill) => (
           <div
             key={skill}
             className={getSkillCardClassName(skill)}
             onClick={() =>
-              !background.skills.includes(skill) && handleSkillToggle(skill)
+              !background?.skills.includes(skill) && handleSkillToggle(skill)
             }
           >
             <div className="p-4 flex-grow flex flex-col">
               <h2 className="text-xl font-bold text-primary mb-2">
                 {skill}
-                {background.skills.includes(skill) && ` (${background.name})`}
+                {background?.skills.includes(skill) && ` (${background.name})`}
               </h2>
             </div>
           </div>

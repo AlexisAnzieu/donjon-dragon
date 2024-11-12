@@ -1,17 +1,12 @@
 import { GiHeartPlus, GiArmorVest, GiSwordsPower } from "react-icons/gi";
 import Stats from "../components/Stats";
 import TooltipText from "../components/TooltipText";
-import { Class, classes } from "./races";
+import { classes } from "./races";
+import { useCharacter } from "./characterContext";
 
-interface ClassSelectionProps {
-  selectedClass: Class | null;
-  setSelectedClass: (cls: Class | null) => void;
-}
+export default function ClassSelection() {
+  const { handleClassChange, selectedClass } = useCharacter();
 
-export default function ClassSelection({
-  selectedClass,
-  setSelectedClass,
-}: ClassSelectionProps) {
   return (
     <>
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 max-w-4xl mx-auto">
@@ -38,7 +33,7 @@ export default function ClassSelection({
               selectedClass?.name === cls.name ? "ring-2 ring-primary" : ""
             }`}
             onClick={() => {
-              setSelectedClass(cls);
+              handleClassChange(cls);
             }}
           >
             <div className="p-4 flex-grow flex flex-col">

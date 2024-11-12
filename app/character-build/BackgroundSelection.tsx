@@ -1,5 +1,7 @@
 "use client";
 
+import { useCharacter } from "./characterContext";
+
 export type Background = {
   name: string;
   tools?: string[];
@@ -75,15 +77,10 @@ const BACKGROUNDS: Background[] = [
   },
 ];
 
-type BackgroundSelectionProps = {
-  selectedBackground: Background | null;
-  onBackgroundChange: (background: Background) => void;
-};
+function BackgroundSelection() {
+  const { handleBackgroundChange, background: selectedBackground } =
+    useCharacter();
 
-export default function BackgroundSelection({
-  selectedBackground,
-  onBackgroundChange,
-}: BackgroundSelectionProps) {
   return (
     <>
       <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 max-w-4xl mx-auto">
@@ -101,7 +98,7 @@ export default function BackgroundSelection({
         {BACKGROUNDS.map((background) => (
           <div
             key={background.name}
-            onClick={() => onBackgroundChange(background)}
+            onClick={() => handleBackgroundChange(background)}
             className={`bg-white rounded-lg shadow-md overflow-hidden cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col h-full ${
               selectedBackground?.name === background.name
                 ? "ring-2 ring-primary"
@@ -139,3 +136,5 @@ export default function BackgroundSelection({
     </>
   );
 }
+
+export default BackgroundSelection;

@@ -1,8 +1,8 @@
 "use client";
 
-import { Race } from "./races"; // Make sure to import Race type
 import TooltipText from "../components/TooltipText";
 import Stats from "../components/Stats";
+import { useCharacter } from "./characterContext";
 
 // Types
 export type AbilityScoreKey =
@@ -12,16 +12,6 @@ export type AbilityScoreKey =
   | "intelligence"
   | "sagesse"
   | "charisme";
-
-type AbilityScoresProps = {
-  scores: Record<AbilityScoreKey, number>;
-  onScoresChange: (scores: Record<AbilityScoreKey, number>) => void;
-  race: Race | null; // Changed from string | null
-  rollDetails: Record<AbilityScoreKey, RollDetail | null>;
-  onRollDetailsChange: (
-    details: Record<AbilityScoreKey, RollDetail | null>
-  ) => void;
-};
 
 export type RollDetail = {
   rolls: number[];
@@ -114,13 +104,15 @@ const CalculationDetails = () => (
 );
 
 // Main component
-export default function AbilityScores({
-  scores,
-  onScoresChange,
-  race,
-  rollDetails,
-  onRollDetailsChange,
-}: AbilityScoresProps) {
+export default function AbilityScores() {
+  const {
+    handleScoresChange,
+    abilityScores,
+    rollDetails,
+    setRollDetails,
+    selectedRace,
+  } = useCharacter();
+
   const rollAbility = () => {
     const rolls = rollMultipleDice(4, 6).sort((a, b) => b - a);
     const total = rolls.slice(0, 3).reduce((sum, roll) => sum + roll, 0);
@@ -136,24 +128,24 @@ export default function AbilityScores({
       newScores[ability as AbilityScoreKey] = rollResult.total;
       newRollDetails[ability as AbilityScoreKey] = {
         ...rollResult,
-        racialBonus: race?.abilityScores?.[ability as AbilityScoreKey]
-          ? `${race.abilityScores[ability as AbilityScoreKey]} (race ${
-              race.name
+        racialBonus: selectedRace?.abilityScores?.[ability as AbilityScoreKey]
+          ? `${selectedRace.abilityScores[ability as AbilityScoreKey]} (race ${
+              selectedRace.name
             })`
           : undefined,
       };
     });
 
-    if (race?.abilityScores) {
-      Object.entries(race.abilityScores).forEach(([ability, bonus]) => {
+    if (selectedRace?.abilityScores) {
+      Object.entries(selectedRace.abilityScores).forEach(([ability, bonus]) => {
         if (ability in newScores) {
           newScores[ability as AbilityScoreKey] += bonus;
         }
       });
     }
 
-    onRollDetailsChange(newRollDetails);
-    onScoresChange(newScores);
+    setRollDetails(newRollDetails);
+    handleScoresChange(newScores);
   };
 
   return (
@@ -167,10 +159,10 @@ export default function AbilityScores({
           Lancer les dés (4d6)
         </button>
       </div>
-      {Object.values(scores).some((value) => value !== 10) && (
+      {Object.values(abilityScores).some((value) => value !== 10) && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mt-4">
-            {Object.entries(scores).map(([ability, value]) => (
+            {Object.entries(abilityScores).map(([ability, value]) => (
               <AbilityScore
                 key={ability}
                 ability={ability}
