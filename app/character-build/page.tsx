@@ -15,6 +15,7 @@ import { Class, classes, Race, races } from "./races";
 import Step from "./Step";
 import CharacterSheet from "./components/CharacterSheet";
 import EquipmentSelection from "./EquipmentSelection";
+import SkillSelection from "./SkillSelection";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
@@ -58,18 +59,24 @@ function CharacterBuildContent() {
   const handleClassChange = (characterClass: Class | null) => {
     setSelectedClass(characterClass);
     setSelectedEquipment(null); // Reset equipment
-    if (characterClass) setActiveStep(3); // Advance to ability scores
+    setSelectedSkills([]); // Reset skills when class changes
+    if (characterClass) setActiveStep(3); // Advance to skill selection
+  };
+
+  const handleSkillChange = (skills: string[]) => {
+    setSelectedSkills(skills);
+    if (skills.length === selectedClass?.skills.canSelect) setActiveStep(4);
   };
 
   const onScoresChange = (scores: Record<AbilityScoreKey, number>) => {
     setAreAbilitiesCalculated(true);
     setAbilityScores(scores);
-    setActiveStep(4); // Advance to background selection
+    setActiveStep(5); // Advance to background selection
   };
 
   const handleBackgroundChange = (newBackground: Background | null) => {
     setBackground(newBackground);
-    if (newBackground) setActiveStep(5); // Advance to next step (if any)
+    if (newBackground) setActiveStep(6); // Advance to next step (if any)
   };
 
   const [rollDetails, setRollDetails] = useState<
@@ -97,6 +104,8 @@ function CharacterBuildContent() {
   const [selectedEquipment, setSelectedEquipment] = useState<string[] | null>(
     null
   );
+
+  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
 
   const calculateHP = () => {
     if (!selectedClass || !abilityScores.constitution) return null;
@@ -209,7 +218,25 @@ function CharacterBuildContent() {
           {selectedClass && (
             <Step
               stepNumber={3}
-              title="3. Calcul tes caractéristiques"
+              title="3. Choisis tes compétences"
+              content={
+                <SkillSelection
+                  selectedClass={selectedClass}
+                  selectedSkills={selectedSkills}
+                  onSkillsChange={handleSkillChange}
+                />
+              }
+              isFilled={
+                selectedSkills.length === selectedClass?.skills.canSelect
+              }
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+          )}
+          {selectedSkills.length === selectedClass?.skills.canSelect && (
+            <Step
+              stepNumber={4}
+              title="4. Calcul tes caractéristiques"
               content={
                 <AbilityScores
                   scores={abilityScores}
@@ -227,8 +254,8 @@ function CharacterBuildContent() {
           {(Object.values(abilityScores).some((score) => score !== 10) ||
             !!background) && (
             <Step
-              stepNumber={4}
-              title="4. Choisis ton historique"
+              stepNumber={5}
+              title="5. Choisis ton historique"
               content={
                 <BackgroundSelection
                   selectedBackground={background}
@@ -242,8 +269,8 @@ function CharacterBuildContent() {
           )}
           {background && (
             <Step
-              stepNumber={5}
-              title="5. Choisis tes équipements"
+              stepNumber={6}
+              title="6. Choisis tes équipements"
               content={
                 <EquipmentSelection
                   selectedClass={selectedClass}
@@ -280,6 +307,7 @@ function CharacterBuildContent() {
               calculateInitiative={calculateInitiative}
               details={details}
               selectedEquipment={selectedEquipment}
+              selectedSkills={selectedSkills} // Add this line
             />
           </div>
         </div>

@@ -23,6 +23,7 @@ interface CharacterSheetProps {
     flaws: string;
   };
   selectedEquipment: string[] | null;
+  selectedSkills: string[]; // Add this new prop
 }
 
 export default function CharacterSheet({
@@ -36,6 +37,7 @@ export default function CharacterSheet({
   calculateInitiative,
   details,
   selectedEquipment,
+  selectedSkills, // Add this new prop
 }: CharacterSheetProps) {
   if (!selectedRace) return null;
 
@@ -184,18 +186,22 @@ export default function CharacterSheet({
                 const baseScore =
                   abilityScores[ability.ability as AbilityScoreKey];
                 const modifier = Math.floor((baseScore - 10) / 2);
-                const sign = modifier >= 0 ? "+" : "";
+                const hasProficiency = selectedSkills.includes(ability.name);
+                const finalModifier = hasProficiency ? modifier + 2 : modifier;
+                const sign = finalModifier >= 0 ? "+" : "";
                 return (
                   <div
                     key={skill}
-                    className="bg-gray-50 p-2 rounded-lg text-center"
+                    className={`bg-gray-50 p-2 rounded-lg text-center ${
+                      hasProficiency ? "border border-red-700" : ""
+                    }`}
                   >
                     <div className="text-xs text-gray-600 uppercase truncate">
                       {skill.charAt(0).toUpperCase() + skill.slice(1)}
                     </div>
                     <div className="text-sm font-bold text-red-700">
                       {sign}
-                      {modifier}
+                      {finalModifier}
                     </div>
                   </div>
                 );
