@@ -16,7 +16,7 @@ export default function MonsterFilter({ monsters }: { monsters: Monster[] }) {
     <>
       <input
         type="text"
-        placeholder="Filter by name"
+        placeholder="Filter by names"
         value={filter}
         onChange={(e) => setFilter(e.target.value)}
         className="mb-4 p-2 border border-gray-300 rounded"
