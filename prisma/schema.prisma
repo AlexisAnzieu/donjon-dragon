@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:Lesloges78@vps-936fc4fa.vps.ovh.net:3310/dnd"
+  url      = env("DATABASE_URL")
 }
 
 model Character {
