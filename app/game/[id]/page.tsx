@@ -40,7 +40,7 @@ export default function Game() {
           Personnages en jeu
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data?.characters.map((character, index: number) => (
+          {data?.characters?.map((character, index: number) => (
             <div key={index} className="relative group">
               <Link
                 href={`/character/edit/?id=${character.id}`}
