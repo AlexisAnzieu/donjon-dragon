@@ -32,7 +32,7 @@ export default function DnDNavigation() {
         <div className="flex justify-between items-center py-4">
           <Link href="/" className="flex items-center space-x-2">
             <GiDoubleDragon className="h-8 w-8 text-white" />
-            <span className="text-2xl font-bold">H2T - D&D Index</span>
+            <span className="text-2xl font-bold">H2T - Donjon & Dragon </span>
           </Link>
 
           {/* Desktop Menu */}
