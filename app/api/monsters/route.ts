@@ -9,7 +9,16 @@ export type Monster = Prisma.MonsterGetPayload<{
     legendary_actions: true;
     saving_throws: true;
   };
-}>;
+}> & {
+  skills: string[];
+  senses: string[];
+  languages: string[];
+  damage_immunities: string[];
+  condition_immunities: string[];
+  damage_resistances: string[];
+  damage_vulnerabilities: string[];
+  proficiency_bonus: string[];
+};
 
 export async function GET() {
   const monsters = await prisma.monster.findMany({
