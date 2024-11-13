@@ -102,7 +102,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
 
   const handleEquipmentChange = (equipment: string[] | null) => {
     setSelectedEquipment(equipment);
-    if (equipment?.length === selectedClass?.equipment.length) setActiveStep(7);
+    if (equipment?.filter(Boolean).length === selectedClass?.equipment.length)
+      setActiveStep(7);
   };
 
   const calculateModifier = (abilityScore: number): number => {

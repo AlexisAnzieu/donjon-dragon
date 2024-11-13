@@ -92,7 +92,7 @@ function CharacterBuildContent() {
       background &&
       selectedSkills.length === selectedClass?.skills.canSelect &&
       areAbilitiesCalculated &&
-      selectedEquipment?.length ===
+      selectedEquipment?.filter(Boolean).length ===
         classes.find((c) => c.name === selectedClass?.name)?.equipment.length
     );
   };
@@ -208,7 +208,7 @@ function CharacterBuildContent() {
               title="6. Choisis tes équipements"
               content={<EquipmentSelection />}
               isFilled={
-                selectedEquipment?.length ===
+                selectedEquipment?.filter(Boolean).length ===
                 classes.find((c) => c.name === selectedClass?.name)?.equipment
                   .length
               }
