@@ -219,8 +219,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
       setAbilityScores(
         character.abilityScores as Record<AbilityScoreKey, number>
       );
-      setSelectedEquipment(character.equipment);
-      setSelectedSkills(character.skills);
+      setSelectedEquipment(character.equipment as string[]);
+      setSelectedSkills(character.skills as string[]);
       setRollDetails(
         character.rollDetails as Record<AbilityScoreKey, RollDetail | null>
       );
