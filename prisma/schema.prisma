@@ -28,6 +28,7 @@ model Character {
   hp            Int?
   userId        String? // Optional: for user association
   games         Game[]   @relation("GameCharacters")
+  active        Boolean  @default(true)
 }
 
 model Game {
