@@ -1,7 +1,30 @@
-/* eslint-disable react/no-unescaped-entities */
+"use client";
+
 import { Printer, Search, Database } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function Home() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const createNewSession = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/api/games", {
+        method: "POST",
+      });
+      const data = await response.json();
+
+      if (!response.ok) throw new Error(data.error);
+
+      router.push(`/game/${data.gameId}`);
+    } catch (error) {
+      console.error("Failed to create game:", error);
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-100 to-red-100 text-gray-900">
       <main>
@@ -10,10 +33,17 @@ export default function Home() {
             Votre Compagnon Ultime pour D&D
           </h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Découvrez une nouvelle façon de gérer vos aventures D&D avec notre
+            {`Découvrez une nouvelle façon de gérer vos aventures D&D avec notre
             système d'index innovant. Imprimez, filtrez et accédez au contenu de
-            D&D 5e comme jamais auparavant !
+            D&D 5e comme jamais auparavant !`}
           </p>
+          <button
+            onClick={createNewSession}
+            disabled={isLoading}
+            className="bg-red-700 text-white p-5 text-xl rounded-lg font-semibold hover:bg-red-600 transition-colors disabled:bg-red-400 disabled:cursor-not-allowed"
+          >
+            {isLoading ? "Création en cours..." : "Créer une nouvelle session"}
+          </button>
         </section>
 
         <section id="features" className="container mx-auto px-4 py-20">
@@ -51,9 +81,9 @@ export default function Home() {
                 <h3 className="text-xl font-semibold">API SRD D&D 5e</h3>
               </div>
               <p>
-                Accédez à une vaste base de données de contenu D&D 5e grâce à
+                {`Accédez à une vaste base de données de contenu D&D 5e grâce à
                 notre intégration avec l'API SRD officielle. Toujours à jour et
-                complète.
+                complète.`}
               </p>
             </div>
           </div>
@@ -64,9 +94,9 @@ export default function Home() {
             Prêt à Améliorer Votre Expérience D&D ?
           </h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Rejoignez notre communauté d'aventuriers et emmenez vos parties de
+            {`Rejoignez notre communauté d'aventuriers et emmenez vos parties de
             D&D au niveau supérieur. Inscrivez-vous maintenant pour être averti
-            lors de notre lancement !
+            lors de notre lancement !`}
           </p>
         </section>
       </main>

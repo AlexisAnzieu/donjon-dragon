@@ -2,10 +2,13 @@
 
 import { useState } from "react";
 import { questions } from "./question";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Quiz() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const gameId = searchParams.get("gameId");
 
   const [currentQuestion, setCurrentQuestion] = useState<number>(0);
   const [scores, setScores] = useState<Record<string, number>>({
@@ -49,7 +52,9 @@ export default function Quiz() {
         .reduce((a, b) => (a[1] > b[1] ? a : b))[0];
 
       router.push(
-        `/character/edit?race=${recommendedRace}&characterClass=${recommendedClass}`
+        `/character/edit?race=${recommendedRace}&characterClass=${recommendedClass}${
+          gameId ? `&gameId=${gameId}` : ""
+        }`
       );
     }
   };

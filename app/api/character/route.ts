@@ -4,7 +4,6 @@ import prisma from "@/prisma/db";
 export async function POST(request: Request) {
   try {
     const data = await request.json();
-    console.log(data);
     const character = await prisma.character.create({ data });
 
     return NextResponse.json(character);
@@ -30,6 +29,13 @@ export async function GET(request: Request) {
 
     const character = await prisma.character.findUnique({
       where: { id },
+      include: {
+        games: {
+          select: {
+            id: true,
+          },
+        },
+      },
     });
 
     if (!character) {

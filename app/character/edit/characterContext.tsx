@@ -12,6 +12,7 @@ import {
   DEFAULT_ABILITY_SCORES,
   RollDetail,
 } from "./AbilityScores";
+import { Prisma } from "@prisma/client";
 
 type CharacterContextType = {
   selectedRace: Race | null;
@@ -36,9 +37,10 @@ type CharacterContextType = {
   calculateModifier: (abilityScore: number) => number;
   activeStep: number | null;
   setActiveStep: (step: number | null) => void;
-  saveCharacter: () => Promise<void>;
+  saveCharacter: (gameId?: string | null) => Promise<void>;
   loadCharacter: (id: string) => Promise<void>;
   characterId: string | null;
+  games: string[];
 };
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -65,6 +67,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
   );
   const [activeStep, setActiveStep] = useState<number | null>(1);
   const [characterId, setCharacterId] = useState<string | null>(null);
+  const [games, setGames] = useState<string[]>([]);
 
   const handleRaceChange = (race: Race | null) => {
     setAreAbilitiesCalculated(false);
@@ -145,9 +148,9 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     return Math.floor((abilityScores.dextérité - 10) / 2);
   };
 
-  const saveCharacter = async () => {
+  const saveCharacter = async (gameId?: string | null) => {
     try {
-      const data = {
+      const data: Prisma.CharacterCreateInput = {
         race: selectedRace?.name,
         class: selectedClass?.name,
         background: background?.name,
@@ -156,6 +159,13 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         skills: selectedSkills,
         rollDetails: rollDetails,
         hp: calculateHP(),
+        ...(gameId && {
+          games: {
+            connect: {
+              id: gameId,
+            },
+          },
+        }),
       };
 
       if (characterId) {
@@ -191,7 +201,11 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         throw new Error("Failed to load character");
       }
 
-      const character = await response.json();
+      const character: Prisma.CharacterGetPayload<{
+        include: { games: { select: { id: true } } };
+      }> = await response.json();
+
+      setGames(character.games.map((game) => game.id));
 
       setCharacterId(character.id);
       setSelectedRace(races.find((r) => r.name === character.race) || null);
@@ -244,6 +258,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         saveCharacter,
         loadCharacter,
         characterId,
+        games,
       }}
     >
       {children}

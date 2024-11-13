@@ -31,17 +31,20 @@ function CharacterBuildContent() {
     setActiveStep,
     loadCharacter,
     saveCharacter,
+    characterId,
+    games,
   } = useCharacter();
 
   const characterClassParam = searchParams.get("characterClass");
   const raceParam = searchParams.get("race");
-  const characterId = searchParams.get("id");
+  const characterIdParam = searchParams.get("id");
+  const gameId = searchParams.get("gameId");
 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (characterId) {
-      loadCharacter(characterId);
+    if (characterIdParam) {
+      loadCharacter(characterIdParam);
       setActiveStep(null);
       setIsLoading(false);
       return;
@@ -56,16 +59,34 @@ function CharacterBuildContent() {
   }, []);
 
   useEffect(() => {
-    if (characterId) {
-      return;
+    const updateUrlParams = () => {
+      const params = new URLSearchParams();
+
+      console.log({ characterId });
+
+      if (characterId) {
+        params.set("id", characterId);
+        router.push(`?${params.toString()}`, { scroll: false });
+        setIsLoading(false);
+      } else {
+        if (gameId) params.set("gameId", gameId);
+        if (selectedRace) params.set("race", selectedRace.name);
+        if (selectedClass) params.set("characterClass", selectedClass.name);
+      }
+      router.replace(`?${params.toString()}`, { scroll: false });
+    };
+
+    if (!characterIdParam) {
+      updateUrlParams();
     }
-    const params = new URLSearchParams();
-    if (selectedRace) params.set("race", selectedRace.name);
-    if (selectedClass) params.set("characterClass", selectedClass.name);
-    router.replace(`?${params.toString()}`, {
-      scroll: false,
-    });
-  }, [selectedRace, selectedClass, router, characterId]);
+  }, [
+    selectedRace,
+    selectedClass,
+    router,
+    characterIdParam,
+    gameId,
+    characterId,
+  ]);
 
   const isCharacterComplete = () => {
     return (
@@ -80,7 +101,7 @@ function CharacterBuildContent() {
   };
 
   const handleSave = async () => {
-    await saveCharacter();
+    await saveCharacter(gameId);
   };
 
   if (characterId && isLoading) {
@@ -103,10 +124,31 @@ function CharacterBuildContent() {
             !selectedClass && !selectedRace ? "p-4" : "lg:w-2/3"
           } transition-all duration-500 ease-in-out py-6`}
         >
+          {games.length > 0 && (
+            <Link href={`/game/${games[0]}`} className="p-10">
+              <button className="flex items-center gap-2 text-primary hover:text-primary-dark">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+                Retour à la session de jeu
+              </button>
+            </Link>
+          )}
           {!selectedClass && !selectedRace && (
             <div className="flex flex-col justify-center items-center text-center mb-4">
               Tu ne sais pas par où commencer ?{" "}
-              <Link href="/character-quiz">
+              <Link
+                href={`/character-quiz${gameId ? `?gameId=${gameId}` : ""}`}
+              >
                 <span className="text-primary font-bold underline hover:text-red-700">
                   Réponds aux 10 questions !
                 </span>
