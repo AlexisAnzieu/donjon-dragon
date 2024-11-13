@@ -13,6 +13,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Character {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  name          String?
+  race          String?
+  class         String?
+  background    String?
+  abilityScores Json // Stores the ability scores object
+  equipment     String[] // Array of equipment strings
+  skills        String[] // Array of selected skills
+  rollDetails   Json // Stores the roll details object
+  hp            Int?
+  userId        String? // Optional: for user association
+  sessionId     String? // Optional: for session association
+}
+
 model Monster {
   id                     String            @id @default(uuid())
   slug                   String            @unique

@@ -10,7 +10,7 @@ export type Background = {
   description: string;
 };
 
-const BACKGROUNDS: Background[] = [
+export const BACKGROUNDS: Background[] = [
   {
     name: "Acolyte",
     tools: ["Langue supplémentaire"],

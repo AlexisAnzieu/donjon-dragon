@@ -47,7 +47,7 @@ const EquipmentChoice: React.FC<EquipmentChoiceProps> = ({
 );
 
 function EquipmentSelection() {
-  const { selectedClass, selectedEquipment, setSelectedEquipment } =
+  const { selectedClass, selectedEquipment, handleEquipmentChange } =
     useCharacter();
 
   const equipmentData = classes.find(
@@ -61,9 +61,9 @@ function EquipmentSelection() {
 
   React.useEffect(() => {
     if (defaultEquipment && !selectedEquipment) {
-      setSelectedEquipment(defaultEquipment);
+      handleEquipmentChange(defaultEquipment);
     }
-  }, [setSelectedEquipment, defaultEquipment, selectedEquipment]);
+  }, [handleEquipmentChange, defaultEquipment, selectedEquipment]);
 
   const handleEquipmentSelection = (
     choiceIndex: number,
@@ -71,7 +71,7 @@ function EquipmentSelection() {
   ) => {
     const newEquipment = [...(selectedEquipment || [])];
     newEquipment[choiceIndex + defaultEquipment.length] = selectedItem;
-    setSelectedEquipment(newEquipment);
+    handleEquipmentChange(newEquipment);
   };
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, Suspense, useState } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -29,12 +29,23 @@ function CharacterBuildContent() {
     selectedEquipment,
     activeStep,
     setActiveStep,
+    loadCharacter,
+    saveCharacter,
   } = useCharacter();
 
   const characterClassParam = searchParams.get("characterClass");
   const raceParam = searchParams.get("race");
+  const characterId = searchParams.get("id");
+
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (characterId) {
+      loadCharacter(characterId);
+      setActiveStep(null);
+      setIsLoading(false);
+      return;
+    }
     const classFromParam =
       classes.find((cls) => cls.name === characterClassParam) || null;
     const raceFromParam = races.find((r) => r.name === raceParam) || null;
@@ -45,13 +56,40 @@ function CharacterBuildContent() {
   }, []);
 
   useEffect(() => {
+    if (characterId) {
+      return;
+    }
     const params = new URLSearchParams();
     if (selectedRace) params.set("race", selectedRace.name);
     if (selectedClass) params.set("characterClass", selectedClass.name);
     router.replace(`?${params.toString()}`, {
       scroll: false,
     });
-  }, [selectedRace, selectedClass, router]);
+  }, [selectedRace, selectedClass, router, characterId]);
+
+  const isCharacterComplete = () => {
+    return (
+      selectedRace &&
+      selectedClass &&
+      background &&
+      selectedSkills.length === selectedClass?.skills.canSelect &&
+      areAbilitiesCalculated &&
+      selectedEquipment?.length ===
+        classes.find((c) => c.name === selectedClass?.name)?.equipment.length
+    );
+  };
+
+  const handleSave = async () => {
+    await saveCharacter();
+  };
+
+  if (characterId && isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+        <div className="text-xl font-semibold">Chargement du personnage...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 px-4 sm:px-8 pt-3 ">
@@ -138,6 +176,25 @@ function CharacterBuildContent() {
               activeStep={activeStep}
               setActiveStep={setActiveStep}
             />
+          )}
+
+          {isCharacterComplete() && (
+            <div className="mt-8 flex justify-center">
+              <button
+                onClick={handleSave}
+                className="bg-primary hover:bg-primary-dark font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-110 flex items-center gap-3 text-lg border-2 border-green-500"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h-2v5.586l-1.293-1.293z" />
+                </svg>
+                Sauvegarde ton personnage
+              </button>
+            </div>
           )}
         </div>
         <div

@@ -5,8 +5,8 @@ import {
   useCallback,
   ReactNode,
 } from "react";
-import { Class, Race, classes } from "./races";
-import { Background } from "./BackgroundSelection";
+import { Class, Race, classes, races } from "./races";
+import { Background, BACKGROUNDS } from "./BackgroundSelection";
 import {
   AbilityScoreKey,
   DEFAULT_ABILITY_SCORES,
@@ -27,7 +27,7 @@ type CharacterContextType = {
   handleBackgroundChange: (background: Background | null) => void;
   handleScoresChange: (scores: Record<AbilityScoreKey, number>) => void;
   handleSkillChange: (skills: string[]) => void;
-  setSelectedEquipment: (equipment: string[] | null) => void;
+  handleEquipmentChange: (equipment: string[] | null) => void;
   setAreAbilitiesCalculated: (value: boolean) => void;
   setRollDetails: (details: Record<AbilityScoreKey, RollDetail | null>) => void;
   calculateHP: () => number | null;
@@ -36,6 +36,9 @@ type CharacterContextType = {
   calculateModifier: (abilityScore: number) => number;
   activeStep: number | null;
   setActiveStep: (step: number | null) => void;
+  saveCharacter: () => Promise<void>;
+  loadCharacter: (id: string) => Promise<void>;
+  characterId: string | null;
 };
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -61,6 +64,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     ) as Record<AbilityScoreKey, RollDetail | null>
   );
   const [activeStep, setActiveStep] = useState<number | null>(1);
+  const [characterId, setCharacterId] = useState<string | null>(null);
 
   const handleRaceChange = (race: Race | null) => {
     setAreAbilitiesCalculated(false);
@@ -91,6 +95,11 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     setAreAbilitiesCalculated(true);
     setAbilityScores(scores);
     setActiveStep(6);
+  };
+
+  const handleEquipmentChange = (equipment: string[] | null) => {
+    setSelectedEquipment(equipment);
+    if (equipment?.length === selectedClass?.equipment.length) setActiveStep(7);
   };
 
   const calculateModifier = (abilityScore: number): number => {
@@ -136,6 +145,77 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     return Math.floor((abilityScores.dextérité - 10) / 2);
   };
 
+  const saveCharacter = async () => {
+    try {
+      const data = {
+        race: selectedRace?.name,
+        class: selectedClass?.name,
+        background: background?.name,
+        abilityScores: abilityScores,
+        equipment: selectedEquipment || [],
+        skills: selectedSkills,
+        rollDetails: rollDetails,
+        hp: calculateHP(),
+      };
+
+      if (characterId) {
+        // TODO: Implement PUT/PATCH endpoint for updates
+        throw new Error("Update not implemented yet");
+      } else {
+        const response = await fetch("/api/character", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to save character");
+        }
+
+        const character = await response.json();
+        setCharacterId(character.id);
+      }
+    } catch (error) {
+      console.error("Failed to save character:", error);
+      throw error;
+    }
+  };
+
+  const loadCharacter = async (id: string) => {
+    try {
+      const response = await fetch(`/api/character?id=${id}`);
+
+      if (!response.ok) {
+        throw new Error("Failed to load character");
+      }
+
+      const character = await response.json();
+
+      setCharacterId(character.id);
+      setSelectedRace(races.find((r) => r.name === character.race) || null);
+      setSelectedClass(
+        classes.find((cls) => cls.name === character.class) || null
+      );
+      setBackground(
+        BACKGROUNDS.find((bg) => bg.name === character.background) || null
+      );
+      setAbilityScores(
+        character.abilityScores as Record<AbilityScoreKey, number>
+      );
+      setSelectedEquipment(character.equipment);
+      setSelectedSkills(character.skills);
+      setRollDetails(
+        character.rollDetails as Record<AbilityScoreKey, RollDetail | null>
+      );
+      setAreAbilitiesCalculated(true);
+    } catch (error) {
+      console.error("Failed to load character:", error);
+      throw error;
+    }
+  };
+
   return (
     <CharacterContext.Provider
       value={{
@@ -152,7 +232,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         handleBackgroundChange,
         handleScoresChange,
         handleSkillChange,
-        setSelectedEquipment,
+        handleEquipmentChange,
         setAreAbilitiesCalculated,
         setRollDetails,
         calculateHP,
@@ -161,6 +241,9 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         calculateModifier,
         activeStep,
         setActiveStep,
+        saveCharacter,
+        loadCharacter,
+        characterId,
       }}
     >
       {children}
