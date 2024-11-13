@@ -62,12 +62,9 @@ function CharacterBuildContent() {
     const updateUrlParams = () => {
       const params = new URLSearchParams();
 
-      console.log({ characterId });
-
       if (characterId) {
         params.set("id", characterId);
-        router.push(`?${params.toString()}`, { scroll: false });
-        setIsLoading(false);
+        window.location.replace(`?${params.toString()}`);
       } else {
         if (gameId) params.set("gameId", gameId);
         if (selectedRace) params.set("race", selectedRace.name);

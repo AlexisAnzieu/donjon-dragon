@@ -49,7 +49,7 @@ export default function Game() {
                     {character.class}
                   </p>
                   <p>
-                    <span className="font-medium">Background:</span>{" "}
+                    <span className="font-medium">Historique:</span>{" "}
                     {character.background}
                   </p>
                   <p className="text-sm text-gray-500 mt-4">

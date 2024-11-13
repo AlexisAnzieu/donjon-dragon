@@ -1,10 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { questions } from "./question";
 import { useRouter, useSearchParams } from "next/navigation";
 
+function LoadingFallback() {
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="text-xl text-gray-600">Chargement...</div>
+    </div>
+  );
+}
+
 export default function Quiz() {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <QuizContent />
+    </Suspense>
+  );
+}
+
+function QuizContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
