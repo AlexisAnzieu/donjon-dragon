@@ -9,7 +9,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -22,13 +22,12 @@ model Character {
   class         String?
   background    String?
   abilityScores Json // Stores the ability scores object
-  equipment     String[] // Array of equipment strings
-  skills        String[] // Array of selected skills
+  equipment     Json // Array of equipment strings
+  skills        Json // Array of selected skills
   rollDetails   Json // Stores the roll details object
   hp            Int?
   userId        String? // Optional: for user association
   games         Game[]   @relation("GameCharacters")
-  active        Boolean  @default(true)
 }
 
 model Game {
@@ -57,14 +56,14 @@ model Monster {
   source                 String
   imageUrl               String?
   saving_throws          SavingThrows?     @relation(fields: [savingThrowsId], references: [id])
-  skills                 String[]
-  senses                 String[]
-  languages              String[]
-  damage_immunities      String[]
-  condition_immunities   String[]
-  damage_resistances     String[]
-  proficiency_bonus      String[]
-  damage_vulnerabilities String[]
+  skills                 Json
+  senses                 Json
+  languages              Json
+  damage_immunities      Json
+  condition_immunities   Json
+  damage_resistances     Json
+  proficiency_bonus      Json
+  damage_vulnerabilities Json
   challenge_rating       Int?
   xp                     Int
   abilitiesId            String?

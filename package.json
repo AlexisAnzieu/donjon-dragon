@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prisma:reset": "dotenv -e .env.local -- npx prisma migrate reset --force",
+    "prisma:generate": "dotenv -e .env.local --  npx prisma generate",
     "prisma:migrate": "dotenv -e .env.local --  npx prisma migrate dev",
     "prisma:studio": "dotenv -e .env.local -- npx prisma studio",
     "postinstall": "prisma generate --no-engine"
