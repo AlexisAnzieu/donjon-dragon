@@ -224,7 +224,7 @@ function CharacterBuildContent() {
               .length && (
             <Step
               stepNumber={7}
-              title="7. Définir la personnalité"
+              title="7. Définis ta personnalité"
               content={<Details />}
               isFilled={!!details.name}
               activeStep={activeStep}
