@@ -23,6 +23,7 @@ export async function GET(request: Request) {
             race: true,
             class: true,
             background: true,
+            name: true,
           },
         },
       },

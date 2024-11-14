@@ -3,27 +3,18 @@
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { fetcher } from "@/lib/fetcher";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Prisma } from "@prisma/client";
 
 export default function Game() {
   const { id } = useParams();
-  const {
-    data,
-  }: {
-    data: Prisma.GameGetPayload<{
+  const { data, isLoading } = useSWR<
+    Prisma.GameGetPayload<{
       include: { characters: true };
-    }>;
-  } = useSWR(`/api/games?id=${id}`, fetcher);
-
-  const handleDelete = async (characterId: string) => {
-    await fetch(`/api/character?id=${characterId}`, {
-      method: "DELETE",
-    });
-    mutate(`/api/games?id=${id}`);
-  };
+    }>
+  >(`/api/games?id=${id}`, fetcher);
 
   return (
     <div className="min-h-screen bg-gray-100 p-8">
@@ -40,42 +31,57 @@ export default function Game() {
           Personnages en jeu
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {data?.characters?.map((character, index: number) => (
-            <div key={index} className="relative group">
-              <Link
-                href={`/character/edit/?id=${character.id}`}
-                className="block"
-              >
-                <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
-                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                    {character.race}
-                  </h2>
-                  <div className="space-y-2 text-gray-600">
-                    <p>
-                      <span className="font-medium">Classe:</span>{" "}
-                      {character.class}
-                    </p>
-                    <p>
-                      <span className="font-medium">Historique:</span>{" "}
-                      {character.background}
-                    </p>
-                    <p className="text-sm text-gray-500 mt-4">
-                      Créé il y a{" "}
-                      {formatDistanceToNow(new Date(character.createdAt), {
-                        locale: fr,
-                      })}
-                    </p>
+          {isLoading
+            ? Array(3)
+                .fill(0)
+                .map((_, index) => (
+                  <div
+                    key={`skeleton-${index}`}
+                    className="bg-white p-6 rounded-lg shadow-md animate-pulse"
+                  >
+                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
+                    <div className="space-y-3">
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/4 mt-4"></div>
+                    </div>
                   </div>
+                ))
+            : data?.characters?.map((character, index: number) => (
+                <div key={index} className="relative group">
+                  <Link
+                    href={`/character/edit/?id=${character.id}`}
+                    className="block"
+                  >
+                    <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer">
+                      <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                        {character.name}
+                      </h2>
+                      <div className="space-y-2 text-gray-600">
+                        <p>
+                          <span className="font-medium">Race:</span>{" "}
+                          {character.race}
+                        </p>
+                        <p>
+                          <span className="font-medium">Classe:</span>{" "}
+                          {character.class}
+                        </p>
+                        <p>
+                          <span className="font-medium">Historique:</span>{" "}
+                          {character.background}
+                        </p>
+                        <p className="text-sm text-gray-500 mt-4">
+                          Créé il y a{" "}
+                          {formatDistanceToNow(new Date(character.createdAt), {
+                            locale: fr,
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </Link>
                 </div>
-              </Link>
-              <button
-                onClick={() => handleDelete(character.id)}
-                className="absolute top-2 right-2 px-3 py-1 bg-red-600 text-white text-sm rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                Supprimer
-              </button>
-            </div>
-          ))}
+              ))}
         </div>
       </div>
     </div>
