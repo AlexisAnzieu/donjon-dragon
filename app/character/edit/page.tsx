@@ -173,7 +173,7 @@ function CharacterBuildContent() {
                 </div>
               )}
 
-              {!selectedClass && !selectedRace && (
+              {!characterIdParam && !selectedClass && !selectedRace && (
                 <div className="bg-white rounded-xl p-6 shadow-sm mb-8 border border-gray-100">
                   <div className="flex flex-col items-center text-center space-y-3">
                     <h2 className="text-xl font-semibold">
