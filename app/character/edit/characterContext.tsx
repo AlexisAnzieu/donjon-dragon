@@ -14,6 +14,15 @@ import {
 } from "./AbilityScores";
 import { Prisma } from "@prisma/client";
 
+interface Details {
+  name: string;
+  alignment: string;
+  traits: string;
+  ideals: string;
+  bonds: string;
+  flaws: string;
+}
+
 type CharacterContextType = {
   selectedRace: Race | null;
   selectedClass: Class | null;
@@ -41,6 +50,8 @@ type CharacterContextType = {
   loadCharacter: (id: string) => Promise<void>;
   characterId: string | null;
   games: string[];
+  details: Details;
+  setDetails: (traits: Details) => void;
 };
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -68,6 +79,14 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
   const [activeStep, setActiveStep] = useState<number | null>(1);
   const [characterId, setCharacterId] = useState<string | null>(null);
   const [games, setGames] = useState<string[]>([]);
+  const [details, setDetails] = useState<Details>({
+    name: "",
+    alignment: "",
+    traits: "",
+    ideals: "",
+    bonds: "",
+    flaws: "",
+  });
 
   const handleRaceChange = (race: Race | null) => {
     setAreAbilitiesCalculated(false);
@@ -159,6 +178,12 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         equipment: selectedEquipment || [],
         skills: selectedSkills,
         rollDetails: rollDetails,
+        name: details.name,
+        alignment: details.alignment,
+        traits: details.traits,
+        ideals: details.ideals,
+        bonds: details.bonds,
+        flaws: details.flaws,
         hp: calculateHP(),
         ...(gameId && {
           games: {
@@ -205,6 +230,15 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
       const character: Prisma.CharacterGetPayload<{
         include: { games: { select: { id: true } } };
       }> = await response.json();
+
+      setDetails({
+        name: character.name,
+        alignment: character.alignment || "",
+        traits: character.traits || "",
+        ideals: character.ideals || "",
+        bonds: character.bonds || "",
+        flaws: character.flaws || "",
+      });
 
       setGames(character.games.map((game) => game.id));
 
@@ -260,6 +294,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         loadCharacter,
         characterId,
         games,
+        details,
+        setDetails,
       }}
     >
       {children}

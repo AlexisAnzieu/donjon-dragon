@@ -13,6 +13,7 @@ import CharacterSheet from "./components/CharacterSheet";
 import EquipmentSelection from "./EquipmentSelection";
 import SkillSelection from "./SkillSelection";
 import { CharacterProvider, useCharacter } from "./characterContext";
+import Details from "./Details";
 
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
@@ -33,6 +34,7 @@ function CharacterBuildContent() {
     saveCharacter,
     characterId,
     games,
+    details,
   } = useCharacter();
 
   const characterClassParam = searchParams.get("characterClass");
@@ -93,7 +95,8 @@ function CharacterBuildContent() {
       selectedSkills.length === selectedClass?.skills.canSelect &&
       areAbilitiesCalculated &&
       selectedEquipment?.filter(Boolean).length ===
-        classes.find((c) => c.name === selectedClass?.name)?.equipment.length
+        classes.find((c) => c.name === selectedClass?.name)?.equipment.length &&
+      details.name
     );
   };
 
@@ -212,6 +215,18 @@ function CharacterBuildContent() {
                 classes.find((c) => c.name === selectedClass?.name)?.equipment
                   .length
               }
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+          )}
+          {selectedEquipment?.filter(Boolean).length ===
+            classes.find((c) => c.name === selectedClass?.name)?.equipment
+              .length && (
+            <Step
+              stepNumber={7}
+              title="7. Définir la personnalité"
+              content={<Details />}
+              isFilled={!!details.name}
               activeStep={activeStep}
               setActiveStep={setActiveStep}
             />

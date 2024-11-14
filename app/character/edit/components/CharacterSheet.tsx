@@ -17,6 +17,7 @@ function CharacterSheet() {
     calculateInitiative,
     selectedEquipment,
     selectedSkills,
+    details,
   } = useCharacter();
 
   if (!selectedRace) return null;
@@ -25,14 +26,23 @@ function CharacterSheet() {
     <div className="bg-white shadow-2xl rounded-lg p-4 sm:p-6 w-full sm:min-w-96">
       {/* Character Header */}
       <div className="mb-4 sm:mb-6 text-center">
-        <h2 className="text-3xl ">
-          <span className="text-primary font-extrabold">
-            {selectedRace.name} {selectedClass?.name}
-          </span>
-        </h2>
-        {background && (
-          <h3 className="text-xl text-gray-700">{background.name}</h3>
-        )}
+        <div className="relative space-y-2">
+          <h1 className="text-4xl  tracking-wider">
+            <span className="bg-gradient-to-r from-red-700 to-red-900 text-transparent bg-clip-text font-extrabold">
+              {details.name}
+            </span>
+          </h1>
+          <h2 className="text-3xl">
+            <span className="relative">
+              <span className="bg-gradient-to-r from-red-600 to-red-800 text-transparent bg-clip-text font-bold">
+                {selectedRace.name} {selectedClass?.name}
+              </span>
+            </span>
+          </h2>
+          <h3 className="text-xl text-gray-600 italic font-light">
+            {background?.name}
+          </h3>
+        </div>
         <div className="relative my-4">
           <Image
             className="rounded-full border-4 border-red-700 shadow-2xl mx-auto w-32 h-32 sm:w-[200px] sm:h-[200px]"

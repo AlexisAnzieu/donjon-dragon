@@ -11,7 +11,12 @@ model Character {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  name          String?
+  name          String
+  alignment     String?
+  traits        String?  @db.Text
+  ideals        String?  @db.Text
+  bonds         String?  @db.Text
+  flaws         String?  @db.Text
   race          String?
   class         String?
   background    String?
