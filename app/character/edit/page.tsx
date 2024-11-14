@@ -15,6 +15,35 @@ import SkillSelection from "./SkillSelection";
 import { CharacterProvider, useCharacter } from "./characterContext";
 import Details from "./Details";
 
+function LoadingOverlay() {
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-xl shadow-xl flex flex-col items-center gap-4">
+        <svg
+          className="animate-spin h-10 w-10 text-primary"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+            fill="none"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          />
+        </svg>
+        <div className="text-xl font-semibold">Sauvegarde en cours...</div>
+      </div>
+    </div>
+  );
+}
+
 function CharacterBuildContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -114,182 +143,163 @@ function CharacterBuildContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 px-4 sm:px-8 pt-3 ">
-      <div
-        className={`flex ${
-          !selectedClass && !selectedRace ? "flex-col" : "flex-col lg:flex-row"
-        } transition-all duration-500 ease-in-out pl-2 sm:pl-6`}
-      >
+    <>
+      {isSaving && <LoadingOverlay />}
+      <div className="min-h-screen bg-gray-100 text-gray-800 px-4 sm:px-8 pt-3">
         <div
-          className={`w-full ${
-            !selectedClass && !selectedRace ? "p-4" : "lg:w-2/3"
-          } transition-all duration-500 ease-in-out py-6`}
-        >
-          {games.length > 0 && (
-            <Link href={`/game/${games[0]}`} className="p-10">
-              <button className="flex items-center gap-2 text-primary hover:text-primary-dark">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-                Retour à la session de jeu
-              </button>
-            </Link>
-          )}
-          {!selectedClass && !selectedRace && (
-            <div className="flex flex-col justify-center items-center text-center mb-4">
-              Tu ne sais pas par où commencer ?{" "}
-              <Link
-                href={`/character-quiz${gameId ? `?gameId=${gameId}` : ""}`}
-              >
-                <span className="text-primary font-bold underline hover:text-red-700">
-                  Réponds aux 10 questions !
-                </span>
-              </Link>
-            </div>
-          )}
-          <Step
-            stepNumber={1}
-            title="1. Choisis une Race"
-            content={<RaceSelection />}
-            isFilled={!!selectedRace}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
-          {selectedRace && (
-            <Step
-              stepNumber={2}
-              title="2. Choisis une Classe"
-              content={<ClassSelection />}
-              isFilled={!!selectedClass}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          )}
-          {selectedClass && (
-            <Step
-              stepNumber={3}
-              title="3. Choisis ton Historique"
-              content={<BackgroundSelection />}
-              isFilled={!!background}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          )}
-          {background && selectedClass && (
-            <Step
-              stepNumber={4}
-              title="4. Choisis tes compétences"
-              content={<SkillSelection />}
-              isFilled={
-                selectedSkills.length === selectedClass?.skills.canSelect
-              }
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          )}
-          {selectedSkills.length === selectedClass?.skills.canSelect && (
-            <Step
-              stepNumber={5}
-              title="5. Calcul tes caractéristiques"
-              content={<AbilityScores />}
-              isFilled={areAbilitiesCalculated}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          )}
-          {Object.values(abilityScores).some((score) => score !== 10) && (
-            <Step
-              stepNumber={6}
-              title="6. Choisis tes équipements"
-              content={<EquipmentSelection />}
-              isFilled={
-                selectedEquipment?.filter(Boolean).length ===
-                classes.find((c) => c.name === selectedClass?.name)?.equipment
-                  .length
-              }
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          )}
-          {selectedEquipment?.filter(Boolean).length ===
-            classes.find((c) => c.name === selectedClass?.name)?.equipment
-              .length && (
-            <Step
-              stepNumber={7}
-              title="7. Définis ta personnalité"
-              content={<Details />}
-              isFilled={!!details.name}
-              activeStep={activeStep}
-              setActiveStep={setActiveStep}
-            />
-          )}
-
-          {isCharacterComplete() && (
-            <div className="mt-8 flex justify-center">
-              <button
-                onClick={handleSave}
-                disabled={isSaving}
-                className="bg-primary hover:bg-primary-dark font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-110 flex items-center gap-3 text-lg border-2 border-green-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-              >
-                {isSaving ? (
-                  <>
-                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Sauvegarde en cours...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-6 w-6"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h-2v5.586l-1.293-1.293z" />
-                    </svg>
-                    Sauvegarde ton personnage
-                  </>
-                )}
-              </button>
-            </div>
-          )}
-        </div>
-        <div
-          className={`w-full ${
+          className={`flex ${
             !selectedClass && !selectedRace
-              ? "lg:w-0"
-              : "lg:w-1/3 flex flex-col"
-          } transition-all duration-500 ease-in-out`}
+              ? "flex-col"
+              : "flex-col lg:flex-row"
+          } transition-all duration-500 ease-in-out pl-2 sm:pl-6`}
         >
-          <div className="pt-4 sm:pt-10 pl-2 sm:pl-7 pb-10">
-            <CharacterSheet />
+          <div
+            className={`w-full ${
+              !selectedClass && !selectedRace ? "p-4" : "lg:w-2/3"
+            } transition-all duration-500 ease-in-out py-6`}
+          >
+            {games.length > 0 && (
+              <Link href={`/game/${games[0]}`} className="p-10">
+                <button className="flex items-center gap-2 text-primary hover:text-primary-dark">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Retour à la session de jeu
+                </button>
+              </Link>
+            )}
+            {!selectedClass && !selectedRace && (
+              <div className="flex flex-col justify-center items-center text-center mb-4">
+                Tu ne sais pas par où commencer ?{" "}
+                <Link
+                  href={`/character-quiz${gameId ? `?gameId=${gameId}` : ""}`}
+                >
+                  <span className="text-primary font-bold underline hover:text-red-700">
+                    Réponds aux 10 questions !
+                  </span>
+                </Link>
+              </div>
+            )}
+            <Step
+              stepNumber={1}
+              title="1. Choisis une Race"
+              content={<RaceSelection />}
+              isFilled={!!selectedRace}
+              activeStep={activeStep}
+              setActiveStep={setActiveStep}
+            />
+            {selectedRace && (
+              <Step
+                stepNumber={2}
+                title="2. Choisis une Classe"
+                content={<ClassSelection />}
+                isFilled={!!selectedClass}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+              />
+            )}
+            {selectedClass && (
+              <Step
+                stepNumber={3}
+                title="3. Choisis ton Historique"
+                content={<BackgroundSelection />}
+                isFilled={!!background}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+              />
+            )}
+            {background && selectedClass && (
+              <Step
+                stepNumber={4}
+                title="4. Choisis tes compétences"
+                content={<SkillSelection />}
+                isFilled={
+                  selectedSkills.length === selectedClass?.skills.canSelect
+                }
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+              />
+            )}
+            {selectedSkills.length === selectedClass?.skills.canSelect && (
+              <Step
+                stepNumber={5}
+                title="5. Calcul tes caractéristiques"
+                content={<AbilityScores />}
+                isFilled={areAbilitiesCalculated}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+              />
+            )}
+            {Object.values(abilityScores).some((score) => score !== 10) && (
+              <Step
+                stepNumber={6}
+                title="6. Choisis tes équipements"
+                content={<EquipmentSelection />}
+                isFilled={
+                  selectedEquipment?.filter(Boolean).length ===
+                  classes.find((c) => c.name === selectedClass?.name)?.equipment
+                    .length
+                }
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+              />
+            )}
+            {selectedEquipment?.filter(Boolean).length ===
+              classes.find((c) => c.name === selectedClass?.name)?.equipment
+                .length && (
+              <Step
+                stepNumber={7}
+                title="7. Définis ta personnalité"
+                content={<Details />}
+                isFilled={!!details.name}
+                activeStep={activeStep}
+                setActiveStep={setActiveStep}
+              />
+            )}
+
+            {isCharacterComplete() && (
+              <div className="mt-8 flex justify-center">
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="bg-primary hover:bg-primary-dark font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-110 flex items-center gap-3 text-lg border-2 border-green-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h-2v5.586l-1.293-1.293z" />
+                  </svg>
+                  Sauvegarde ton personnage
+                </button>
+              </div>
+            )}
+          </div>
+          <div
+            className={`w-full ${
+              !selectedClass && !selectedRace
+                ? "lg:w-0"
+                : "lg:w-1/3 flex flex-col"
+            } transition-all duration-500 ease-in-out`}
+          >
+            <div className="pt-4 sm:pt-10 pl-2 sm:pl-7 pb-10">
+              <CharacterSheet />
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
