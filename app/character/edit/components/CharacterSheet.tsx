@@ -23,7 +23,7 @@ function CharacterSheet() {
   if (!selectedRace) return null;
 
   return (
-    <div className="bg-white shadow-2xl rounded-lg p-4 sm:p-6 w-full sm:min-w-96">
+    <div>
       {/* Character Header */}
       <div className="mb-4 sm:mb-6 text-center">
         <div className="relative space-y-2">
