@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Suspense, useState } from "react";
+import { useEffect, Suspense } from "react";
 import RaceSelection from "./RaceSelection";
 import ClassSelection from "./ClassSelection";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -38,7 +38,7 @@ function LoadingOverlay() {
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
         </svg>
-        <div className="text-xl font-semibold">Sauvegarde en cours...</div>
+        <div className="text-xl font-semibold">Chargement en cours...</div>
       </div>
     </div>
   );
@@ -64,7 +64,7 @@ function CharacterBuildContent() {
     characterId,
     games,
     details,
-    isSaving,
+    isLoading,
   } = useCharacter();
 
   const characterClassParam = searchParams.get("characterClass");
@@ -72,13 +72,10 @@ function CharacterBuildContent() {
   const characterIdParam = searchParams.get("id");
   const gameId = searchParams.get("gameId");
 
-  const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     if (characterIdParam) {
       loadCharacter(characterIdParam);
       setActiveStep(null);
-      setIsLoading(false);
       return;
     }
     const classFromParam =
@@ -134,17 +131,9 @@ function CharacterBuildContent() {
     await saveCharacter(gameId);
   };
 
-  if (characterId && isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-xl font-semibold">Chargement du personnage...</div>
-      </div>
-    );
-  }
-
   return (
     <>
-      {isSaving && <LoadingOverlay />}
+      {isLoading && <LoadingOverlay />}
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 text-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div
@@ -197,9 +186,10 @@ function CharacterBuildContent() {
                       href={`/character-quiz${
                         gameId ? `?gameId=${gameId}` : ""
                       }`}
+                      className="block"
                     >
-                      <span className="inline-block bg-primary px-6 py-3 rounded-lg font-medium hover:bg-primary-dark transition-colors duration-200">
-                        Réponds à notre quiz !
+                      <span className="inline-block bg-red-800 text-white  px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:bg-primary-dark hover:scale-105 transform transition-all duration-200 ">
+                        ✨ Réponds au quizz ✨
                       </span>
                     </Link>
                   </div>
@@ -290,7 +280,7 @@ function CharacterBuildContent() {
                 <div className="mt-12 mb-8">
                   <button
                     onClick={handleSave}
-                    disabled={isSaving}
+                    disabled={isLoading}
                     className="w-full bg-green-200 hover:bg-primary-dark font-bold py-4 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     <svg
@@ -301,7 +291,7 @@ function CharacterBuildContent() {
                     >
                       <path d="M17 3H5C3.89 3 3 3.9 3 5V19C3 20.1 3.89 21 5 21H19C20.1 21 21 20.1 21 19V7L17 3ZM12 19C10.34 19 9 17.66 9 16C9 14.34 10.34 13 12 13C13.66 13 15 14.34 15 16C15 17.66 13.66 19 12 19ZM15 9H5V5H15V9Z" />
                     </svg>
-                    Sauvegarder le personnage
+                    Sauvegarde ton personnage
                   </button>
                 </div>
               )}

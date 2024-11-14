@@ -51,14 +51,18 @@ export default function Game() {
                 .map((_, index) => (
                   <div
                     key={`skeleton-${index}`}
-                    className="bg-white p-6 rounded-xl shadow-md animate-pulse"
+                    className="bg-white p-6 rounded-xl shadow-md"
                   >
-                    <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-                    <div className="space-y-3">
-                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                      <div className="h-4 bg-gray-200 rounded w-1/3"></div>
-                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-                      <div className="h-4 bg-gray-200 rounded w-1/4 mt-4"></div>
+                    <div className="h-8 bg-gray-200 rounded w-3/4 mb-6"></div>
+                    <div className="space-y-4">
+                      {[...Array(3)].map((_, i) => (
+                        <div key={i} className="flex items-center">
+                          <div className="h-4 bg-gray-200 rounded w-[100px]"></div>
+                          <div className="h-4 bg-gray-200 rounded w-1/2 ml-2"></div>
+                        </div>
+                      ))}
+                      <div className="h-[1px] bg-gray-100 my-4"></div>
+                      <div className="h-4 bg-gray-200 rounded w-2/5"></div>
                     </div>
                   </div>
                 ))
