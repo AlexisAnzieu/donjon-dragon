@@ -194,25 +194,23 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         }),
       };
 
-      if (characterId) {
-        // TODO: Implement PUT/PATCH endpoint for updates
-        throw new Error("Update not implemented yet");
-      } else {
-        const response = await fetch("/api/character", {
-          method: "POST",
+      const response = await fetch(
+        characterId ? `/api/character?id=${characterId}` : "/api/character",
+        {
+          method: characterId ? "PUT" : "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(data),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to save character");
         }
+      );
 
-        const character = await response.json();
-        setCharacterId(character.id);
+      if (!response.ok) {
+        throw new Error("Failed to save character");
       }
+
+      const character = await response.json();
+      setCharacterId(character.id);
     } catch (error) {
       console.error("Failed to save character:", error);
       throw error;

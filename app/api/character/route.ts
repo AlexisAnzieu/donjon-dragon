@@ -77,3 +77,30 @@ export async function DELETE(request: Request) {
     await prisma.$disconnect();
   }
 }
+
+export async function PUT(request: Request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+    const data = await request.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: "Character ID is required" },
+        { status: 400 }
+      );
+    }
+
+    const character = await prisma.character.update({
+      where: { id },
+      data,
+    });
+
+    return NextResponse.json(character);
+  } catch (error) {
+    console.log(error);
+    return NextResponse.json({ error }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
