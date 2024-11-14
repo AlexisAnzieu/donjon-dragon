@@ -52,6 +52,7 @@ type CharacterContextType = {
   games: string[];
   details: Details;
   setDetails: (traits: Details) => void;
+  isSaving: boolean;
 };
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -87,6 +88,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     bonds: "",
     flaws: "",
   });
+  const [isSaving, setIsSaving] = useState(false);
 
   const handleRaceChange = (race: Race | null) => {
     setAreAbilitiesCalculated(false);
@@ -169,6 +171,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
   };
 
   const saveCharacter = async (gameId?: string | null) => {
+    setIsSaving(true);
     try {
       const data: Prisma.CharacterCreateInput = {
         race: selectedRace?.name,
@@ -214,6 +217,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       console.error("Failed to save character:", error);
       throw error;
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -294,6 +299,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         games,
         details,
         setDetails,
+        isSaving,
       }}
     >
       {children}
