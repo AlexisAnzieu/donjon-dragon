@@ -70,6 +70,7 @@ export type Class = {
     canSelect: number;
     choices: string[];
   };
+  minorSpells: number; // New attribute
 };
 
 export type Equipment = {
@@ -187,6 +188,7 @@ export const classes: Class[] = [
         "Persuasion",
       ],
     },
+    minorSpells: 2, // Bards know 2 cantrips at 1st level
   },
   {
     name: "Clerc",
@@ -211,6 +213,7 @@ export const classes: Class[] = [
       canSelect: 2,
       choices: ["Histoire", "Intuition", "Médecine", "Persuasion", "Religion"],
     },
+    minorSpells: 3, // Clerics know 3 cantrips at 1st level
   },
   {
     name: "Magicien",
@@ -240,6 +243,7 @@ export const classes: Class[] = [
         "Religion",
       ],
     },
+    minorSpells: 3, // Wizards know 3 cantrips at 1st level
   },
   {
     name: "Guerrier",
@@ -276,6 +280,7 @@ export const classes: Class[] = [
         "Survie",
       ],
     },
+    minorSpells: 0, // Fighters don't have cantrips at 1st level
   },
   {
     name: "Roublard",
@@ -320,6 +325,7 @@ export const classes: Class[] = [
         "Tromperie",
       ],
     },
+    minorSpells: 0, // Rogues don't have cantrips at 1st level
   },
 ];
 export const minorSpells: Record<
