@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { AbilityScoreKey } from "../AbilityScores";
 import { GiSwordman } from "react-icons/gi";
-import { skills } from "../races";
+import { skills, equipments } from "../races";
 import TooltipText from "@/app/components/TooltipText";
 import { useCharacter } from "../characterContext";
 
@@ -19,6 +19,12 @@ function CharacterSheet() {
     selectedSkills,
     details,
   } = useCharacter();
+
+  const getEquipmentDescription = (itemName: string) => {
+    return equipments.find(
+      (e) => e.name.toLowerCase() === itemName.toLowerCase()
+    )?.description;
+  };
 
   if (!selectedRace) return null;
 
@@ -259,9 +265,20 @@ function CharacterSheet() {
                           key={index}
                           className="flex items-center bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100"
                         >
-                          <span className="text-sm text-gray-700">
-                            {equipment}
-                          </span>
+                          {getEquipmentDescription(equipment) ? (
+                            <TooltipText text={equipment}>
+                              <>
+                                <div className="font-medium">{equipment}</div>
+                                <div className="text-sm text-slate-500">
+                                  {getEquipmentDescription(equipment)}
+                                </div>
+                              </>
+                            </TooltipText>
+                          ) : (
+                            <span className="text-sm text-gray-700">
+                              {equipment}
+                            </span>
+                          )}
                         </div>
                       )
                   )}
@@ -269,7 +286,7 @@ function CharacterSheet() {
               </div>
             )}
             <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
-              <div className="font-semibold mb-3 ">
+              <div className="font-semibold mb-3">
                 Équipements {selectedClass?.name}
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -280,9 +297,20 @@ function CharacterSheet() {
                         key={index}
                         className="flex items-center bg-white p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100"
                       >
-                        <span className="text-sm text-gray-700">
-                          {equipment}
-                        </span>
+                        {getEquipmentDescription(equipment) ? (
+                          <TooltipText text={equipment}>
+                            <>
+                              <div className="font-medium">{equipment}</div>
+                              <div className="text-sm text-slate-500">
+                                {getEquipmentDescription(equipment)}
+                              </div>
+                            </>
+                          </TooltipText>
+                        ) : (
+                          <span className="text-sm text-gray-700">
+                            {equipment}
+                          </span>
+                        )}
                       </div>
                     )
                 )}
