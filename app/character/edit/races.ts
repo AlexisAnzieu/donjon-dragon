@@ -99,6 +99,56 @@ export const equipmentData: Record<string, Equipment> = {
     },
   },
 };
+export const equipments = [
+  {
+    name: "Paquetage de diplomate",
+    description:
+      "Comprend un coffre, 2 étuis à cartes ou parchemins, des vêtements fins, une bouteille d'encre, une plume d'écriture, une lampe, deux flasques d'huile, 5 feuilles de papier, un flacon de parfum, de la cire à cacheter et du savon.",
+    price: "39 po",
+  },
+  {
+    name: "Paquetage d'artiste",
+    description:
+      "Comprend un sac à dos, un sac de couchage, 2 costumes, 5 bougies, 5 jours de rations, une gourde d'eau et un kit de déguisement.",
+    price: "40 po",
+  },
+  {
+    name: "Paquetage de cambrioleur",
+    description:
+      "Comprend un sac à dos, un sac de 1000 billes, 3 mètres de chaîne, une cloche, 5 bougies, un pied-de-biche, un marteau, 10 pitons, une lanterne à capuchon, 2 flasques d'huile, 5 jours de rations, une boite d'allume-feu et une gourde d'eau. Le sac comprend aussi 15 mètres de corde de chanvre attachée sur son côté.",
+    price: "16 po",
+  },
+  {
+    name: "Paquetage de diplomate",
+    description:
+      "Comprend un coffre, 2 étuis à cartes ou parchemins, des vêtements fins, une bouteille d'encre, une plume d'écriture, une lampe, deux flasques d'huile, 5 feuilles de papier, un flacon de parfum, de la cire à cacheter et du savon.",
+    price: "39 po",
+  },
+  {
+    name: "Paquetage d'ecclésiastique",
+    description:
+      "Comprend un sac à dos, une couverture, 10 bougies, une boite d'allume-feu, une boîte pour l'aumône, 2 bâtonnets d'encens, un encensoir, des habits de cérémonie, 2 jours de rations et une gourde d'eau.",
+    price: "19 po",
+  },
+  {
+    name: "Paquetage d'érudit",
+    description:
+      "Comprend un sac à dos, un livre de connaissance, une bouteille d'encre, une plume d'écriture, 10 feuilles de parchemin, un petit sac de sable et un petit couteau.",
+    price: "40 po",
+  },
+  {
+    name: "Paquetage d'explorateur",
+    description:
+      "Comprend un sac à dos, un sac de couchage, une gamelle, une boite d'allume-feu, 10 torches, 10 jours de rations et une gourde d'eau. Le sac comprend aussi 15 mètres de corde de chanvre attachée sur son côté.",
+    price: "10 po",
+  },
+  {
+    name: "Paquetage d'exploration souterraine",
+    description:
+      "Comprend un sac à dos, un pied de biche, un marteau, 10 pitons, 10 torches, une boite d'allume-feu, 10 jours de rations et une gourde d'eau. Le sac comprend aussi 15 mètres de corde de chanvre attachée sur son côté.",
+    price: "12 po",
+  },
+];
 
 export const classes: Class[] = [
   {

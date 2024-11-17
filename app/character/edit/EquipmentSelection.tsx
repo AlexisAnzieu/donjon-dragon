@@ -1,6 +1,7 @@
 import React from "react";
 import { useCharacter } from "./characterContext";
-import { classes } from "./races";
+import { classes, equipments } from "./races";
+import TooltipText from "../../components/TooltipText";
 
 interface EquipmentChoiceProps {
   choices: string[];
@@ -14,37 +15,63 @@ const EquipmentChoice: React.FC<EquipmentChoiceProps> = ({
   choiceIndex,
   selectedItem,
   onSelect,
-}) => (
-  <div className="transform hover:scale-[1.01] transition-all duration-300">
-    <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200 shadow-md hover:shadow-lg transition-all">
-      <h3 className="text-lg font-semibold text-slate-800 mb-4">
-        Lot nº{choiceIndex + 1}
-      </h3>
-      <div className="space-y-2">
-        {choices.map((item, itemIndex) => (
-          <div
-            key={itemIndex}
-            onClick={() => onSelect(choiceIndex, item)}
-            className={`p-3 rounded-lg transition-all duration-200 cursor-pointer
-              ${
-                selectedItem === item
-                  ? "bg-blue-50 border-l-4 border-blue-400"
-                  : "bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50"
-              }`}
-          >
-            <p
-              className={`font-medium ${
-                selectedItem === item ? "text-blue-700" : "text-slate-600"
-              }`}
-            >
-              {item}
-            </p>
-          </div>
-        ))}
+}) => {
+  const getEquipmentDescription = (itemName: string) => {
+    return equipments.find(
+      (e) => e.name.toLowerCase() === itemName.toLowerCase()
+    )?.description;
+  };
+
+  return (
+    <div className="transform hover:scale-[1.01] transition-all duration-300">
+      <div className="bg-white/80 backdrop-blur-sm rounded-xl p-6 border border-slate-200 shadow-md hover:shadow-lg transition-all">
+        <h3 className="text-lg font-semibold text-slate-800 mb-4">
+          Lot nº{choiceIndex + 1}
+        </h3>
+        <div className="space-y-2">
+          {choices.map((item, itemIndex) => {
+            const description = getEquipmentDescription(item);
+            const Content = () => (
+              <p
+                className={`font-medium ${
+                  selectedItem === item ? "text-blue-700" : "text-slate-600"
+                }`}
+              >
+                {item}
+              </p>
+            );
+
+            return (
+              <div
+                key={itemIndex}
+                onClick={() => onSelect(choiceIndex, item)}
+                className={`p-3 rounded-lg transition-all duration-200 cursor-pointer
+                  ${
+                    selectedItem === item
+                      ? "bg-blue-50 border-l-8 border-blue-400"
+                      : "bg-slate-50 border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50"
+                  }`}
+              >
+                {description ? (
+                  <TooltipText text={item}>
+                    <>
+                      <div className="font-medium">{item}</div>
+                      <div className="text-sm text-slate-500">
+                        {description}
+                      </div>
+                    </>
+                  </TooltipText>
+                ) : (
+                  <Content />
+                )}
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 function EquipmentSelection() {
   const { selectedClass, selectedEquipment, handleEquipmentChange } =

@@ -17,7 +17,7 @@ import Details from "./Details";
 
 function LoadingOverlay() {
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-10 flex items-center justify-center">
       <div className="bg-white p-8 rounded-xl shadow-xl flex flex-col items-center gap-4">
         <svg
           className="animate-spin h-10 w-10 text-primary"
