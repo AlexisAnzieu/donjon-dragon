@@ -322,6 +322,198 @@ export const classes: Class[] = [
     },
   },
 ];
+export const minorSpells: Record<
+  string,
+  {
+    name: string;
+    description: string;
+    duration: string;
+    portée: string;
+    composantes: string;
+  }[]
+> = {
+  Barde: [
+    {
+      name: "Lumière",
+      description: "Fait briller un objet comme une torche pendant 1 heure.",
+      duration: "1 heure",
+      portée: "Contact",
+      composantes: "V, M (une luciole ou de la mousse phosphorescente)",
+    },
+    {
+      name: "Lumières dansantes",
+      description:
+        "Crée jusqu'à quatre lumières flottantes qui ressemblent à des lanternes ou des torches.",
+      duration: "1 minute",
+      portée: "36 mètres",
+      composantes: "V, S, M (un bout de phosphore ou un ver luisant)",
+    },
+    {
+      name: "Main du mage",
+      description:
+        "Crée une main spectrale qui peut manipuler des objets à distance.",
+      duration: "1 minute",
+      portée: "9 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Message",
+      description: "Permet de chuchoter un message à une créature distante.",
+      duration: "1 round",
+      portée: "36 mètres",
+      composantes: "V, S, M (un petit bout de fil de cuivre)",
+    },
+    {
+      name: "Moquerie cruelle",
+      description:
+        "Inflige 1d4 dégâts psychiques en insultant magiquement une créature.",
+      duration: "Instantanée",
+      portée: "18 mètres",
+      composantes: "V",
+    },
+    {
+      name: "Prestidigitation",
+      description:
+        "Permet de créer des effets magiques mineurs comme nettoyer, allumer une flamme, etc.",
+      duration: "Jusqu'à 1 heure",
+      portée: "3 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Réparation",
+      description: "Répare une cassure ou une déchirure unique dans un objet.",
+      duration: "Instantanée",
+      portée: "Contact",
+      composantes: "V, S, M (deux aimants)",
+    },
+  ],
+  Clerc: [
+    {
+      name: "Aspersion acide",
+      description: "Lance une bulle d'acide qui inflige 1d6 dégâts d'acide.",
+      duration: "Instantanée",
+      portée: "18 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Flamme sacrée",
+      description:
+        "Rayonnement semblable à des flammes qui inflige 1d8 dégâts radiants.",
+      duration: "Instantanée",
+      portée: "18 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Lumière",
+      description: "Fait briller un objet comme une torche pendant 1 heure.",
+      duration: "1 heure",
+      portée: "Contact",
+      composantes: "V, M (une luciole ou de la mousse phosphorescente)",
+    },
+    {
+      name: "Protection contre les armes",
+      description: "Crée une barrière magique qui donne +1 à la CA.",
+      duration: "1 round",
+      portée: "Personnelle",
+      composantes: "V, S",
+    },
+    {
+      name: "Réparation",
+      description: "Répare une cassure ou une déchirure unique dans un objet.",
+      duration: "Instantanée",
+      portée: "Contact",
+      composantes: "V, S, M (deux aimants)",
+    },
+    {
+      name: "Résistance",
+      description:
+        "Le sujet peut ajouter 1d4 à un jet de sauvegarde de son choix.",
+      duration: "1 minute",
+      portée: "Contact",
+      composantes: "V, S, M (une cape miniature)",
+    },
+    {
+      name: "Thaumaturgie",
+      description:
+        "Crée des effets surnaturels mineurs comme faire trembler le sol ou amplifier sa voix.",
+      duration: "Jusqu'à 1 minute",
+      portée: "9 mètres",
+      composantes: "V",
+    },
+  ],
+  Magicien: [
+    {
+      name: "Aspersion acide",
+      description: "Lance une bulle d'acide qui inflige 1d6 dégâts d'acide.",
+      duration: "Instantanée",
+      portée: "18 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Illusion mineure",
+      description:
+        "Crée un son ou une image illusoire qui dure jusqu'à 1 minute.",
+      duration: "1 minute",
+      portée: "9 mètres",
+      composantes: "S, M (un peu de laine)",
+    },
+    {
+      name: "Lumière",
+      description: "Fait briller un objet comme une torche pendant 1 heure.",
+      duration: "1 heure",
+      portée: "Contact",
+      composantes: "V, M (une luciole ou de la mousse phosphorescente)",
+    },
+    {
+      name: "Main du mage",
+      description:
+        "Crée une main spectrale qui peut manipuler des objets à distance.",
+      duration: "1 minute",
+      portée: "9 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Message",
+      description: "Permet de chuchoter un message à une créature distante.",
+      duration: "1 round",
+      portée: "36 mètres",
+      composantes: "V, S, M (un petit bout de fil de cuivre)",
+    },
+    {
+      name: "Prestidigitation",
+      description:
+        "Permet de créer des effets magiques mineurs comme nettoyer, allumer une flamme, etc.",
+      duration: "Jusqu'à 1 heure",
+      portée: "3 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Projectile magique",
+      description:
+        "Lance trois projectiles d'énergie infligeant 1d4+1 dégâts de force chacun.",
+      duration: "Instantanée",
+      portée: "36 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Rayon de givre",
+      description:
+        "Rayon de froid qui inflige 1d8 dégâts de froid et réduit la vitesse.",
+      duration: "Instantanée",
+      portée: "18 mètres",
+      composantes: "V, S",
+    },
+    {
+      name: "Réparation",
+      description: "Répare une cassure ou une déchirure unique dans un objet.",
+      duration: "Instantanée",
+      portée: "Contact",
+      composantes: "V, S, M (deux aimants)",
+    },
+  ],
+  Guerrier: [],
+  Roublard: [],
+};
 
 export const skills = {
   acrobaties: { name: "Acrobaties", ability: "dextérité" },
