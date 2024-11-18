@@ -269,7 +269,7 @@ function CharacterBuildContent() {
                       ?.equipment.length && (
                     <Step
                       stepNumber={7}
-                      title="7. Choisis tes sorts"
+                      title="7. Choisis tes sorts mineurs"
                       content={<SpellSelection />}
                       isFilled={
                         !selectedClass?.cantrips ||
