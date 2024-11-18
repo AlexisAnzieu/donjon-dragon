@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { AbilityScoreKey } from "../AbilityScores";
-import { GiSwordman } from "react-icons/gi";
+import { GiSwordman, GiSpellBook } from "react-icons/gi";
 import { skills, equipments } from "../races";
 import TooltipText from "@/app/components/TooltipText";
 import { useCharacter } from "../characterContext";
@@ -18,6 +18,7 @@ function CharacterSheet() {
     selectedEquipment,
     selectedSkills,
     details,
+    selectedSpells,
   } = useCharacter();
 
   const getEquipmentDescription = (itemName: string) => {
@@ -316,6 +317,36 @@ function CharacterSheet() {
                 )}
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Spells Section */}
+      {selectedSpells.length > 0 && (
+        <div className="mt-4 sm:mt-6">
+          <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4 text-center border-b-2 border-red-700 pb-2 flex items-center justify-center gap-2">
+            <GiSpellBook />
+            Sorts
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {selectedSpells.map((spell) => (
+              <div
+                key={spell.name}
+                className="bg-gray-50 p-3 rounded-lg shadow-sm hover:shadow-md transition-all duration-200"
+              >
+                <TooltipText text={spell.name}>
+                  <>
+                    <div className="font-medium">{spell.name}</div>
+                    <div className="text-sm text-gray-500">
+                      {spell.description}
+                    </div>
+                    <div className="text-xs text-gray-400 mt-1">
+                      Portée: {spell.portée} | Durée: {spell.duration}
+                    </div>
+                  </>
+                </TooltipText>
+              </div>
+            ))}
           </div>
         </div>
       )}

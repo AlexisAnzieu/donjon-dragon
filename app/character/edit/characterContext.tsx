@@ -53,6 +53,20 @@ type CharacterContextType = {
   details: Details;
   setDetails: (traits: Details) => void;
   isLoading: boolean;
+  selectedSpells: {
+    name: string;
+    description: string;
+    duration: string;
+    portée: string;
+    composantes: string;
+  }[];
+  handleSpellChange: (spell: {
+    name: string;
+    description: string;
+    duration: string;
+    portée: string;
+    composantes: string;
+  }) => void;
 };
 
 const CharacterContext = createContext<CharacterContextType | undefined>(
@@ -89,6 +103,15 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     flaws: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedSpells, setSelectedSpells] = useState<
+    {
+      name: string;
+      description: string;
+      duration: string;
+      portée: string;
+      composantes: string;
+    }[]
+  >([]);
 
   const handleRaceChange = (race: Race | null) => {
     setAreAbilitiesCalculated(false);
@@ -101,6 +124,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     setSelectedClass(characterClass);
     setSelectedEquipment(null); // Reset equipment
     setSelectedSkills([]); // Reset skills when class changes
+    setSelectedSpells([]); // Reset spells when class changes
     if (characterClass) setActiveStep(3); // Advance to background selection
   };
 
@@ -125,6 +149,37 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     setSelectedEquipment(equipment);
     if (equipment?.filter(Boolean).length === selectedClass?.equipment.length)
       setActiveStep(7);
+  };
+
+  const handleSpellChange = (spell: {
+    name: string;
+    description: string;
+    duration: string;
+    portée: string;
+    composantes: string;
+  }) => {
+    if (!selectedClass?.cantrips) return;
+
+    setSelectedSpells((prev) => {
+      const isAlreadySelected = prev.some((s) => s.name === spell.name);
+      if (isAlreadySelected) {
+        return prev.filter((s) => s.name !== spell.name);
+      }
+
+      if (prev.length >= selectedClass?.cantrips?.canSelect) {
+        return prev;
+      }
+
+      const updatedSpells = isAlreadySelected
+        ? prev.filter((s) => s.name !== spell.name)
+        : [...prev, spell];
+
+      if (updatedSpells.length === selectedClass.cantrips.canSelect) {
+        setActiveStep(8);
+      }
+
+      return updatedSpells;
+    });
   };
 
   const calculateModifier = (abilityScore: number): number => {
@@ -188,6 +243,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         bonds: details.bonds,
         flaws: details.flaws,
         hp: calculateHP(),
+        spells: selectedSpells,
         ...(gameId && {
           games: {
             connect: {
@@ -262,6 +318,15 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
       setRollDetails(
         character.rollDetails as Record<AbilityScoreKey, RollDetail | null>
       );
+      setSelectedSpells(
+        (character.spells as {
+          name: string;
+          description: string;
+          duration: string;
+          portée: string;
+          composantes: string;
+        }[]) || []
+      );
       setAreAbilitiesCalculated(true);
     } catch (error) {
       console.error("Failed to load character:", error);
@@ -303,6 +368,8 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         details,
         setDetails,
         isLoading,
+        selectedSpells,
+        handleSpellChange,
       }}
     >
       {children}

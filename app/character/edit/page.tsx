@@ -14,6 +14,7 @@ import EquipmentSelection from "./EquipmentSelection";
 import SkillSelection from "./SkillSelection";
 import { CharacterProvider, useCharacter } from "./characterContext";
 import Details from "./Details";
+import SpellSelection from "./SpellSelection";
 
 function LoadingOverlay() {
   return (
@@ -65,6 +66,7 @@ function CharacterBuildContent() {
     games,
     details,
     isLoading,
+    selectedSpells,
   } = useCharacter();
 
   const characterClassParam = searchParams.get("characterClass");
@@ -267,13 +269,29 @@ function CharacterBuildContent() {
                       ?.equipment.length && (
                     <Step
                       stepNumber={7}
-                      title="7. Définis ta personnalité"
-                      content={<Details />}
-                      isFilled={!!details.name}
+                      title="7. Choisis tes sorts"
+                      content={<SpellSelection />}
+                      isFilled={
+                        !selectedClass?.cantrips ||
+                        selectedSpells?.length ===
+                          selectedClass?.cantrips.canSelect
+                      }
                       activeStep={activeStep}
                       setActiveStep={setActiveStep}
                     />
                   )}
+                {(!selectedClass?.cantrips ||
+                  selectedSpells?.length ===
+                    selectedClass?.cantrips.canSelect) && (
+                  <Step
+                    stepNumber={8}
+                    title="8. Définis ta personnalité"
+                    content={<Details />}
+                    isFilled={!!details.name}
+                    activeStep={activeStep}
+                    setActiveStep={setActiveStep}
+                  />
+                )}
               </div>
 
               {isCharacterComplete() && (

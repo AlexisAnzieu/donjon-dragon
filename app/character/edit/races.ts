@@ -70,7 +70,9 @@ export type Class = {
     canSelect: number;
     choices: string[];
   };
-  minorSpells: number; // New attribute
+  cantrips: {
+    canSelect: number;
+  };
 };
 
 export type Equipment = {
@@ -188,7 +190,9 @@ export const classes: Class[] = [
         "Persuasion",
       ],
     },
-    minorSpells: 2, // Bards know 2 cantrips at 1st level
+    cantrips: {
+      canSelect: 2,
+    },
   },
   {
     name: "Clerc",
@@ -213,7 +217,9 @@ export const classes: Class[] = [
       canSelect: 2,
       choices: ["Histoire", "Intuition", "Médecine", "Persuasion", "Religion"],
     },
-    minorSpells: 3, // Clerics know 3 cantrips at 1st level
+    cantrips: {
+      canSelect: 3,
+    },
   },
   {
     name: "Magicien",
@@ -243,7 +249,9 @@ export const classes: Class[] = [
         "Religion",
       ],
     },
-    minorSpells: 3, // Wizards know 3 cantrips at 1st level
+    cantrips: {
+      canSelect: 3,
+    },
   },
   {
     name: "Guerrier",
@@ -280,7 +288,9 @@ export const classes: Class[] = [
         "Survie",
       ],
     },
-    minorSpells: 0, // Fighters don't have cantrips at 1st level
+    cantrips: {
+      canSelect: 0,
+    },
   },
   {
     name: "Roublard",
@@ -325,10 +335,12 @@ export const classes: Class[] = [
         "Tromperie",
       ],
     },
-    minorSpells: 0, // Rogues don't have cantrips at 1st level
+    cantrips: {
+      canSelect: 0,
+    },
   },
 ];
-export const minorSpells: Record<
+export const spells: Record<
   string,
   {
     name: string;
@@ -336,6 +348,7 @@ export const minorSpells: Record<
     duration: string;
     portée: string;
     composantes: string;
+    level: number;
   }[]
 > = {
   Barde: [
@@ -345,6 +358,7 @@ export const minorSpells: Record<
       duration: "1 heure",
       portée: "Contact",
       composantes: "V, M (une luciole ou de la mousse phosphorescente)",
+      level: 0,
     },
     {
       name: "Lumières dansantes",
@@ -353,6 +367,7 @@ export const minorSpells: Record<
       duration: "1 minute",
       portée: "36 mètres",
       composantes: "V, S, M (un bout de phosphore ou un ver luisant)",
+      level: 0,
     },
     {
       name: "Main du mage",
@@ -361,6 +376,7 @@ export const minorSpells: Record<
       duration: "1 minute",
       portée: "9 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Message",
@@ -368,6 +384,7 @@ export const minorSpells: Record<
       duration: "1 round",
       portée: "36 mètres",
       composantes: "V, S, M (un petit bout de fil de cuivre)",
+      level: 0,
     },
     {
       name: "Moquerie cruelle",
@@ -376,6 +393,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "18 mètres",
       composantes: "V",
+      level: 0,
     },
     {
       name: "Prestidigitation",
@@ -384,6 +402,7 @@ export const minorSpells: Record<
       duration: "Jusqu'à 1 heure",
       portée: "3 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Réparation",
@@ -391,6 +410,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "Contact",
       composantes: "V, S, M (deux aimants)",
+      level: 0,
     },
   ],
   Clerc: [
@@ -400,6 +420,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "18 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Flamme sacrée",
@@ -408,6 +429,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "18 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Lumière",
@@ -415,6 +437,7 @@ export const minorSpells: Record<
       duration: "1 heure",
       portée: "Contact",
       composantes: "V, M (une luciole ou de la mousse phosphorescente)",
+      level: 0,
     },
     {
       name: "Protection contre les armes",
@@ -422,6 +445,7 @@ export const minorSpells: Record<
       duration: "1 round",
       portée: "Personnelle",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Réparation",
@@ -429,6 +453,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "Contact",
       composantes: "V, S, M (deux aimants)",
+      level: 0,
     },
     {
       name: "Résistance",
@@ -437,6 +462,7 @@ export const minorSpells: Record<
       duration: "1 minute",
       portée: "Contact",
       composantes: "V, S, M (une cape miniature)",
+      level: 0,
     },
     {
       name: "Thaumaturgie",
@@ -445,6 +471,7 @@ export const minorSpells: Record<
       duration: "Jusqu'à 1 minute",
       portée: "9 mètres",
       composantes: "V",
+      level: 0,
     },
   ],
   Magicien: [
@@ -454,6 +481,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "18 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Illusion mineure",
@@ -462,6 +490,7 @@ export const minorSpells: Record<
       duration: "1 minute",
       portée: "9 mètres",
       composantes: "S, M (un peu de laine)",
+      level: 0,
     },
     {
       name: "Lumière",
@@ -469,6 +498,7 @@ export const minorSpells: Record<
       duration: "1 heure",
       portée: "Contact",
       composantes: "V, M (une luciole ou de la mousse phosphorescente)",
+      level: 0,
     },
     {
       name: "Main du mage",
@@ -477,6 +507,7 @@ export const minorSpells: Record<
       duration: "1 minute",
       portée: "9 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Message",
@@ -484,6 +515,7 @@ export const minorSpells: Record<
       duration: "1 round",
       portée: "36 mètres",
       composantes: "V, S, M (un petit bout de fil de cuivre)",
+      level: 0,
     },
     {
       name: "Prestidigitation",
@@ -492,6 +524,7 @@ export const minorSpells: Record<
       duration: "Jusqu'à 1 heure",
       portée: "3 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Projectile magique",
@@ -500,6 +533,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "36 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Rayon de givre",
@@ -508,6 +542,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "18 mètres",
       composantes: "V, S",
+      level: 0,
     },
     {
       name: "Réparation",
@@ -515,6 +550,7 @@ export const minorSpells: Record<
       duration: "Instantanée",
       portée: "Contact",
       composantes: "V, S, M (deux aimants)",
+      level: 0,
     },
   ],
   Guerrier: [],
