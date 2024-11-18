@@ -63,7 +63,7 @@ export default function SkillSelection() {
             }
           >
             <div className="p-4 flex-grow flex flex-col">
-              <h2 className="text-xl font-bold text-primary mb-2">
+              <h2 className="text-lg font-bold text-primary mb-2">
                 {skill}
                 {background?.skills.includes(skill) && ` (${background.name})`}
               </h2>

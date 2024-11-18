@@ -102,8 +102,8 @@ function EquipmentSelection() {
   };
 
   return (
-    <div className="overflow-hidden h-full p-8">
-      <div className="space-y-8 max-w-6xl mx-auto">
+    <div className="overflow-hidden h-full p-2">
+      <div className="space-y-3 max-w-6xl mx-auto">
         {!!defaultEquipment.length && (
           <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-slate-200">
             <h3 className="text-xl font-bold text-slate-800">

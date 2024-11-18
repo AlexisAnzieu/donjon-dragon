@@ -19,7 +19,7 @@ export default function SpellSelection() {
 
   const getSpellCardClassName = (spell: Spell) => {
     const baseClasses =
-      "bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 p-2";
+      "bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 flex flex-col h-full";
     const selectableClass = isSpellSelected(spell) ? "ring-2 ring-primary" : "";
     const disabledClass = isSpellDisabled(spell)
       ? "opacity-50 cursor-not-allowed"
@@ -51,12 +51,28 @@ export default function SpellSelection() {
             onClick={() => handleSpellToggle(spell)}
             className={getSpellCardClassName(spell)}
           >
-            <h3 className="text-lg font-semibold mb-2">{spell.name}</h3>
-            <div className="space-y-2 text-sm text-gray-600">
-              <p>{spell.description}</p>
-              <div className="flex justify-between text-xs text-gray-500">
-                <span>Durée: {spell.duration}</span>
-                <span>Portée: {spell.portée}</span>
+            <div className="p-4 flex-grow flex flex-col">
+              <h2 className="text-xl font-bold text-primary mb-2">
+                {spell.name}
+              </h2>
+              <div className="flex-grow">
+                <p className="text-gray-600">{spell.description}</p>
+              </div>
+            </div>
+            <div className="px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 mt-auto border-t border-gray-200">
+              <div className="space-y-3">
+                <div className="flex items-center">
+                  <p className="text-sm font-medium text-gray-700">
+                    Durée:{" "}
+                    <span className="text-gray-600">{spell.duration}</span>
+                  </p>
+                </div>
+                <div className="flex items-center">
+                  <p className="text-sm font-medium text-gray-700">
+                    Portée:{" "}
+                    <span className="text-gray-600">{spell.portée}</span>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
