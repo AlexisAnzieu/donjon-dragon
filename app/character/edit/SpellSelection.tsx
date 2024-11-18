@@ -1,4 +1,4 @@
-import { spells } from "./races";
+import { Spell, spells } from "./races";
 import { useCharacter } from "./characterContext";
 
 export default function SpellSelection() {
@@ -8,18 +8,18 @@ export default function SpellSelection() {
 
   const availableSpells = spells[selectedClass.name] || [];
 
-  const isSpellSelected = (spell: any) =>
+  const isSpellSelected = (spell: Spell) =>
     selectedSpells.some((s) => s.name === spell.name);
 
   const canSelectMoreSpells = () =>
     selectedSpells.length < (selectedClass?.cantrips?.canSelect || 0);
 
-  const isSpellDisabled = (spell: any) =>
+  const isSpellDisabled = (spell: Spell) =>
     !isSpellSelected(spell) && !canSelectMoreSpells();
 
-  const getSpellCardClassName = (spell: any) => {
+  const getSpellCardClassName = (spell: Spell) => {
     const baseClasses =
-      "bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105";
+      "bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 ease-in-out transform hover:scale-105 p-2";
     const selectableClass = isSpellSelected(spell) ? "ring-2 ring-primary" : "";
     const disabledClass = isSpellDisabled(spell)
       ? "opacity-50 cursor-not-allowed"
@@ -28,7 +28,7 @@ export default function SpellSelection() {
     return `${baseClasses} ${selectableClass} ${disabledClass}`;
   };
 
-  const handleSpellToggle = (spell: any) => {
+  const handleSpellToggle = (spell: Spell) => {
     if (isSpellDisabled(spell)) return;
     handleSpellChange(spell);
   };
@@ -44,7 +44,7 @@ export default function SpellSelection() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-4xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto mt-4">
         {availableSpells.map((spell) => (
           <div
             key={spell.name}

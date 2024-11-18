@@ -340,17 +340,17 @@ export const classes: Class[] = [
     },
   },
 ];
-export const spells: Record<
-  string,
-  {
-    name: string;
-    description: string;
-    duration: string;
-    portée: string;
-    composantes: string;
-    level: number;
-  }[]
-> = {
+
+export type Spell = {
+  name: string;
+  description: string;
+  duration: string;
+  portée: string;
+  composantes: string;
+  level: number;
+};
+
+export const spells: Record<string, Spell[]> = {
   Barde: [
     {
       name: "Lumière",
