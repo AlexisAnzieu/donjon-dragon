@@ -305,7 +305,7 @@ export const classes: Class[] = [
         "paquetage d'exploration souterraine",
         "paquetage d'explorateur",
       ],
-      ["Armure de cuir", "Deux dagues", "Outils de voleur"],
+      ["Armure de cuir, deux dagues et des outils de voleur"],
     ],
     proficiencies: {
       armures: ["Armures légères"],
