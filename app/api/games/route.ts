@@ -24,6 +24,7 @@ export async function GET(request: Request) {
             class: true,
             background: true,
             name: true,
+            alignment: true,
           },
         },
       },

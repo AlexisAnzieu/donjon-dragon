@@ -7,6 +7,7 @@ import useSWR from "swr";
 import { formatDistanceToNow } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Prisma } from "@prisma/client";
+import TooltipText from "@/app/components/TooltipText";
 
 export default function Game() {
   const { id } = useParams();
@@ -44,65 +45,193 @@ export default function Game() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {isLoading
-            ? Array(3)
-                .fill(0)
-                .map((_, index) => (
-                  <div
-                    key={`skeleton-${index}`}
-                    className="bg-white p-6 rounded-xl shadow-md"
-                  >
-                    <div className="h-8 bg-gray-200 rounded w-3/4 mb-6"></div>
-                    <div className="space-y-4">
-                      {[...Array(3)].map((_, i) => (
-                        <div key={i} className="flex items-center">
-                          <div className="h-4 bg-gray-200 rounded w-[100px]"></div>
-                          <div className="h-4 bg-gray-200 rounded w-1/2 ml-2"></div>
-                        </div>
-                      ))}
-                      <div className="h-[1px] bg-gray-100 my-4"></div>
-                      <div className="h-4 bg-gray-200 rounded w-2/5"></div>
-                    </div>
-                  </div>
-                ))
-            : data?.characters?.map((character, index: number) => (
-                <div
-                  key={index}
-                  className="relative group transform transition-all duration-200 hover:scale-[1.02]"
-                >
-                  <Link
-                    href={`/character/edit/?id=${character.id}`}
-                    className="block"
-                  >
-                    <div className="bg-white p-6 rounded-xl shadow-md hover:shadow-xl transition-all">
-                      <h2 className="text-2xl font-bold text-gray-800 mb-4">
-                        {character.name}
-                      </h2>
-                      <div className="space-y-3 text-gray-600">
-                        {[
-                          { label: "Race", value: character.race },
-                          { label: "Classe", value: character.class },
-                          { label: "Historique", value: character.background },
-                        ].map((item, i) => (
-                          <div key={i} className="flex items-center">
-                            <span className="font-medium min-w-[100px]">
-                              {item.label}:
-                            </span>
-                            <span className="ml-2">{item.value}</span>
+        <div className="grid grid-cols-1 gap-8">
+          {/* Characters Table Section */}
+          <div className="bg-white rounded-xl shadow-md overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Nom
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Race
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Classe
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Historique
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <TooltipText text="Alignement">
+                      <div className="p-4 max-w-md lowercase">
+                        <h3 className="text-lg font-bold mb-4 text-gray-800 border-b pb-2">
+                          Les alignements dans D&D 5e
+                        </h3>
+                        <div className="grid grid-cols-1 gap-4">
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-emerald-700">
+                              Alignements Bons
+                            </h4>
+                            <div className="ml-2 space-y-1 text-sm">
+                              <p>
+                                <span className="font-medium uppercase">
+                                  LB
+                                </span>{" "}
+                                - Loyal Bon: Suit un code d'honneur strict et
+                                aide les autres
+                              </p>
+                              <p>
+                                <span className="font-medium uppercase">
+                                  NB
+                                </span>{" "}
+                                - Neutre Bon: Fait le bien sans se préoccuper
+                                des lois
+                              </p>
+                              <p>
+                                <span className="font-medium uppercase">
+                                  CB
+                                </span>{" "}
+                                - Chaotique Bon: Suit sa conscience, privilégie
+                                la liberté
+                              </p>
+                            </div>
                           </div>
-                        ))}
-                        <p className="text-sm text-gray-500 mt-6 pt-4 border-t border-gray-100">
-                          Créé il y a{" "}
+
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-amber-700">
+                              Alignements Neutres
+                            </h4>
+                            <div className="ml-2 space-y-1 text-sm">
+                              <p>
+                                <span className="font-medium uppercase">
+                                  LN
+                                </span>{" "}
+                                - Loyal Neutre: Suit les règles sans parti pris
+                                moral
+                              </p>
+                              <p>
+                                <span className="font-medium uppercase">N</span>{" "}
+                                - Neutre: Maintient l'équilibre, évite les
+                                extrêmes
+                              </p>
+                              <p>
+                                <span className="font-medium uppercase">
+                                  CN
+                                </span>{" "}
+                                - Chaotique Neutre: Valorise sa liberté
+                                personnelle
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-2">
+                            <h4 className="font-semibold text-red-700">
+                              Alignements Mauvais
+                            </h4>
+                            <div className="ml-2 space-y-1 text-sm">
+                              <p>
+                                <span className="font-medium uppercase">
+                                  LM
+                                </span>{" "}
+                                - Loyal Mauvais: Oppresse méthodiquement les
+                                autres
+                              </p>
+                              <p>
+                                <span className="font-medium uppercase">
+                                  NM
+                                </span>{" "}
+                                - Neutre Mauvais: Fait le mal pour son profit
+                                personnel
+                              </p>
+                              <p>
+                                <span className="font-medium uppercase">
+                                  CM
+                                </span>{" "}
+                                - Chaotique Mauvais: Agit avec cruauté et
+                                destruction
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </TooltipText>
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Créé
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {isLoading
+                  ? Array(3)
+                      .fill(0)
+                      .map((_, index) => (
+                        <tr key={`skeleton-${index}`}>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-20"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-16"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-16"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-24"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-28"></div>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap">
+                            <div className="h-4 bg-gray-200 rounded w-28"></div>
+                          </td>
+                        </tr>
+                      ))
+                  : data?.characters?.map((character, index) => (
+                      <tr
+                        key={index}
+                        className="hover:bg-gray-50 cursor-pointer"
+                        onClick={() =>
+                          (window.location.href = `/character/edit/?id=${character.id}`)
+                        }
+                      >
+                        <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
+                          {character.name}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                          {character.race}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                          {character.class}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                          {character.background}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-gray-500">
+                          {character.alignment}
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                           {formatDistanceToNow(new Date(character.createdAt), {
                             locale: fr,
                           })}
-                        </p>
-                      </div>
-                    </div>
-                  </Link>
-                </div>
-              ))}
+                        </td>
+                      </tr>
+                    ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Calendar Section */}
+          <div className="w-full bg-white p-4 rounded-xl shadow-md">
+            <iframe
+              src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=America%2FToronto&showPrint=0&showTz=0&showTabs=0&showNav=0&mode=AGENDA&showDate=0&title=DND%20H2T&src=MGQzY2Y2ODY5Mzg4MTE3NjdiOTEyOGU0ZGIwZjE0ZDQ1MTk4MThmYWJkMjdjNGIzZmE1N2IzZGI0MjVjZmFkMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23F09300"
+              className="w-full h-[300px]"
+              frameBorder="0"
+              scrolling="no"
+            />
+          </div>
         </div>
       </div>
     </div>
