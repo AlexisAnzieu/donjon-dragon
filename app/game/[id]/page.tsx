@@ -225,14 +225,16 @@ export default function Game() {
           </div>
 
           {/* Calendar Section */}
-          <div className="w-full bg-white p-4 rounded-xl shadow-md">
-            <iframe
-              src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=America%2FToronto&showPrint=0&showTz=0&showTabs=0&showNav=0&mode=AGENDA&showDate=0&title=DND%20H2T&src=MGQzY2Y2ODY5Mzg4MTE3NjdiOTEyOGU0ZGIwZjE0ZDQ1MTk4MThmYWJkMjdjNGIzZmE1N2IzZGI0MjVjZmFkMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23F09300"
-              className="w-full h-[300px]"
-              frameBorder="0"
-              scrolling="no"
-            />
-          </div>
+          {id === "cm3gc9o5l001euleokyus4z7d" && (
+            <div className="w-full bg-white p-4 rounded-xl shadow-md">
+              <iframe
+                src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=America%2FToronto&showPrint=0&showTz=0&showTabs=0&showNav=0&mode=AGENDA&showDate=0&title=DND%20H2T&src=MGQzY2Y2ODY5Mzg4MTE3NjdiOTEyOGU0ZGIwZjE0ZDQ1MTk4MThmYWJkMjdjNGIzZmE1N2IzZGI0MjVjZmFkMUBncm91cC5jYWxlbmRhci5nb29nbGUuY29t&color=%23F09300"
+                className="w-full h-[300px]"
+                frameBorder="0"
+                scrolling="no"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
