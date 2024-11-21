@@ -184,7 +184,7 @@ export default function MonsterComponent(monster: Monster) {
             <SavingThrows savingThrows={monster.saving_throws} />
           )}
 
-        {monster.skills.length > 0 && (
+        {monster.skills?.length > 0 && (
           <ListSection title="Compétences" items={monster.skills} />
         )}
 
@@ -196,35 +196,35 @@ export default function MonsterComponent(monster: Monster) {
           <ListSection title="Langues" items={monster.languages} />
         )}
 
-        {monster.damage_immunities.length > 0 && (
+        {monster.damage_immunities?.length > 0 && (
           <ListSection
             title="Immunités aux Dégâts"
             items={monster.damage_immunities}
           />
         )}
 
-        {monster.condition_immunities.length > 0 && (
+        {monster.condition_immunities?.length > 0 && (
           <ListSection
             title="Immunités aux Conditions"
             items={monster.condition_immunities}
           />
         )}
 
-        {monster.damage_resistances.length > 0 && (
+        {monster.damage_resistances?.length > 0 && (
           <ListSection
             title="Résistances aux Dégâts"
             items={monster.damage_resistances}
           />
         )}
 
-        {monster.damage_vulnerabilities.length > 0 && (
+        {monster.damage_vulnerabilities?.length > 0 && (
           <ListSection
             title="Vulnérabilités aux Dégâts"
             items={monster.damage_vulnerabilities}
           />
         )}
 
-        {monster.proficiency_bonus.length > 0 && (
+        {monster.proficiency_bonus?.length > 0 && (
           <ListSection
             title="Bonus de Compétence"
             items={monster.proficiency_bonus}

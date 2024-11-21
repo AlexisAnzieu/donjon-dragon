@@ -253,63 +253,56 @@ export async function GET() {
   // const urls = extractUrls(document);
   const urls = scrapped_monsters.slice(0, 50);
 
-  const results = [];
-
-  for (const url of urls.slice(0, 1000)) {
+  for (const url of urls) {
     const itemDocument = await fetchDocument(url);
 
     try {
       const monsterData = extractMonsterData(itemDocument);
 
-      console.log("done", monsterData.slug);
+      console.log("to scrap", monsterData.slug);
 
       const existingMonster = await prisma.monster.findUnique({
         where: { slug: monsterData.slug },
       });
 
-      if (!existingMonster) {
-        console.log("not done", monsterData.slug);
-
-        const {
-          abilities,
-          actions,
-          special_abilities,
-          saving_throws,
-          legendary_actions,
-          ...monster
-        } = monsterData;
-
-        await prisma.monster.create({
-          data: {
-            ...monster,
-            abilities: {
-              create: abilities,
-            },
-            legendary_actions: {
-              create: legendary_actions.map((action: any) => ({
-                name: Object.keys(action)[0],
-                description: Object.values(action)[0],
-              })),
-            },
-            actions: {
-              create: actions.map((action: any) => ({
-                name: Object.keys(action)[0],
-                description: Object.values(action)[0],
-              })),
-            },
-            special_abilities: {
-              create: special_abilities.map((ability: any) => ({
-                name: Object.keys(ability)[0],
-                description: Object.values(ability)[0],
-              })),
-            },
-            saving_throws: {
-              create: saving_throws,
-            },
-          },
-        });
+      if (existingMonster) {
+        console.log("already scrapped", monsterData.slug);
       }
-      results.push(monsterData);
+
+      const {
+        abilities,
+        actions,
+        special_abilities,
+        legendary_actions,
+        ...monster
+      } = monsterData;
+
+      await prisma.monster.create({
+        data: {
+          ...monster,
+          abilities: {
+            create: abilities,
+          },
+          legendary_actions: {
+            create: legendary_actions.map((action: any) => ({
+              name: Object.keys(action)[0],
+              description: Object.values(action)[0],
+            })),
+          },
+          actions: {
+            create: actions.map((action: any) => ({
+              name: Object.keys(action)[0],
+              description: Object.values(action)[0],
+            })),
+          },
+          special_abilities: {
+            create: special_abilities.map((ability: any) => ({
+              name: Object.keys(ability)[0],
+              description: Object.values(ability)[0],
+            })),
+          },
+        },
+      });
     } catch (error) {
       throw new Error(`Error parsing ${url}: ${error}`);
     }

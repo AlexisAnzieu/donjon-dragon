@@ -38,7 +38,7 @@ model Game {
 }
 
 model Monster {
-  id                     String            @id @default(uuid())
+  id                     String            @id @default(cuid())
   slug                   String            @unique
   name                   String            @unique
   size                   String
@@ -52,27 +52,25 @@ model Monster {
   abilities              Ability[]
   actions                Action[]
   special_abilities      SpecialAbility[]
-  description            String?
+  description            String?           @db.LongText
   source                 String
   imageUrl               String?
-  saving_throws          SavingThrows?     @relation(fields: [savingThrowsId], references: [id])
-  skills                 Json
-  senses                 Json
-  languages              Json
-  damage_immunities      Json
-  condition_immunities   Json
-  damage_resistances     Json
-  proficiency_bonus      Json
-  damage_vulnerabilities Json
+  saving_throws          Json?
+  skills                 Json?
+  senses                 Json?
+  languages              Json?
+  damage_immunities      Json?
+  condition_immunities   Json?
+  damage_resistances     Json?
+  proficiency_bonus      Json?
+  damage_vulnerabilities Json?
   challenge_rating       Int?
   xp                     Int
-  abilitiesId            String?
-  savingThrowsId         String?
   legendary_actions      LegendaryAction[]
 }
 
 model Ability {
-  id        String  @id @default(uuid())
+  id        String  @id @default(cuid())
   name      String
   value     Int
   modifier  String
@@ -81,36 +79,25 @@ model Ability {
 }
 
 model Action {
-  id          String  @id @default(uuid())
+  id          String  @id @default(cuid())
   name        String
-  description String
+  description String  @db.LongText
   monsterId   String
   monster     Monster @relation(fields: [monsterId], references: [id])
 }
 
 model LegendaryAction {
-  id          String  @id @default(uuid())
+  id          String  @id @default(cuid())
   name        String
-  description String
+  description String  @db.LongText
   monsterId   String
   monster     Monster @relation(fields: [monsterId], references: [id])
 }
 
 model SpecialAbility {
-  id          String  @id @default(uuid())
+  id          String  @id @default(cuid())
   name        String
-  description String
+  description String  @db.LongText
   monsterId   String
   monster     Monster @relation(fields: [monsterId], references: [id])
-}
-
-model SavingThrows {
-  id      String    @id @default(uuid())
-  STR     String?
-  DEX     String?
-  CON     String?
-  INT     String?
-  WIS     String?
-  CHA     String?
-  Monster Monster[]
 }

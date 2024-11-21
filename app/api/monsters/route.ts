@@ -7,7 +7,6 @@ export type Monster = Prisma.MonsterGetPayload<{
     special_abilities: true;
     actions: true;
     legendary_actions: true;
-    saving_throws: true;
   };
 }> & {
   skills: string[];
@@ -18,6 +17,7 @@ export type Monster = Prisma.MonsterGetPayload<{
   damage_resistances: string[];
   damage_vulnerabilities: string[];
   proficiency_bonus: string[];
+  saving_throws: Record<string, string>;
 };
 
 export async function GET() {
@@ -27,7 +27,6 @@ export async function GET() {
       special_abilities: true,
       actions: true,
       legendary_actions: true,
-      saving_throws: true,
     },
   });
 
