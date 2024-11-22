@@ -34,3 +34,23 @@ export async function GET() {
     headers: { "Content-Type": "application/json" },
   });
 }
+
+export async function POST(request: Request) {
+  const { slug } = await request.json();
+
+  const monsters = await prisma.monster.findMany({
+    include: {
+      abilities: true,
+      special_abilities: true,
+      actions: true,
+      legendary_actions: true,
+    },
+    where: {
+      slug,
+    },
+  });
+
+  return new Response(JSON.stringify(monsters), {
+    headers: { "Content-Type": "application/json" },
+  });
+}

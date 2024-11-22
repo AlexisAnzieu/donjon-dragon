@@ -15,11 +15,20 @@ export const getMonsters = async () => {
 };
 
 export const getMonster = async (slug: string) => {
-  const response = await fetch(`/api/monsters/${slug}`);
+  const response = await fetch(`${baseUrl}/api/monsters`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ slug }),
+  });
+
+  const data = await response.json();
+
   if (!response.ok) {
-    throw new Error("Failed to fetch monster");
+    throw new Error("Failed to fetch monsters");
   }
-  return response.json();
+  return data;
 };
 
 export const getEquipments = async () => {
