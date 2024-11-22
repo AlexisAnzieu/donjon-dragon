@@ -2,26 +2,17 @@
 import { type Monster } from "@/app/api/monsters/route";
 import MonsterComponent from "@/app/components/monsters/MonsterComponent";
 import { getMonster } from "@/lib/dd5";
-import { notFound } from "next/navigation";
 
-interface MonsterPageProps {
-  params: {
-    slug: string;
-  };
-}
-
-export default async function Monster({ params }: MonsterPageProps) {
-  const { slug } = params;
-  const monsterData = await getMonster(slug);
-
-  if (!monsterData?.length) {
-    notFound();
-  }
-
-  const monster: Monster = monsterData[0];
+export default async function Monster({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const monster: Monster = (await getMonster(slug))[0];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       <MonsterComponent key={monster.slug} {...monster} />
     </div>
   );
