@@ -96,7 +96,7 @@ model LegendaryAction {
 
 model SpecialAbility {
   id          String  @id @default(cuid())
-  name        String
+  name        String  @db.Text
   description String  @db.LongText
   monsterId   String
   monster     Monster @relation(fields: [monsterId], references: [id])

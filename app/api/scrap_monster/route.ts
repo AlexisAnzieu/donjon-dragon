@@ -253,7 +253,7 @@ export async function GET() {
   //   "https://www.aidedd.org/dnd-filters/monstres.php"
   // );
   // const urls = extractUrls(document);
-  const urls = scrapped_monsters.slice(400, 1000);
+  const urls = scrapped_monsters;
 
   for (const url of urls) {
     const itemDocument = await fetchDocument(url);
