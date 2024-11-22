@@ -4,7 +4,7 @@ import { useCharacter } from "./characterContext";
 export default function SpellSelection() {
   const { selectedClass, selectedSpells, handleSpellChange } = useCharacter();
 
-  if (!selectedClass?.cantrips) return null;
+  if (!selectedClass?.spellsLimit) return null;
 
   const availableSpells = spells[selectedClass.name] || [];
 
@@ -12,7 +12,7 @@ export default function SpellSelection() {
     selectedSpells.some((s) => s.name === spell.name);
 
   const canSelectMoreSpells = () =>
-    selectedSpells.length < (selectedClass?.cantrips?.canSelect || 0);
+    selectedSpells.length < (selectedClass?.spellsLimit?.minor || 0);
 
   const isSpellDisabled = (spell: Spell) =>
     !isSpellSelected(spell) && !canSelectMoreSpells();
@@ -39,7 +39,7 @@ export default function SpellSelection() {
         <div className="flex items-center">
           <div className="text-sm text-blue-700">
             En tant que {selectedClass.name}, tu peux choisir{" "}
-            {selectedClass.cantrips.canSelect} sorts mineurs.
+            {selectedClass.spellsLimit.minor} sorts mineurs.
           </div>
         </div>
       </div>

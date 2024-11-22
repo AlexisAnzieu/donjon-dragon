@@ -272,17 +272,17 @@ function CharacterBuildContent() {
                       title="7. Choisis tes sorts mineurs"
                       content={<SpellSelection />}
                       isFilled={
-                        !selectedClass?.cantrips ||
+                        !selectedClass?.spellsLimit ||
                         selectedSpells?.length ===
-                          selectedClass?.cantrips.canSelect
+                          selectedClass?.spellsLimit.minor
                       }
                       activeStep={activeStep}
                       setActiveStep={setActiveStep}
                     />
                   )}
-                {(!selectedClass?.cantrips ||
+                {(!selectedClass?.spellsLimit ||
                   selectedSpells?.length ===
-                    selectedClass?.cantrips.canSelect) && (
+                    selectedClass?.spellsLimit.minor) && (
                   <Step
                     stepNumber={8}
                     title="8. Définis ta personnalité"

@@ -158,7 +158,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
     portée: string;
     composantes: string;
   }) => {
-    if (!selectedClass?.cantrips) return;
+    if (!selectedClass?.spellsLimit) return;
 
     setSelectedSpells((prev) => {
       const isAlreadySelected = prev.some((s) => s.name === spell.name);
@@ -166,7 +166,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         return prev.filter((s) => s.name !== spell.name);
       }
 
-      if (prev.length >= selectedClass?.cantrips?.canSelect) {
+      if (prev.length >= selectedClass?.spellsLimit?.minor) {
         return prev;
       }
 
@@ -174,7 +174,7 @@ export function CharacterProvider({ children }: { children: ReactNode }) {
         ? prev.filter((s) => s.name !== spell.name)
         : [...prev, spell];
 
-      if (updatedSpells.length === selectedClass.cantrips.canSelect) {
+      if (updatedSpells.length === selectedClass.spellsLimit.minor) {
         setActiveStep(8);
       }
 

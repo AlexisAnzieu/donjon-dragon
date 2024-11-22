@@ -70,8 +70,8 @@ export type Class = {
     canSelect: number;
     choices: string[];
   };
-  cantrips: {
-    canSelect: number;
+  spellsLimit: {
+    minor: number;
   };
 };
 
@@ -190,8 +190,8 @@ export const classes: Class[] = [
         "Persuasion",
       ],
     },
-    cantrips: {
-      canSelect: 2,
+    spellsLimit: {
+      minor: 2,
     },
   },
   {
@@ -217,8 +217,8 @@ export const classes: Class[] = [
       canSelect: 2,
       choices: ["Histoire", "Intuition", "Médecine", "Persuasion", "Religion"],
     },
-    cantrips: {
-      canSelect: 3,
+    spellsLimit: {
+      minor: 3,
     },
   },
   {
@@ -249,8 +249,8 @@ export const classes: Class[] = [
         "Religion",
       ],
     },
-    cantrips: {
-      canSelect: 3,
+    spellsLimit: {
+      minor: 3,
     },
   },
   {
@@ -288,8 +288,8 @@ export const classes: Class[] = [
         "Survie",
       ],
     },
-    cantrips: {
-      canSelect: 0,
+    spellsLimit: {
+      minor: 0,
     },
   },
   {
@@ -335,8 +335,8 @@ export const classes: Class[] = [
         "Tromperie",
       ],
     },
-    cantrips: {
-      canSelect: 0,
+    spellsLimit: {
+      minor: 0,
     },
   },
 ];
