@@ -1,7 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Monster } from "@/app/api/monsters/route";
 import MonsterComponent from "@/app/components/monsters/MonsterComponent";
-import { getMonster } from "@/lib/dd5";
+import { getMonster, getMonsters } from "@/lib/dd5";
+
+export async function generateStaticParams() {
+  const monsters = await getMonsters().then((res) => res.json());
+
+  return monsters.map((monster: Monster) => ({
+    slug: monster.slug,
+  }));
+}
 
 export default async function Monster({
   params,

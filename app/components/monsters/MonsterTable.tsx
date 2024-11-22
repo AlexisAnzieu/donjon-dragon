@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Monster } from "@/app/api/monsters/route";
 import { useRouter } from "next/navigation";
 
-export default function MonsterFilter({ monsters }: { monsters: Monster[] }) {
+export default function MonstersTable({ monsters }: { monsters: Monster[] }) {
   const router = useRouter();
   const [filter, setFilter] = useState("");
   const [sortField, setSortField] = useState<keyof Monster>("name");
