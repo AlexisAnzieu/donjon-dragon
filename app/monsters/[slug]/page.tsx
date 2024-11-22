@@ -4,7 +4,7 @@ import MonsterComponent from "@/app/components/monsters/MonsterComponent";
 import { getMonster, getMonsters } from "@/lib/dd5";
 
 export async function generateStaticParams() {
-  const monsters = await getMonsters().then((res) => res.json());
+  const monsters = (await getMonsters()).then((res: any) => res.json());
 
   return monsters.map((monster: Monster) => ({
     slug: monster.slug,
