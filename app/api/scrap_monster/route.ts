@@ -251,7 +251,7 @@ export async function GET() {
   //   "https://www.aidedd.org/dnd-filters/monstres.php"
   // );
   // const urls = extractUrls(document);
-  const urls = scrapped_monsters.slice(0, 50);
+  const urls = scrapped_monsters.slice(400, 1000);
 
   for (const url of urls) {
     const itemDocument = await fetchDocument(url);
@@ -267,42 +267,42 @@ export async function GET() {
 
       if (existingMonster) {
         console.log("already scrapped", monsterData.slug);
+      } else {
+        const {
+          abilities,
+          actions,
+          special_abilities,
+          legendary_actions,
+          ...monster
+        } = monsterData;
+
+        await prisma.monster.create({
+          data: {
+            ...monster,
+            abilities: {
+              create: abilities,
+            },
+            legendary_actions: {
+              create: legendary_actions.map((action: any) => ({
+                name: Object.keys(action)[0],
+                description: Object.values(action)[0],
+              })),
+            },
+            actions: {
+              create: actions.map((action: any) => ({
+                name: Object.keys(action)[0],
+                description: Object.values(action)[0],
+              })),
+            },
+            special_abilities: {
+              create: special_abilities.map((ability: any) => ({
+                name: Object.keys(ability)[0],
+                description: Object.values(ability)[0],
+              })),
+            },
+          },
+        });
       }
-
-      const {
-        abilities,
-        actions,
-        special_abilities,
-        legendary_actions,
-        ...monster
-      } = monsterData;
-
-      await prisma.monster.create({
-        data: {
-          ...monster,
-          abilities: {
-            create: abilities,
-          },
-          legendary_actions: {
-            create: legendary_actions.map((action: any) => ({
-              name: Object.keys(action)[0],
-              description: Object.values(action)[0],
-            })),
-          },
-          actions: {
-            create: actions.map((action: any) => ({
-              name: Object.keys(action)[0],
-              description: Object.values(action)[0],
-            })),
-          },
-          special_abilities: {
-            create: special_abilities.map((ability: any) => ({
-              name: Object.keys(ability)[0],
-              description: Object.values(ability)[0],
-            })),
-          },
-        },
-      });
     } catch (error) {
       throw new Error(`Error parsing ${url}: ${error}`);
     }

@@ -123,7 +123,7 @@ export default function MonsterComponent(monster: Monster) {
             <div className="flex items-center">
               <GiHearts className="w-6 h-6 text-black mr-2" />
               <span className="text-sm font-semibold text-black">
-                PV: {monster.hit_points} ({monster.hit_dice})
+                PV: {monster.hit_points} ({monster.hit_points_roll})
               </span>
             </div>
           </div>
