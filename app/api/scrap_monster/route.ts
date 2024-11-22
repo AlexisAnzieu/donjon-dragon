@@ -45,12 +45,14 @@ function extractTypeSizeAlignment(
   document: Document
 ): { type: string; size: string; alignment: string } | null {
   const typeText = document.querySelector(".type")?.textContent?.trim();
-  const typeMatch = typeText?.match(/\s*(.+?)\s*de taille\s+(\w+),\s*(.+)/i);
+  const typeMatch = typeText?.match(
+    /\s*(.+?)\s*de taille\s+([\w\s]+),\s*(.+)/i
+  );
 
   if (!typeMatch) return null;
   return {
     type: typeMatch[1].toLowerCase(),
-    size: typeMatch[2],
+    size: typeMatch[2].trim(),
     alignment: typeMatch[3],
   };
 }
