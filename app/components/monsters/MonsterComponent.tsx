@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { Monster } from "@/app/api/monsters/route";
+import Image from "next/image";
 import {
   GiShield,
   GiHearts,
@@ -93,7 +94,10 @@ export default function MonsterComponent(monster: Monster) {
   }
 
   return (
-    <div className="w-[300px] bg-white text-black rounded-lg overflow-hidden shadow-lg relative border-4 border-black print:border-2">
+    <div
+      className="w-[300px] bg-white text-black rounded-lg overflow-hidden shadow-lg relative border-4 border-black print:border-2"
+      id="printable"
+    >
       <div className="p-6 relative z-10">
         <h2 className="text-3xl font-bold text-black mb-2 text-center font-serif">
           {monster.name}
@@ -103,7 +107,7 @@ export default function MonsterComponent(monster: Monster) {
         </p>
         {monster.imageUrl && (
           <>
-            <img
+            <Image
               src={monster.imageUrl}
               className="rounded-full mx-auto m-5"
               width="150"

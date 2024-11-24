@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { type Monster } from "@/app/api/monsters/route";
 import MonsterComponent from "@/app/components/monsters/MonsterComponent";
+import PrintButton from "@/app/components/PrintButton";
 import { getMonster, getMonsters } from "@/lib/dd5";
 
 export async function generateStaticParams() {
@@ -20,7 +21,8 @@ export default async function Monster({
   const monster: Monster = (await getMonster(slug))[0];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div className="container mx-auto p-10">
+      <PrintButton />
       <MonsterComponent key={monster.slug} {...monster} />
     </div>
   );
