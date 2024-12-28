@@ -1,0 +1,139 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Character {
+  id            String   @id @default(cuid())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  name          String
+  alignment     String?
+  traits        String?  @db.Text
+  ideals        String?  @db.Text
+  bonds         String?  @db.Text
+  flaws         String?  @db.Text
+  race          String?
+  class         String?
+  background    String?
+  abilityScores Json // Stores the ability scores object
+  equipment     Json // Array of equipment strings
+  skills        Json // Array of selected skills
+  rollDetails   Json // Stores the roll details object
+  hp            Int?
+  userId        String? // Optional: for user association
+  games         Game[]   @relation("GameCharacters")
+  spells        Json?
+  Token         Token[]
+}
+
+model Game {
+  id         String      @id @default(cuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  characters Character[] @relation("GameCharacters")
+  sessions   Session[]
+}
+
+model Token {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  type        String
+  name        String
+  xPercent    Float
+  yPercent    Float
+  size        Float
+  hitPoint    Int
+  maxHitPoint Int
+  session     Session    @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
+  icon        String?
+  monsterId   String?
+  monster     Monster?   @relation(fields: [monsterId], references: [id])
+  characterId String?
+  character   Character? @relation(fields: [characterId], references: [id])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  gameId    String
+  game      Game     @relation(fields: [gameId], references: [id])
+  tokens    Token[]
+  notes     String?  @db.LongText
+  name      String
+  fogOfWar  String?  @db.LongText
+  viewState Json?
+}
+
+model Monster {
+  id                     String            @id @default(cuid())
+  slug                   String            @unique
+  name                   String            @unique
+  size                   String
+  type                   String
+  alignment              String
+  armor_class            String
+  hit_points             Int
+  hit_dice               String?
+  hit_points_roll        String?
+  speed                  String
+  abilities              Ability[]
+  actions                Action[]
+  special_abilities      SpecialAbility[]
+  description            String?           @db.LongText
+  source                 String
+  imageUrl               String?
+  saving_throws          Json?
+  skills                 Json?
+  senses                 Json?
+  languages              Json?
+  damage_immunities      Json?
+  condition_immunities   Json?
+  damage_resistances     Json?
+  proficiency_bonus      Json?
+  damage_vulnerabilities Json?
+  challenge_rating       Int?
+  xp                     Int
+  legendary_actions      LegendaryAction[]
+  token                  Token[]
+}
+
+model Ability {
+  id        String  @id @default(cuid())
+  name      String
+  value     Int
+  modifier  String
+  monsterId String
+  monster   Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+}
+
+model Action {
+  id          String  @id @default(cuid())
+  name        String
+  description String  @db.LongText
+  monsterId   String
+  monster     Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+}
+
+model LegendaryAction {
+  id          String  @id @default(cuid())
+  name        String
+  description String  @db.LongText
+  monsterId   String
+  monster     Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+}
+
+model SpecialAbility {
+  id          String  @id @default(cuid())
+  name        String  @db.Text
+  description String  @db.LongText
+  monsterId   String
+  monster     Monster @relation(fields: [monsterId], references: [id], onDelete: Cascade)
+}
