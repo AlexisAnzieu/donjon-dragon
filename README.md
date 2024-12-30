@@ -1,4 +1,4 @@
-## Core Features
+# Core Features
 
 1. **Game Board System**
 
