@@ -73,14 +73,6 @@ export const useAudio = (effects: Effect[]) => {
     }
   }, [effects]);
 
-  const isIOSDevice = useCallback(() => {
-    const userAgent = navigator.userAgent.toLowerCase();
-    return (
-      /iphone|ipad|ipod/.test(userAgent) ||
-      (userAgent.includes("chrome") && navigator.platform === "iPhone")
-    );
-  }, []);
-
   const playEffect = useCallback(
     (effect: Effect) => {
       if (!audioContext.current || !audioBuffers.current[effect.id]) return;
