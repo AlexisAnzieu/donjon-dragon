@@ -8,16 +8,36 @@ export const useAudio = (effects: Effect[]) => {
   const [volume, setVolume] = useState<Record<string, number>>({});
   const [isLooping, setIsLooping] = useState<Record<string, boolean>>({});
   const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
   const audioContext = useRef<AudioContext>();
+  const audioBuffers = useRef<Record<string, AudioBuffer>>({});
+  const sourceNodes = useRef<Record<string, AudioBufferSourceNode>>({});
+  const gainNodes = useRef<Record<string, GainNode>>({});
+  const progressAnimationFrames = useRef<Record<string, number>>({});
+  const startTimes = useRef<Record<string, number>>({});
 
   const updateProgress = useCallback(
-    (effectId: string, audio: HTMLAudioElement) => {
-      const percentage = (audio.currentTime / audio.duration) * 100;
-      setProgress((prev) => ({ ...prev, [effectId]: percentage }));
+    (effectId: string) => {
+      if (!audioContext.current || !audioBuffers.current[effectId]) return;
+
+      const currentTime =
+        audioContext.current.currentTime - (startTimes.current[effectId] || 0);
+      const duration = audioBuffers.current[effectId].duration;
+      const percentage = (currentTime / duration) * 100;
+
+      setProgress((prev) => ({
+        ...prev,
+        [effectId]: Math.min(percentage, 100),
+      }));
+
+      if (percentage < 100 && isUsed[effectId]) {
+        progressAnimationFrames.current[effectId] = requestAnimationFrame(() =>
+          updateProgress(effectId)
+        );
+      }
     },
-    []
+    [isUsed]
   );
 
   const handleEnded = useCallback((effectId: string) => {
@@ -25,16 +45,33 @@ export const useAudio = (effects: Effect[]) => {
     setProgress((prev) => ({ ...prev, [effectId]: 0 }));
   }, []);
 
-  const initAudioContext = useCallback(() => {
+  const initializeAudioContext = useCallback(async () => {
     if (!audioContext.current) {
       audioContext.current = new (window.AudioContext ||
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).webkitAudioContext)();
+
+      try {
+        await audioContext.current.resume();
+
+        // Load all audio files
+        const bufferPromises = effects.map(async (effect) => {
+          const response = await fetch(effect.src);
+          const arrayBuffer = await response.arrayBuffer();
+          const audioBuffer = await audioContext.current!.decodeAudioData(
+            arrayBuffer
+          );
+          audioBuffers.current[effect.id] = audioBuffer;
+          setIsLoaded((prev) => ({ ...prev, [effect.id]: true }));
+        });
+
+        await Promise.all(bufferPromises);
+        setIsInitialized(true);
+      } catch (error) {
+        console.error("Audio initialization failed:", error);
+      }
     }
-    if (audioContext.current.state === "suspended") {
-      audioContext.current.resume();
-    }
-  }, []);
+  }, [effects]);
 
   const isIOSDevice = useCallback(() => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -44,84 +81,68 @@ export const useAudio = (effects: Effect[]) => {
     );
   }, []);
 
-  const initializeAudio = useCallback(
-    (effect: Effect) => {
-      const audio = new Audio();
-      audio.src = effect.src;
-      // iOS Chrome requires these settings
-      audio.preload = "none";
-      audio.load();
-      audioRefs.current[effect.id] = audio;
-      setIsLoaded((prev) => ({ ...prev, [effect.id]: true }));
-
-      audio.addEventListener("timeupdate", () =>
-        updateProgress(effect.id, audio)
-      );
-      audio.addEventListener("ended", () => handleEnded(effect.id));
-    },
-    [updateProgress, handleEnded]
-  );
-
   const playEffect = useCallback(
     (effect: Effect) => {
-      initAudioContext();
+      if (!audioContext.current || !audioBuffers.current[effect.id]) return;
 
-      // Initialize audio on first play for iOS
-      if (!audioRefs.current[effect.id]) {
-        initializeAudio(effect);
+      // Stop existing playback and progress tracking
+      if (sourceNodes.current[effect.id]) {
+        sourceNodes.current[effect.id].stop();
+        sourceNodes.current[effect.id].disconnect();
+        if (progressAnimationFrames.current[effect.id]) {
+          cancelAnimationFrame(progressAnimationFrames.current[effect.id]);
+        }
       }
-
-      const audio = audioRefs.current[effect.id];
-      if (!audio) return;
 
       if (isUsed[effect.id]) {
-        audio.pause();
-        audio.currentTime = 0;
         setIsUsed((prev) => ({ ...prev, [effect.id]: false }));
         setProgress((prev) => ({ ...prev, [effect.id]: 0 }));
-      } else {
-        // Set properties before attempting to play
-        audio.volume = volume[effect.id] ?? effect.volume ?? 1;
-        audio.loop = isLooping[effect.id];
-        audio.currentTime = 0;
+        return;
+      }
 
-        // Force load for iOS Chrome
-        if (isIOSDevice()) {
-          audio.load();
-        }
+      // Create new nodes
+      const source = audioContext.current.createBufferSource();
+      const gainNode = audioContext.current.createGain();
 
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
-              setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
-              setTimeout(() => {
-                setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
-              }, 200);
-            })
-            .catch((error) => {
-              console.error("Playback failed:", error);
-              // Special handling for iOS
-              if (isIOSDevice()) {
-                audio.load();
-                setTimeout(() => {
-                  audio
-                    .play()
-                    .catch((e) => console.error("iOS retry failed:", e));
-                }, 100);
-              }
-            });
+      source.buffer = audioBuffers.current[effect.id];
+      source.loop = isLooping[effect.id];
+      gainNode.gain.value = volume[effect.id] ?? effect.volume ?? 1;
+
+      source.connect(gainNode);
+      gainNode.connect(audioContext.current.destination);
+
+      sourceNodes.current[effect.id] = source;
+      gainNodes.current[effect.id] = gainNode;
+
+      source.onended = () => {
+        handleEnded(effect.id);
+        if (progressAnimationFrames.current[effect.id]) {
+          cancelAnimationFrame(progressAnimationFrames.current[effect.id]);
         }
+      };
+
+      try {
+        startTimes.current[effect.id] = audioContext.current.currentTime;
+        source.start(0);
+        setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
+        setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
+        // Start progress tracking
+        updateProgress(effect.id);
+
+        setTimeout(() => {
+          setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
+        }, 200);
+      } catch (error) {
+        console.error("Playback failed:", error);
       }
     },
-    [isUsed, volume, isLooping, initAudioContext, initializeAudio, isIOSDevice]
+    [isUsed, volume, isLooping, handleEnded, updateProgress]
   );
 
   const setEffectVolume = useCallback((effectId: string, value: number) => {
     setVolume((prev) => ({ ...prev, [effectId]: value }));
-    if (audioRefs.current[effectId]) {
-      audioRefs.current[effectId].volume = value;
+    if (gainNodes.current[effectId]) {
+      gainNodes.current[effectId].gain.value = value;
     }
   }, []);
 
@@ -133,28 +154,26 @@ export const useAudio = (effects: Effect[]) => {
   }, []);
 
   useEffect(() => {
-    // Initialize audio context on any user interaction for iOS
-    const handleUserGesture = () => {
-      initAudioContext();
-      if (!isIOSDevice()) {
-        effects.forEach(initializeAudio);
-      }
-      document.removeEventListener("touchstart", handleUserGesture);
-      document.removeEventListener("click", handleUserGesture);
+    const initOnInteraction = () => {
+      initializeAudioContext();
+      document.removeEventListener("touchstart", initOnInteraction);
+      document.removeEventListener("click", initOnInteraction);
     };
 
-    document.addEventListener("touchstart", handleUserGesture);
-    document.addEventListener("click", handleUserGesture);
+    document.addEventListener("touchstart", initOnInteraction);
+    document.addEventListener("click", initOnInteraction);
 
     return () => {
-      document.removeEventListener("touchstart", handleUserGesture);
-      document.removeEventListener("click", handleUserGesture);
-      Object.values(audioRefs.current).forEach((audio) => {
-        audio.pause();
-        audio.currentTime = 0;
+      document.removeEventListener("touchstart", initOnInteraction);
+      document.removeEventListener("click", initOnInteraction);
+      if (audioContext.current) {
+        audioContext.current.close();
+      }
+      Object.values(progressAnimationFrames.current).forEach((frameId) => {
+        cancelAnimationFrame(frameId);
       });
     };
-  }, [effects, initializeAudio, initAudioContext, isIOSDevice]);
+  }, [initializeAudioContext]);
 
   return {
     isPlaying,
@@ -166,5 +185,6 @@ export const useAudio = (effects: Effect[]) => {
     isLooping,
     toggleLoop,
     isLoaded,
+    isInitialized,
   };
 };
