@@ -9,6 +9,8 @@ export const useAudio = (effects: Effect[]) => {
   const [isLooping, setIsLooping] = useState<Record<string, boolean>>({});
   const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const initializeAttempts = useRef(0);
 
   const audioContext = useRef<AudioContext>();
   const audioBuffers = useRef<Record<string, AudioBuffer>>({});
@@ -46,30 +48,46 @@ export const useAudio = (effects: Effect[]) => {
   }, []);
 
   const initializeAudioContext = useCallback(async () => {
-    if (!audioContext.current) {
+    if (initializeAttempts.current > 5) return; // Prevent infinite attempts
+    initializeAttempts.current += 1;
+
+    setIsLoading(true);
+
+    try {
       audioContext.current = new (window.AudioContext ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).webkitAudioContext)();
 
-      try {
+      // Force resume multiple times for iOS
+      for (let i = 0; i < 3; i++) {
         await audioContext.current.resume();
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
 
-        // Load all audio files
-        const bufferPromises = effects.map(async (effect) => {
+      // Load all audio files
+      const bufferPromises = effects.map(async (effect) => {
+        try {
           const response = await fetch(effect.src);
+          if (!response.ok)
+            throw new Error(`HTTP error! status: ${response.status}`);
           const arrayBuffer = await response.arrayBuffer();
           const audioBuffer = await audioContext.current!.decodeAudioData(
             arrayBuffer
           );
           audioBuffers.current[effect.id] = audioBuffer;
           setIsLoaded((prev) => ({ ...prev, [effect.id]: true }));
-        });
+        } catch (error) {
+          console.error(`Failed to load audio: ${effect.id}`, error);
+        }
+      });
 
-        await Promise.all(bufferPromises);
-        setIsInitialized(true);
-      } catch (error) {
-        console.error("Audio initialization failed:", error);
-      }
+      await Promise.all(bufferPromises);
+      setIsInitialized(true);
+    } catch (error) {
+      console.error("Audio initialization failed:", error);
+      // Retry initialization after a delay
+      setTimeout(() => initializeAudioContext(), 500);
+    } finally {
+      setIsLoading(false);
     }
   }, [effects]);
 
@@ -146,18 +164,20 @@ export const useAudio = (effects: Effect[]) => {
   }, []);
 
   useEffect(() => {
-    const initOnInteraction = () => {
-      initializeAudioContext();
-      document.removeEventListener("touchstart", initOnInteraction);
-      document.removeEventListener("click", initOnInteraction);
+    const initOnInteraction = async (e: Event) => {
+      e.preventDefault();
+      await initializeAudioContext();
     };
 
-    document.addEventListener("touchstart", initOnInteraction);
-    document.addEventListener("click", initOnInteraction);
+    const options = { capture: true, passive: false };
+    document.addEventListener("touchstart", initOnInteraction, options);
+    document.addEventListener("touchend", initOnInteraction, options);
+    document.addEventListener("click", initOnInteraction, options);
 
     return () => {
-      document.removeEventListener("touchstart", initOnInteraction);
-      document.removeEventListener("click", initOnInteraction);
+      document.removeEventListener("touchstart", initOnInteraction, options);
+      document.removeEventListener("touchend", initOnInteraction, options);
+      document.removeEventListener("click", initOnInteraction, options);
       if (audioContext.current) {
         audioContext.current.close();
       }
@@ -178,5 +198,6 @@ export const useAudio = (effects: Effect[]) => {
     toggleLoop,
     isLoaded,
     isInitialized,
+    isLoading,
   };
 };

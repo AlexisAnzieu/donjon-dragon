@@ -15,6 +15,7 @@ export default function VFXTriggers() {
     toggleLoop,
     isLoaded,
     isInitialized,
+    isLoading,
   } = useAudio(effects);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -38,9 +39,27 @@ export default function VFXTriggers() {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6">
       <div className="max-w-6xl mx-auto space-y-8 rounded-2xl bg-gray-800/50 p-8 backdrop-blur-sm shadow-2xl">
         {!isInitialized ? (
-          <div className="text-white text-center p-4">
-            Tap anywhere to initialize audio...
-          </div>
+          <button
+            onClick={() => {}} // Empty click handler to show it's interactive
+            className="w-full h-40 flex flex-col items-center justify-center space-y-4 text-white rounded-xl bg-gray-700/50 hover:bg-gray-700/70 transition-colors"
+          >
+            {isLoading ? (
+              <>
+                <div className="animate-spin h-8 w-8 border-4 border-white/20 border-l-white rounded-full" />
+                <div className="text-white/80">Loading audio files...</div>
+              </>
+            ) : (
+              <>
+                <div className="text-4xl">🔊</div>
+                <div className="text-xl font-medium">
+                  Tap here to initialize audio
+                </div>
+                <div className="text-sm text-white/60">
+                  Required for iOS devices
+                </div>
+              </>
+            )}
+          </button>
         ) : (
           <>
             <h1 className="text-3xl font-bold text-white tracking-tight">
