@@ -13,6 +13,7 @@ export default function VFXTriggers() {
     setEffectVolume,
     isLooping,
     toggleLoop,
+    isLoaded,
   } = useAudio(effects);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -58,13 +59,19 @@ export default function VFXTriggers() {
                   <div key={effect.id} className="space-y-3">
                     <button
                       onClick={() => playEffect(effect)}
+                      disabled={!isLoaded[effect.id]}
                       className={`w-full aspect-square rounded-xl flex flex-col items-center justify-center relative overflow-hidden
-                    ${
-                      isPlaying[effect.id]
-                        ? "bg-gradient-to-b from-gray-600 to-gray-700 ring-2 ring-white/30"
-                        : "bg-gradient-to-b from-gray-700 to-gray-800"
-                    } 
-                    hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out`}
+                        ${
+                          !isLoaded[effect.id]
+                            ? "opacity-50 cursor-not-allowed"
+                            : ""
+                        }
+                        ${
+                          isPlaying[effect.id]
+                            ? "bg-gradient-to-b from-gray-600 to-gray-700 ring-2 ring-white/30"
+                            : "bg-gradient-to-b from-gray-700 to-gray-800"
+                        } 
+                        hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out`}
                     >
                       <div
                         onClick={(e) => {

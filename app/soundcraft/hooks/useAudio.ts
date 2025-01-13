@@ -7,8 +7,10 @@ export const useAudio = (effects: Effect[]) => {
   const [progress, setProgress] = useState<Record<string, number>>({});
   const [volume, setVolume] = useState<Record<string, number>>({});
   const [isLooping, setIsLooping] = useState<Record<string, boolean>>({});
+  const [isLoaded, setIsLoaded] = useState<Record<string, boolean>>({});
 
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
+  const audioContext = useRef<AudioContext>();
 
   const updateProgress = useCallback(
     (effectId: string, audio: HTMLAudioElement) => {
@@ -23,10 +25,21 @@ export const useAudio = (effects: Effect[]) => {
     setProgress((prev) => ({ ...prev, [effectId]: 0 }));
   }, []);
 
+  const initAudioContext = useCallback(() => {
+    if (!audioContext.current) {
+      audioContext.current = new (window.AudioContext ||
+        (window as any).webkitAudioContext)();
+    }
+    if (audioContext.current.state === "suspended") {
+      audioContext.current.resume();
+    }
+  }, []);
+
   const playEffect = useCallback(
     (effect: Effect) => {
+      initAudioContext();
       const audio = audioRefs.current[effect.id];
-      if (!audio) return;
+      if (!audio || !isLoaded[effect.id]) return;
 
       if (isUsed[effect.id]) {
         audio.pause();
@@ -34,18 +47,26 @@ export const useAudio = (effects: Effect[]) => {
         setIsUsed((prev) => ({ ...prev, [effect.id]: false }));
         setProgress((prev) => ({ ...prev, [effect.id]: 0 }));
       } else {
-        audio.currentTime = 0;
-        audio.volume = volume[effect.id] ?? effect.volume ?? 1;
-        audio.loop = isLooping[effect.id];
-        audio.play();
-        setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
-        setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
-        setTimeout(() => {
-          setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
-        }, 200);
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              audio.currentTime = 0;
+              audio.volume = volume[effect.id] ?? effect.volume ?? 1;
+              audio.loop = isLooping[effect.id];
+              setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
+              setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
+              setTimeout(() => {
+                setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
+              }, 200);
+            })
+            .catch((error) => {
+              console.error("Playback failed:", error);
+            });
+        }
       }
     },
-    [isUsed, volume, isLooping]
+    [isUsed, volume, isLooping, isLoaded, initAudioContext]
   );
 
   const setEffectVolume = useCallback((effectId: string, value: number) => {
@@ -64,14 +85,21 @@ export const useAudio = (effects: Effect[]) => {
 
   useEffect(() => {
     effects.forEach((effect) => {
-      const audio = new Audio(effect.src);
+      const audio = new Audio();
+      audio.preload = "auto";
+      audio.src = effect.src;
       audio.loop = effect.loop ?? false;
-      audioRefs.current[effect.id] = audio;
+
+      audio.addEventListener("canplaythrough", () => {
+        setIsLoaded((prev) => ({ ...prev, [effect.id]: true }));
+      });
 
       audio.addEventListener("timeupdate", () =>
         updateProgress(effect.id, audio)
       );
       audio.addEventListener("ended", () => handleEnded(effect.id));
+
+      audioRefs.current[effect.id] = audio;
     });
 
     // Initialize loop state for all effects
@@ -98,5 +126,6 @@ export const useAudio = (effects: Effect[]) => {
     setEffectVolume,
     isLooping,
     toggleLoop,
+    isLoaded,
   };
 };
