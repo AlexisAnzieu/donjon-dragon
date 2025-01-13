@@ -1,7 +1,9 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { effects, EffectCategory } from "./effects";
 import { useAudio } from "./hooks/useAudio";
+import { EffectButton } from "./components/EffectButton";
+import { VolumeSlider } from "./components/VolumeSlider";
 
 export default function VFXTriggers() {
   const {
@@ -15,6 +17,33 @@ export default function VFXTriggers() {
     toggleLoop,
   } = useAudio(effects);
   const [searchTerm, setSearchTerm] = useState("");
+  const [favorites, setFavorites] = useState<string[]>([]);
+
+  const toggleFavorite = (effectId: string) => {
+    setFavorites((prev) => {
+      if (prev.includes(effectId)) {
+        return prev.filter((id) => id !== effectId);
+      }
+      if (prev.length >= 9) return prev;
+      return [...prev, effectId];
+    });
+  };
+
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      const key = event.key;
+      if (key >= "1" && key <= "9") {
+        const index = parseInt(key) - 1;
+        if (index < favorites.length) {
+          const effect = effects.find((e) => e.id === favorites[index])!;
+          playEffect(effect);
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
+  }, [favorites, playEffect]);
 
   const effectsByCategory = useMemo(() => {
     const filteredEffects = effects.filter(
@@ -32,12 +61,51 @@ export default function VFXTriggers() {
     }, {} as Record<EffectCategory, typeof effects>);
   }, [searchTerm]);
 
+  const renderEffectItem = (
+    effect: (typeof effects)[0],
+    favoriteIndex?: number
+  ) => (
+    <div key={effect.id} className="space-y-3">
+      <EffectButton
+        effect={effect}
+        isPlaying={isPlaying[effect.id]}
+        isUsed={isUsed[effect.id]}
+        progress={progress[effect.id] || 0}
+        isLooping={isLooping[effect.id]}
+        isFavorite={favorites.includes(effect.id)}
+        favoriteIndex={favoriteIndex}
+        onPlay={() => playEffect(effect)}
+        onToggleFavorite={() => toggleFavorite(effect.id)}
+        onToggleLoop={() => toggleLoop(effect.id)}
+      />
+      <VolumeSlider
+        effectId={effect.id}
+        volume={volume[effect.id] ?? effect.volume ?? 1}
+        onChange={setEffectVolume}
+      />
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 p-6">
       <div className="max-w-6xl mx-auto space-y-8 rounded-2xl bg-gray-800/50 p-8 backdrop-blur-sm shadow-2xl">
         <h1 className="text-3xl font-bold text-white tracking-tight">
           VFX Triggers
         </h1>
+
+        {favorites.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-semibold text-white/90 border-b border-white/10 pb-2">
+              Favorites (Press 1-9 to play)
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
+              {favorites.map((id, index) => {
+                const effect = effects.find((e) => e.id === id)!;
+                return renderEffectItem(effect, index);
+              })}
+            </div>
+          </div>
+        )}
 
         <input
           type="text"
@@ -54,77 +122,14 @@ export default function VFXTriggers() {
                 {category}
               </h2>
               <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-4">
-                {categoryEffects.map((effect) => (
-                  <div key={effect.id} className="space-y-3">
-                    <button
-                      onClick={() => playEffect(effect)}
-                      className={`w-full aspect-square rounded-xl flex flex-col items-center justify-center relative overflow-hidden
-                    ${
-                      isPlaying[effect.id]
-                        ? "bg-gradient-to-b from-gray-600 to-gray-700 ring-2 ring-white/30"
-                        : "bg-gradient-to-b from-gray-700 to-gray-800"
-                    } 
-                    hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out`}
-                    >
-                      <div
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          toggleLoop(effect.id);
-                        }}
-                        className={`absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-br-xl transition-all duration-200 z-20 cursor-pointer
-                      ${
-                        isLooping[effect.id]
-                          ? "bg-white/30 text-white"
-                          : "text-gray-400 hover:bg-gray-600/80 hover:text-white"
-                      }`}
-                        title="Toggle loop"
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          className="w-4 h-4"
-                          stroke="currentColor"
-                          strokeWidth={2}
-                        >
-                          <path
-                            d="M17 3L21 7M21 7L17 11M21 7H7C4.79086 7 3 8.79086 3 11V13M7 21L3 17M3 17L7 13M3 17H17C19.2091 17 21 15.2091 21 13V11"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </div>
-                      {isUsed[effect.id] && (
-                        <div
-                          className="absolute inset-0 bg-white/30 h-full"
-                          style={{
-                            right: `${100 - (progress[effect.id] || 0)}%`,
-                            transition: "right 100ms linear",
-                          }}
-                        />
-                      )}
-                      <span className="text-4xl filter drop-shadow-md relative z-10 mb-2">
-                        {effect.icon}
-                      </span>
-                      <span className="text-white/90 text-sm font-medium relative z-10">
-                        {effect.label}
-                      </span>
-                    </button>
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.1"
-                        value={volume[effect.id] ?? effect.volume ?? 1}
-                        onChange={(e) =>
-                          setEffectVolume(effect.id, Number(e.target.value))
-                        }
-                        className="w-full appearance-none h-1.5 rounded-full bg-gray-700 accent-white/75 hover:accent-white transition-all cursor-pointer"
-                      />
-                    </div>
-                  </div>
-                ))}
+                {categoryEffects.map((effect) =>
+                  renderEffectItem(
+                    effect,
+                    favorites.includes(effect.id)
+                      ? favorites.indexOf(effect.id)
+                      : undefined
+                  )
+                )}
               </div>
             </div>
           )
