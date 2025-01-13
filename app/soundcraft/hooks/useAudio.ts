@@ -48,44 +48,55 @@ export const useAudio = (effects: Effect[]) => {
   }, []);
 
   const initializeAudioContext = useCallback(async () => {
-    if (initializeAttempts.current > 5) return; // Prevent infinite attempts
+    if (initializeAttempts.current > 5) return;
     initializeAttempts.current += 1;
 
     setIsLoading(true);
 
     try {
-      audioContext.current = new (window.AudioContext ||
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (window as any).webkitAudioContext)();
+      // Create new context if it doesn't exist or is closed
+      if (!audioContext.current || audioContext.current.state === "closed") {
+        audioContext.current = new (window.AudioContext ||
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).webkitAudioContext)();
+      }
 
-      // Force resume multiple times for iOS
+      // For iOS, create and play a silent buffer
+      const silentBuffer = audioContext.current.createBuffer(1, 1, 22050);
+      const source = audioContext.current.createBufferSource();
+      source.buffer = silentBuffer;
+      source.connect(audioContext.current.destination);
+      source.start(0);
+
+      // Force resume multiple times
       for (let i = 0; i < 3; i++) {
         await audioContext.current.resume();
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
 
-      // Load all audio files
-      const bufferPromises = effects.map(async (effect) => {
-        try {
-          const response = await fetch(effect.src);
-          if (!response.ok)
-            throw new Error(`HTTP error! status: ${response.status}`);
-          const arrayBuffer = await response.arrayBuffer();
-          const audioBuffer = await audioContext.current!.decodeAudioData(
-            arrayBuffer
-          );
-          audioBuffers.current[effect.id] = audioBuffer;
-          setIsLoaded((prev) => ({ ...prev, [effect.id]: true }));
-        } catch (error) {
-          console.error(`Failed to load audio: ${effect.id}`, error);
-        }
-      });
+      // Load audio files only after context is running
+      if (audioContext.current.state === "running") {
+        const bufferPromises = effects.map(async (effect) => {
+          try {
+            const response = await fetch(effect.src);
+            if (!response.ok)
+              throw new Error(`HTTP error! status: ${response.status}`);
+            const arrayBuffer = await response.arrayBuffer();
+            const audioBuffer = await audioContext.current!.decodeAudioData(
+              arrayBuffer
+            );
+            audioBuffers.current[effect.id] = audioBuffer;
+            setIsLoaded((prev) => ({ ...prev, [effect.id]: true }));
+          } catch (error) {
+            console.error(`Failed to load audio: ${effect.id}`, error);
+          }
+        });
 
-      await Promise.all(bufferPromises);
-      setIsInitialized(true);
+        await Promise.all(bufferPromises);
+        setIsInitialized(true);
+      }
     } catch (error) {
       console.error("Audio initialization failed:", error);
-      // Retry initialization after a delay
       setTimeout(() => initializeAudioContext(), 500);
     } finally {
       setIsLoading(false);

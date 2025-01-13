@@ -19,6 +19,24 @@ export default function VFXTriggers() {
   } = useAudio(effects);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const handleInitClick = () => {
+    // Create and play a silent buffer to unlock audio
+    const audioContext = new (window.AudioContext ||
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (window as any).webkitAudioContext)();
+    const buffer = audioContext.createBuffer(1, 1, 22050);
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
+    source.connect(audioContext.destination);
+    source.start(0);
+    audioContext.close();
+
+    // Trigger multiple touch/click events to ensure initialization
+    const event = new Event("touchstart", { bubbles: true });
+    document.body.dispatchEvent(event);
+    document.body.click();
+  };
+
   const effectsByCategory = useMemo(() => {
     const filteredEffects = effects.filter(
       (effect) =>
@@ -40,8 +58,9 @@ export default function VFXTriggers() {
       <div className="max-w-6xl mx-auto space-y-8 rounded-2xl bg-gray-800/50 p-8 backdrop-blur-sm shadow-2xl">
         {!isInitialized ? (
           <button
-            onClick={() => {}} // Empty click handler to show it's interactive
-            className="w-full h-40 flex flex-col items-center justify-center space-y-4 text-white rounded-xl bg-gray-700/50 hover:bg-gray-700/70 transition-colors"
+            onClick={handleInitClick}
+            onTouchStart={handleInitClick}
+            className="w-full h-40 flex flex-col items-center justify-center space-y-4 text-white rounded-xl bg-gray-700/50 hover:bg-gray-700/70 transition-colors active:bg-gray-700/90"
           >
             {isLoading ? (
               <>
