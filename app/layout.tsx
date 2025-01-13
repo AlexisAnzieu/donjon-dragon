@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "H2T - Donjon & Dragon",
+  title: "D&D craft",
   description: "Un Saas pour les joueurs de Donjon & Dragon",
 };
 

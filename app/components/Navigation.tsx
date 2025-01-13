@@ -23,6 +23,10 @@ const categories = [
       { name: "Armures ", href: "/armors" },
     ],
   },
+  {
+    title: "Sons",
+    href: "/soundcraft",
+  },
 ];
 
 export default function DnDNavigation() {
@@ -39,7 +43,7 @@ export default function DnDNavigation() {
         <div className="flex justify-between items-center py-4">
           <Link href="/" className="flex items-center space-x-2">
             <GiDoubleDragon className="h-8 w-8 text-white" />
-            <span className="text-2xl font-bold">H2T - Donjon & Dragon </span>
+            <span className="text-2xl font-bold">D&D craft </span>
           </Link>
 
           {/* Desktop Menu */}

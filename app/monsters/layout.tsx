@@ -3,7 +3,7 @@ import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 
 export const metadata: Metadata = {
-  title: "H2T - Donjon & Dragon",
+  title: "D&D craft",
   description: "Un Saas pour les joueurs de Donjon & Dragon",
 };
 
