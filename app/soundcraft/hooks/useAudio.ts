@@ -6,6 +6,7 @@ export const useAudio = (effects: Effect[]) => {
   const [isUsed, setIsUsed] = useState<Record<string, boolean>>({});
   const [progress, setProgress] = useState<Record<string, number>>({});
   const [volume, setVolume] = useState<Record<string, number>>({});
+  const [isLooping, setIsLooping] = useState<Record<string, boolean>>({});
 
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
@@ -35,6 +36,7 @@ export const useAudio = (effects: Effect[]) => {
       } else {
         audio.currentTime = 0;
         audio.volume = volume[effect.id] ?? effect.volume ?? 1;
+        audio.loop = isLooping[effect.id];
         audio.play();
         setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
         setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
@@ -43,7 +45,7 @@ export const useAudio = (effects: Effect[]) => {
         }, 200);
       }
     },
-    [isUsed, volume]
+    [isUsed, volume, isLooping]
   );
 
   const setEffectVolume = useCallback((effectId: string, value: number) => {
@@ -51,6 +53,13 @@ export const useAudio = (effects: Effect[]) => {
     if (audioRefs.current[effectId]) {
       audioRefs.current[effectId].volume = value;
     }
+  }, []);
+
+  const toggleLoop = useCallback((effectId: string) => {
+    setIsLooping((prev) => ({
+      ...prev,
+      [effectId]: !prev[effectId],
+    }));
   }, []);
 
   useEffect(() => {
@@ -64,6 +73,13 @@ export const useAudio = (effects: Effect[]) => {
       );
       audio.addEventListener("ended", () => handleEnded(effect.id));
     });
+
+    // Initialize loop state for all effects
+    const initialLoopState = effects.reduce((acc, effect) => {
+      acc[effect.id] = true; // Default to true
+      return acc;
+    }, {} as Record<string, boolean>);
+    setIsLooping(initialLoopState);
 
     return () => {
       Object.values(audioRefs.current).forEach((audio) => {
@@ -80,5 +96,7 @@ export const useAudio = (effects: Effect[]) => {
     volume,
     playEffect,
     setEffectVolume,
+    isLooping,
+    toggleLoop,
   };
 };
