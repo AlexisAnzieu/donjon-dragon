@@ -28,6 +28,7 @@ export const useAudio = (effects: Effect[]) => {
   const initAudioContext = useCallback(() => {
     if (!audioContext.current) {
       audioContext.current = new (window.AudioContext ||
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).webkitAudioContext)();
     }
     if (audioContext.current.state === "suspended") {
