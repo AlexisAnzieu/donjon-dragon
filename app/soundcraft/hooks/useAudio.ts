@@ -55,6 +55,7 @@ export const useAudio = (effects: Effect[]) => {
 
     try {
       audioContext.current = new (window.AudioContext ||
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (window as any).webkitAudioContext)();
 
       // Force resume multiple times for iOS
