@@ -79,7 +79,7 @@ export const useAudio = (effects: Effect[]) => {
 
     // Initialize loop state
     const initialLoopState = effects.reduce((acc, effect) => {
-      acc[effect.id] = true;
+      acc[effect.id] = false;
       return acc;
     }, {} as Record<string, boolean>);
     setIsLooping(initialLoopState);
