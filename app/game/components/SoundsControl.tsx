@@ -1,9 +1,10 @@
 "use client";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { effects } from "@/app/soundcraft/effects";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
 import { useFavorites } from "../context/BoardContext";
+import { searchFreesound } from "@/app/services/freesound";
+import type { Effect } from "@/app/soundcraft/effects";
 
 interface SoundsControlProps {
   onClose: () => void;
@@ -21,9 +22,11 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     setEffectVolume,
     isLooping,
     toggleLoop,
-  } = useAudio(effects);
+  } = useAudio([]);
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [effects, setEffects] = useState<Effect[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -31,7 +34,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       if (key >= "1" && key <= "9") {
         const index = parseInt(key) - 1;
         if (index < favorites.length) {
-          const effect = effects.find((e) => e.id === favorites[index])!;
+          const effect = effects.find((e) => e.id === favorites[index].id)!;
           playEffect(effect);
         }
       }
@@ -39,7 +42,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [favorites, playEffect]);
+  }, [favorites, playEffect, effects]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -57,26 +60,34 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     };
   }, [onClose]);
 
-  const effectsByCategory = useMemo(() => {
-    const filteredEffects = effects.filter(
-      (effect) =>
-        effect.label.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        effect.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  useEffect(() => {
+    const searchTimer = setTimeout(async () => {
+      if (searchTerm.length >= 2) {
+        setIsLoading(true);
+        const results = await searchFreesound(searchTerm);
+        setEffects(results);
+        setIsLoading(false);
+      }
+    }, 200);
 
-    return filteredEffects.reduce((acc, effect) => {
+    return () => clearTimeout(searchTimer);
+  }, [searchTerm]);
+
+  const effectsByCategory = useMemo(() => {
+    return effects.reduce((acc, effect) => {
       if (!acc[effect.category]) {
         acc[effect.category] = [];
       }
       acc[effect.category].push(effect);
       return acc;
-    }, {} as Record<string, typeof effects>);
-  }, [searchTerm]);
+    }, {} as Record<string, Effect[]>);
+  }, [effects]);
 
-  const renderEffectItem = (
-    effect: (typeof effects)[0],
-    favoriteIndex?: number
-  ) => (
+  const handleToggleFavorite = (effect: Effect) => {
+    toggleFavorite(effect);
+  };
+
+  const renderEffectItem = (effect: Effect, favoriteIndex?: number) => (
     <div key={effect.id} className="space-y-3">
       <EffectButton
         volume={volume[effect.id] ?? effect.volume ?? 1}
@@ -86,10 +97,10 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
         isUsed={isUsed[effect.id]}
         progress={progress[effect.id] || 0}
         isLooping={isLooping[effect.id]}
-        isFavorite={favorites.includes(effect.id)}
+        isFavorite={favorites.map((f) => f.id).includes(effect.id)}
         favoriteIndex={favoriteIndex}
         onPlay={() => playEffect(effect)}
-        onToggleFavorite={() => toggleFavorite(effect.id)}
+        onToggleFavorite={() => handleToggleFavorite(effect)}
         onToggleLoop={() => toggleLoop(effect.id)}
       />
     </div>
@@ -130,13 +141,20 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
         </svg>
       </button>
 
-      <input
-        type="text"
-        placeholder="Search sounds..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 mb-6"
-      />
+      <div className="relative">
+        <input
+          type="text"
+          placeholder="Search sounds..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full px-4 py-2 rounded-lg bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/20 mb-6"
+        />
+        {isLoading && (
+          <div className="absolute right-3 top-2">
+            <div className="animate-spin h-5 w-5 border-2 border-white/20 border-t-white rounded-full" />
+          </div>
+        )}
+      </div>
 
       {Object.entries(effectsByCategory).map(([category, categoryEffects]) => (
         <div key={category} className="space-y-4 mb-6">
@@ -147,8 +165,8 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
             {categoryEffects.map((effect) =>
               renderEffectItem(
                 effect,
-                favorites.includes(effect.id)
-                  ? favorites.indexOf(effect.id)
+                favorites.some((f) => f.id === effect.id)
+                  ? favorites.findIndex((f) => f.id === effect.id)
                   : undefined
               )
             )}

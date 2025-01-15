@@ -1,12 +1,18 @@
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback } from "react";
 import type { Effect } from "../effects";
 
 export const useAudio = (effects: Effect[]) => {
+  const initialLoopState = effects.reduce((acc, effect) => {
+    acc[effect.id] = effect.loop ?? false;
+    return acc;
+  }, {} as Record<string, boolean>);
+
   const [isPlaying, setIsPlaying] = useState<Record<string, boolean>>({});
   const [isUsed, setIsUsed] = useState<Record<string, boolean>>({});
   const [progress, setProgress] = useState<Record<string, number>>({});
   const [volume, setVolume] = useState<Record<string, number>>({});
-  const [isLooping, setIsLooping] = useState<Record<string, boolean>>({});
+  const [isLooping, setIsLooping] =
+    useState<Record<string, boolean>>(initialLoopState);
 
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
@@ -24,31 +30,47 @@ export const useAudio = (effects: Effect[]) => {
   const handleEnded = useCallback((effectId: string) => {
     setIsUsed((prev) => ({ ...prev, [effectId]: false }));
     setProgress((prev) => ({ ...prev, [effectId]: 0 }));
+    setIsPlaying((prev) => ({ ...prev, [effectId]: false }));
   }, []);
 
   const playEffect = useCallback(
-    (effect: Effect) => {
-      const audio = audioRefs.current[effect.id];
-      if (!audio) return;
+    async (effect: Effect) => {
+      try {
+        let audio = audioRefs.current[effect.id];
 
-      if (isUsed[effect.id]) {
-        audio.pause();
-        audio.currentTime = 0;
-        setIsUsed((prev) => ({ ...prev, [effect.id]: false }));
-        setProgress((prev) => ({ ...prev, [effect.id]: 0 }));
-      } else {
-        audio.currentTime = 0;
-        audio.volume = volume[effect.id] ?? effect.volume ?? 1;
-        audio.loop = isLooping[effect.id];
-        audio.play();
-        setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
-        setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
-        setTimeout(() => {
+        if (!audio) {
+          audio = new Audio(effect.url);
+          audioRefs.current[effect.id] = audio;
+
+          audio.volume = volume[effect.id] ?? effect.volume ?? 1;
+          audio.loop = isLooping[effect.id] ?? false;
+
+          audio.addEventListener("timeupdate", () =>
+            updateProgress(effect.id, audio)
+          );
+          audio.addEventListener("ended", () => {
+            if (!audio.loop) {
+              handleEnded(effect.id);
+            }
+          });
+        }
+
+        if (isPlaying[effect.id]) {
+          audio.pause();
+          audio.currentTime = 0;
           setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
-        }, 200);
+          setIsUsed((prev) => ({ ...prev, [effect.id]: false }));
+        } else {
+          await audio.play();
+          setIsPlaying((prev) => ({ ...prev, [effect.id]: true }));
+          setIsUsed((prev) => ({ ...prev, [effect.id]: true }));
+        }
+      } catch (error) {
+        console.error("Error playing sound:", error);
+        setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
       }
     },
-    [isUsed, volume, isLooping]
+    [isPlaying, volume, isLooping, handleEnded, updateProgress]
   );
 
   const setEffectVolume = useCallback((effectId: string, value: number) => {
@@ -59,39 +81,14 @@ export const useAudio = (effects: Effect[]) => {
   }, []);
 
   const toggleLoop = useCallback((effectId: string) => {
-    setIsLooping((prev) => ({
-      ...prev,
-      [effectId]: !prev[effectId],
-    }));
-  }, []);
-
-  useEffect(() => {
-    effects.forEach((effect) => {
-      const audio = new Audio(effect.src);
-      audio.loop = effect.loop ?? false;
-      audioRefs.current[effect.id] = audio;
-
-      audio.addEventListener("timeupdate", () =>
-        updateProgress(effect.id, audio)
-      );
-      audio.addEventListener("ended", () => handleEnded(effect.id));
+    setIsLooping((prev) => {
+      const newValue = !prev[effectId];
+      if (audioRefs.current[effectId]) {
+        audioRefs.current[effectId].loop = newValue;
+      }
+      return { ...prev, [effectId]: newValue };
     });
-
-    // Initialize loop state
-    const initialLoopState = effects.reduce((acc, effect) => {
-      acc[effect.id] = false;
-      return acc;
-    }, {} as Record<string, boolean>);
-    setIsLooping(initialLoopState);
-
-    return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      Object.values(audioRefs.current).forEach((audio) => {
-        audio.pause();
-        audio.currentTime = 0;
-      });
-    };
-  }, [effects, updateProgress, handleEnded]);
+  }, []);
 
   return {
     isPlaying,

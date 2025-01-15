@@ -1,11 +1,14 @@
 import { ReactNode } from "react";
 import { createStorageContext } from "./createContext";
+import { Effect } from "@/app/soundcraft/effects";
+
+export const FAVORITE_SOUNDS = "soundFavorites";
 
 export const {
   Provider: FavoritesProvider,
   useStorageContext: useFavoritesStorage,
-} = createStorageContext<string[]>({
-  key: "soundFavorites",
+} = createStorageContext<Effect[]>({
+  key: FAVORITE_SOUNDS,
   defaultValue: [],
   maxItems: 9,
 });
@@ -13,13 +16,13 @@ export const {
 export function useFavorites() {
   const { data: favorites, setData: setFavorites } = useFavoritesStorage();
 
-  const toggleFavorite = (effectId: string) => {
+  const toggleFavorite = (effect: Effect) => {
     setFavorites(
-      favorites.includes(effectId)
-        ? favorites.filter((id) => id !== effectId)
+      favorites.map((f) => f.id).includes(effect.id)
+        ? favorites.filter((f) => f.id !== effect.id)
         : favorites.length >= 9
         ? favorites
-        : [...favorites, effectId]
+        : [...favorites, effect]
     );
   };
 

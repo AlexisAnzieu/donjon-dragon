@@ -1,13 +1,14 @@
 "use client";
 import { useEffect, useState } from "react";
-import { effects } from "@/app/soundcraft/effects";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
-import { useFavorites } from "../context/BoardContext";
+import { FAVORITE_SOUNDS, useFavorites } from "../context/BoardContext";
 import { SoundsControl } from "./SoundsControl";
+import { Effect } from "@/app/soundcraft/effects";
 
 export function FavoriteSounds() {
   const { favorites, toggleFavorite } = useFavorites();
+  const [favoriteEffects, setFavoriteEffects] = useState<Effect[]>([]);
   const {
     isPlaying,
     isUsed,
@@ -17,7 +18,7 @@ export function FavoriteSounds() {
     setEffectVolume,
     isLooping,
     toggleLoop,
-  } = useAudio(effects);
+  } = useAudio([]);
   const [showSoundModal, setShowSoundModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
     x: number;
@@ -26,25 +27,27 @@ export function FavoriteSounds() {
   } | null>(null);
 
   useEffect(() => {
+    const storedEffects = localStorage.getItem(FAVORITE_SOUNDS);
+    const allEffects = storedEffects ? JSON.parse(storedEffects) : [];
+    setFavoriteEffects(allEffects);
+  }, [favorites]);
+
+  useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key;
       if (key >= "1" && key <= "9") {
         const index = parseInt(key) - 1;
-        if (index < favorites.length) {
-          const effect = effects.find((e) => e.id === favorites[index])!;
-          playEffect(effect);
+        if (index < favoriteEffects.length) {
+          playEffect(favoriteEffects[index]);
         }
       }
     };
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [favorites, playEffect]);
+  }, [favoriteEffects, playEffect]);
 
-  const renderEffectItem = (
-    effect: (typeof effects)[0],
-    favoriteIndex: number
-  ) => (
+  const renderEffectItem = (effect: Effect, favoriteIndex: number) => (
     <div key={effect.id} className="flex items-center gap-2">
       <span className="text-white/50 w-4">{favoriteIndex + 1}</span>
       <div
@@ -88,10 +91,9 @@ export function FavoriteSounds() {
           VFX
         </h2>
         <div className="space-y-3">
-          {favorites.map((id, index) => {
-            const effect = effects.find((e) => e.id === id)!;
-            return renderEffectItem(effect, index);
-          })}
+          {favoriteEffects.map((effect, index) =>
+            renderEffectItem(effect, index)
+          )}
           {favorites.length < 9 && (
             <div className="flex items-center gap-2">
               <span className="text-white/50 w-4">{favorites.length + 1}</span>
@@ -133,7 +135,12 @@ export function FavoriteSounds() {
           <button
             className="w-full px-4 py-2 text-left text-white/90 hover:bg-gray-700"
             onClick={() => {
-              toggleFavorite(contextMenu.effectId);
+              const effect = favoriteEffects.find(
+                (effect) => effect.id === contextMenu.effectId
+              );
+              if (effect) {
+                toggleFavorite(effect);
+              }
               setContextMenu(null);
             }}
           >
