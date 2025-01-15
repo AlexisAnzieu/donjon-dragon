@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { effects } from "@/app/soundcraft/effects";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
@@ -25,6 +25,8 @@ export function FavoriteSounds() {
     effectId: string;
   } | null>(null);
 
+  const effectRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key;
@@ -41,6 +43,26 @@ export function FavoriteSounds() {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [favorites, playEffect]);
 
+  useEffect(() => {
+    // Set up non-passive wheel event listeners
+    favorites.forEach((id) => {
+      const element = effectRefs.current.get(id);
+      if (element) {
+        const handleWheel = (e: WheelEvent) => {
+          e.preventDefault();
+          const effect = effects.find((e) => e.id === id)!;
+          const currentVolume = volume[effect.id] ?? effect.volume ?? 1;
+          const delta = e.deltaY > 0 ? -0.03 : 0.03;
+          const newVolume = Math.max(0, Math.min(1, currentVolume + delta));
+          setEffectVolume(effect.id, newVolume);
+        };
+
+        element.addEventListener("wheel", handleWheel, { passive: false });
+        return () => element.removeEventListener("wheel", handleWheel);
+      }
+    });
+  }, [favorites, volume, setEffectVolume]);
+
   const renderEffectItem = (
     effect: (typeof effects)[0],
     favoriteIndex: number
@@ -48,6 +70,9 @@ export function FavoriteSounds() {
     <div key={effect.id} className="flex items-center gap-2">
       <span className="text-white/50 w-4">{favoriteIndex + 1}</span>
       <div
+        ref={(el) => {
+          if (el) effectRefs.current.set(effect.id, el);
+        }}
         onContextMenu={(e) => {
           e.preventDefault();
           setContextMenu({
@@ -55,13 +80,6 @@ export function FavoriteSounds() {
             y: e.clientY,
             effectId: effect.id,
           });
-        }}
-        onWheel={(e) => {
-          e.preventDefault();
-          const currentVolume = volume[effect.id] ?? effect.volume ?? 1;
-          const delta = e.deltaY > 0 ? -0.03 : 0.03;
-          const newVolume = Math.max(0, Math.min(1, currentVolume + delta));
-          setEffectVolume(effect.id, newVolume);
         }}
       >
         <EffectButton
