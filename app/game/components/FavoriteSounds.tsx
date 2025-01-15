@@ -56,6 +56,13 @@ export function FavoriteSounds() {
             effectId: effect.id,
           });
         }}
+        onWheel={(e) => {
+          e.preventDefault();
+          const currentVolume = volume[effect.id] ?? effect.volume ?? 1;
+          const delta = e.deltaY > 0 ? -0.03 : 0.03;
+          const newVolume = Math.max(0, Math.min(1, currentVolume + delta));
+          setEffectVolume(effect.id, newVolume);
+        }}
       >
         <EffectButton
           size="small"
@@ -77,7 +84,7 @@ export function FavoriteSounds() {
   return (
     <>
       <div className="bg-gray-800/90 rounded-lg p-3 w-full max-w-xs">
-        <h2 className="text-lg font-semibold text-white/90 border-b border-white/10 pb-1 mb-3 text-center">
+        <h2 className="text-lg font-semibold text-white/90 bor5der-b border-white/10 pb-1 mb-3 text-center">
           VFX
         </h2>
         <div className="space-y-3">
