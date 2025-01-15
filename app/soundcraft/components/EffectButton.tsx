@@ -7,10 +7,13 @@ interface EffectButtonProps {
   progress: number;
   isLooping: boolean;
   isFavorite: boolean;
-  favoriteIndex?: number;
+  size?: "small" | "medium" | "large";
   onPlay: () => void;
-  onToggleFavorite: () => void;
+  onToggleFavorite?: () => void;
   onToggleLoop: () => void;
+  volume: number;
+  onVolumeChange: (effectId: string, volume: number) => void;
+  favoriteIndex?: number;
 }
 
 export function EffectButton({
@@ -20,95 +23,159 @@ export function EffectButton({
   progress,
   isLooping,
   isFavorite,
-  favoriteIndex,
+  size = "medium",
   onPlay,
   onToggleFavorite,
   onToggleLoop,
+  volume,
+  onVolumeChange,
+  favoriteIndex,
 }: EffectButtonProps) {
+  const sizeClasses = {
+    small: {
+      button: "w-16",
+      icon: "w-6 h-6",
+      controls: "w-6 h-6",
+      iconText: "text-2xl",
+      label: "text-xs",
+      favorite: "text-sm",
+      volume: "h-1",
+    },
+    medium: {
+      button: "w-full",
+      icon: "w-8 h-8",
+      controls: "w-8 h-8",
+      iconText: "text-4xl",
+      label: "text-sm",
+      favorite: "text-sm",
+      volume: "h-1.5",
+    },
+    large: {
+      button: "w-full",
+      icon: "w-10 h-10",
+      controls: "w-10 h-10",
+      iconText: "text-5xl",
+      label: "text-base",
+      favorite: "text-base",
+      volume: "h-2",
+    },
+  };
+
   return (
-    <button
-      onClick={onPlay}
-      className={`w-full aspect-square rounded-xl flex flex-col items-center justify-center relative overflow-hidden
+    <div className="flex flex-col gap-2">
+      <button
+        onClick={onPlay}
+        className={`${
+          sizeClasses[size].button
+        } aspect-square rounded-xl flex flex-col items-center justify-center relative overflow-hidden
         ${
           isPlaying
             ? "bg-gradient-to-b from-gray-600 to-gray-700 ring-2 ring-white/30"
             : "bg-gradient-to-b from-gray-700 to-gray-800"
         } hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out`}
-    >
-      {favoriteIndex !== undefined && (
-        <div className="absolute top-0 left-0 right-0 h-8 flex items-center justify-center">
-          <div className="w-6 h-6 rounded-full bg-gray-700/50 flex items-center justify-center text-white/75 text-sm font-medium">
-            {favoriteIndex + 1}
-          </div>
-        </div>
-      )}
-
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onToggleFavorite();
-        }}
-        className={`absolute top-0 left-0 w-8 h-8 flex items-center justify-center rounded-bl-xl transition-all duration-200 z-20 cursor-pointer
-          ${isFavorite ? "text-yellow-400" : "text-gray-400 hover:text-white"}`}
-        title="Toggle favorite"
       >
-        <svg
-          viewBox="0 0 24 24"
-          fill={isFavorite ? "currentColor" : "none"}
-          className="w-4 h-4"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-        </svg>
-      </div>
+        {/* Only show favorite index and button for medium and large sizes */}
+        {favoriteIndex !== undefined && size !== "small" && (
+          <div className="absolute top-0 left-0 right-0 h-8 flex items-center justify-center">
+            <div
+              className={`w-6 h-6 rounded-full bg-gray-700/50 flex items-center justify-center text-white/75 ${sizeClasses[size].favorite} font-medium`}
+            >
+              {favoriteIndex + 1}
+            </div>
+          </div>
+        )}
 
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onToggleLoop();
-        }}
-        className={`absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-br-xl transition-all duration-200 z-20 cursor-pointer
+        {size !== "small" && (
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggleFavorite!();
+            }}
+            className={`absolute top-0 left-0 ${
+              sizeClasses[size].controls
+            } flex items-center justify-center rounded-bl-xl transition-all duration-200 z-20 cursor-pointer
+            ${
+              isFavorite ? "text-yellow-400" : "text-gray-400 hover:text-white"
+            }`}
+            title="Toggle favorite"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill={isFavorite ? "currentColor" : "none"}
+              className="w-4 h-4"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+            </svg>
+          </div>
+        )}
+
+        {/* Keep loop button for all sizes */}
+        <div
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            onToggleLoop();
+          }}
+          className={`absolute top-0 ${
+            size === "small" ? "right-0" : "right-0"
+          } ${
+            sizeClasses[size].controls
+          } flex items-center justify-center rounded-br-xl transition-all duration-200 z-20 cursor-pointer
           ${
             isLooping
               ? "bg-white/30 text-white"
               : "text-gray-400 hover:bg-gray-600/80 hover:text-white"
           }`}
-        title="Toggle loop"
-      >
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          className="w-4 h-4"
-          stroke="currentColor"
-          strokeWidth={2}
+          title="Toggle loop"
         >
-          <path
-            d="M17 3L21 7M21 7L17 11M21 7H7C4.79086 7 3 8.79086 3 11V13M7 21L3 17M3 17L7 13M3 17H17C19.2091 17 21 15.2091 21 13V11"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            className="w-4 h-4"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path
+              d="M17 3L21 7M21 7L17 11M21 7H7C4.79086 7 3 8.79086 3 11V13M7 21L3 17M3 17L7 13M3 17H17C19.2091 17 21 15.2091 21 13V11"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+
+        {isUsed && (
+          <div
+            className="absolute inset-0 bg-white/30 h-full"
+            style={{
+              right: `${100 - progress}%`,
+              transition: "right 100ms linear",
+            }}
           />
-        </svg>
-      </div>
+        )}
 
-      {isUsed && (
-        <div
-          className="absolute inset-0 bg-white/30 h-full"
-          style={{
-            right: `${100 - progress}%`,
-            transition: "right 100ms linear",
-          }}
-        />
-      )}
-
-      <span className="text-4xl filter drop-shadow-md relative z-10 mb-2">
-        {effect.icon}
-      </span>
-      <span className="text-white/90 text-sm font-medium relative z-10">
-        {effect.label}
-      </span>
-    </button>
+        <span
+          className={`${sizeClasses[size].iconText} filter drop-shadow-md relative z-10 mb-2`}
+        >
+          {effect.icon}
+        </span>
+        <span
+          className={`text-white/90 ${sizeClasses[size].label} font-medium relative z-10`}
+        >
+          {effect.label}
+        </span>
+      </button>
+      <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.1"
+        value={volume}
+        onChange={(e) => onVolumeChange(effect.id, Number(e.target.value))}
+        className={`${sizeClasses[size].button} appearance-none ${sizeClasses[size].volume} rounded-full bg-gray-700 accent-white/75 hover:accent-white transition-all cursor-pointer`}
+      />
+    </div>
   );
 }

@@ -3,7 +3,6 @@ import { useMemo, useState, useEffect } from "react";
 import { effects, EffectCategory } from "./effects";
 import { useAudio } from "./hooks/useAudio";
 import { EffectButton } from "./components/EffectButton";
-import { VolumeSlider } from "./components/VolumeSlider";
 
 export default function VFXTriggers() {
   const {
@@ -67,6 +66,7 @@ export default function VFXTriggers() {
   ) => (
     <div key={effect.id} className="space-y-3">
       <EffectButton
+        size="large"
         effect={effect}
         isPlaying={isPlaying[effect.id]}
         isUsed={isUsed[effect.id]}
@@ -77,11 +77,8 @@ export default function VFXTriggers() {
         onPlay={() => playEffect(effect)}
         onToggleFavorite={() => toggleFavorite(effect.id)}
         onToggleLoop={() => toggleLoop(effect.id)}
-      />
-      <VolumeSlider
-        effectId={effect.id}
         volume={volume[effect.id] ?? effect.volume ?? 1}
-        onChange={setEffectVolume}
+        onVolumeChange={setEffectVolume}
       />
     </div>
   );

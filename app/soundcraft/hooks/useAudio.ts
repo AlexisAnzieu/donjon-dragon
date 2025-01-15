@@ -85,6 +85,7 @@ export const useAudio = (effects: Effect[]) => {
     setIsLooping(initialLoopState);
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       Object.values(audioRefs.current).forEach((audio) => {
         audio.pause();
         audio.currentTime = 0;

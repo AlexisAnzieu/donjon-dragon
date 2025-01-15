@@ -116,6 +116,18 @@ export function NavBar({
         />
         <span>Fog</span>
       </button>
+      <button
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 
+                             transition-colors duration-150 rounded-lg"
+        onClick={() => onToggleElements("VFXControls")}
+      >
+        <HiEye
+          className={`text-xl ${
+            showElements.VFXControls ? "text-green-400" : "text-gray-600"
+          }`}
+        />
+        <span>VFX</span>
+      </button>
     </>
   );
 

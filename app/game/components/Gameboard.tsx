@@ -17,6 +17,8 @@ import { TokenContextMenu } from "./TokenContextMenu";
 import { CSSProperties } from "react";
 import { BrushPreview } from "./BrushPreview";
 import { NavBar } from "./NavBar";
+import { FavoriteSounds } from "./FavoriteSounds";
+import { BoardContextProvider } from "../context/BoardContext";
 
 interface GameBoardProps {
   sessionId: string;
@@ -29,6 +31,7 @@ interface GameBoardProps {
 const UIElements = {
   HitPointControls: true,
   FogControls: true,
+  VFXControls: true,
 };
 export type UIElementsKey = keyof typeof UIElements;
 
@@ -405,9 +408,10 @@ export default function GameBoard({
 
   return (
     <div className="h-screen w-screen select-none">
-      <div className="relative h-full w-full">
-        <div
-          className={`
+      <BoardContextProvider>
+        <div className="relative h-full w-full">
+          <div
+            className={`
             game-board
             relative w-full h-full
             overflow-hidden
@@ -418,175 +422,183 @@ export default function GameBoard({
             ${isFogControlActive ? "border-violet-600" : "border-black"}
             ${isPublic ? "cursor-default" : ""}
           `}
-        >
-          <div
-            ref={boardRef}
-            className="absolute inset-0"
-            style={boardStyle}
-            onMouseDown={handleBoardMouseDown}
-            onContextMenu={(e) => e.preventDefault()}
           >
-            {tokens.map((token: Token) => (
-              <TokenComponent
-                zoom={zoom}
-                key={token.id}
-                token={token}
-                type={token.type as TokenType}
-                onMouseDown={(e) =>
-                  handleTokenMouseDown(e, token.type as TokenType, token.id)
-                }
-                onContextMenu={(e) =>
-                  handleTokenContextMenu(e, token.type as TokenType, token.id)
-                }
-                style={getTokenStyle(token)}
-              />
-            ))}
-          </div>
-
-          <canvas
-            ref={fogCanvasRef}
-            className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{
-              opacity: isPublic ? 1 : 0.7,
-              mixBlendMode: "multiply",
-              ...getBoardTransformStyle(),
-              zIndex: 2,
-              pointerEvents: isFogControlActive ? "auto" : "none",
-            }}
-          />
-
-          {!isPublic && (
-            <>
-              {isFogControlActive && (
-                <BrushPreview
-                  size={brushSize}
-                  mousePosition={mousePosition}
-                  zoom={zoom}
-                />
-              )}
-              {!isFogControlActive && (
-                <>
-                  {showElements.HitPointControls && (
-                    <div className="absolute top-4 right-4  z-50 ">
-                      <HitPointControls
-                        tokens={tokens}
-                        onHitPointChange={handleHitPointChange}
-                      />
-                    </div>
-                  )}
-                  <NavBar
-                    onImageUpload={handleImageUpload}
-                    onToggleElements={handleToggleElements}
-                    showElements={showElements}
-                  />
-                </>
-              )}
-              {showElements.FogControls && (
-                <FogControls
-                  isFogControlActive={isFogControlActive}
-                  setIsFogControlActive={setIsFogControlActive}
-                  isDrawingFog={isDrawingFog}
-                  setIsDrawingFog={setIsDrawingFog}
-                  brushSize={brushSize}
-                  setBrushSize={setBrushSize}
-                  onReset={resetFog}
-                  isAutoClearEnabled={isAutoClearEnabled}
-                  setIsAutoClearEnabled={setIsAutoClearEnabled}
-                />
-              )}
-            </>
-          )}
-
-          <div className="absolute bottom-4 right-4 flex gap-2 z-50">
-            <button
-              onClick={toggleFullscreen}
-              className="bg-white/80 hover:bg-white/90 p-2 rounded-lg shadow-md"
+            <div
+              ref={boardRef}
+              className="absolute inset-0"
+              style={boardStyle}
+              onMouseDown={handleBoardMouseDown}
+              onContextMenu={(e) => e.preventDefault()}
             >
-              {isFullscreen ? (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              ) : (
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"
-                  />
-                </svg>
-              )}
-            </button>
-          </div>
+              {tokens.map((token: Token) => (
+                <TokenComponent
+                  zoom={zoom}
+                  key={token.id}
+                  token={token}
+                  type={token.type as TokenType}
+                  onMouseDown={(e) =>
+                    handleTokenMouseDown(e, token.type as TokenType, token.id)
+                  }
+                  onContextMenu={(e) =>
+                    handleTokenContextMenu(e, token.type as TokenType, token.id)
+                  }
+                  style={getTokenStyle(token)}
+                />
+              ))}
+            </div>
 
-          {contextMenu && (
-            <TokenContextMenu
-              position={{ x: contextMenu.x, y: contextMenu.y }}
-              tokenId={contextMenu.tokenId}
-              tokenType={contextMenu.tokenType}
-              token={tokens.find((t) => t.id === contextMenu.tokenId)!}
-              onSeeDetails={() => {
-                // You can implement the details view logic here
-                console.log("Show details for token:", contextMenu.tokenId);
-                setContextMenu(null);
+            <canvas
+              ref={fogCanvasRef}
+              className="absolute inset-0 w-full h-full pointer-events-none"
+              style={{
+                opacity: isPublic ? 1 : 0.7,
+                mixBlendMode: "multiply",
+                ...getBoardTransformStyle(),
+                zIndex: 2,
+                pointerEvents: isFogControlActive ? "auto" : "none",
               }}
-              onDuplicate={() => {
-                duplicateToken(contextMenu.tokenId);
-                setContextMenu(null);
-              }}
-              onMarkAsDead={() => {
-                const token = tokens.find((t) => t.id === contextMenu.tokenId);
-                if (token) {
-                  updateToken(contextMenu.tokenId, {
-                    hitPoint: token.hitPoint <= 0 ? 1 : 0,
-                  });
+            />
+
+            {!isPublic && (
+              <>
+                {isFogControlActive && (
+                  <BrushPreview
+                    size={brushSize}
+                    mousePosition={mousePosition}
+                    zoom={zoom}
+                  />
+                )}
+                {!isFogControlActive && (
+                  <>
+                    {showElements.HitPointControls && (
+                      <div className="absolute top-4 right-4  z-50 ">
+                        <HitPointControls
+                          tokens={tokens}
+                          onHitPointChange={handleHitPointChange}
+                        />
+                      </div>
+                    )}
+                    {showElements.VFXControls && (
+                      <div className="absolute top-20 left-4 z-50">
+                        <FavoriteSounds />
+                      </div>
+                    )}
+                    <NavBar
+                      onImageUpload={handleImageUpload}
+                      onToggleElements={handleToggleElements}
+                      showElements={showElements}
+                    />
+                  </>
+                )}
+                {showElements.FogControls && (
+                  <FogControls
+                    isFogControlActive={isFogControlActive}
+                    setIsFogControlActive={setIsFogControlActive}
+                    isDrawingFog={isDrawingFog}
+                    setIsDrawingFog={setIsDrawingFog}
+                    brushSize={brushSize}
+                    setBrushSize={setBrushSize}
+                    onReset={resetFog}
+                    isAutoClearEnabled={isAutoClearEnabled}
+                    setIsAutoClearEnabled={setIsAutoClearEnabled}
+                  />
+                )}
+              </>
+            )}
+
+            <div className="absolute bottom-4 right-4 flex gap-2 z-50">
+              <button
+                onClick={toggleFullscreen}
+                className="bg-white/80 hover:bg-white/90 p-2 rounded-lg shadow-md"
+              >
+                {isFullscreen ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-6 w-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5v-4m0 4h-4m4 0l-5-5"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+
+            {contextMenu && (
+              <TokenContextMenu
+                position={{ x: contextMenu.x, y: contextMenu.y }}
+                tokenId={contextMenu.tokenId}
+                tokenType={contextMenu.tokenType}
+                token={tokens.find((t) => t.id === contextMenu.tokenId)!}
+                onSeeDetails={() => {
+                  // You can implement the details view logic here
+                  console.log("Show details for token:", contextMenu.tokenId);
+                  setContextMenu(null);
+                }}
+                onDuplicate={() => {
+                  duplicateToken(contextMenu.tokenId);
+                  setContextMenu(null);
+                }}
+                onMarkAsDead={() => {
+                  const token = tokens.find(
+                    (t) => t.id === contextMenu.tokenId
+                  );
+                  if (token) {
+                    updateToken(contextMenu.tokenId, {
+                      hitPoint: token.hitPoint <= 0 ? 1 : 0,
+                    });
+                  }
+                  setContextMenu(null);
+                }}
+                onConvertToEnemy={() => {
+                  convertToken("enemies", contextMenu.tokenId);
+                  setContextMenu(null);
+                }}
+                onConvertToNpc={() => {
+                  convertToken("npcs", contextMenu.tokenId);
+                  setContextMenu(null);
+                }}
+                onRemove={() => {
+                  removeToken(contextMenu.tokenId);
+                  setContextMenu(null);
+                }}
+              />
+            )}
+
+            {newTokenForm.isOpen && (
+              <TokenForm
+                position={{ x: newTokenForm.x, y: newTokenForm.y }}
+                isOpen={newTokenForm.isOpen}
+                onClose={() =>
+                  setNewTokenForm((prev) => ({ ...prev, isOpen: false }))
                 }
-                setContextMenu(null);
-              }}
-              onConvertToEnemy={() => {
-                convertToken("enemies", contextMenu.tokenId);
-                setContextMenu(null);
-              }}
-              onConvertToNpc={() => {
-                convertToken("npcs", contextMenu.tokenId);
-                setContextMenu(null);
-              }}
-              onRemove={() => {
-                removeToken(contextMenu.tokenId);
-                setContextMenu(null);
-              }}
-            />
-          )}
-
-          {newTokenForm.isOpen && (
-            <TokenForm
-              position={{ x: newTokenForm.x, y: newTokenForm.y }}
-              isOpen={newTokenForm.isOpen}
-              onClose={() =>
-                setNewTokenForm((prev) => ({ ...prev, isOpen: false }))
-              }
-              onSubmit={handleTokenFormSubmit}
-            />
-          )}
+                onSubmit={handleTokenFormSubmit}
+              />
+            )}
+          </div>
         </div>
-      </div>
+      </BoardContextProvider>
     </div>
   );
 }
