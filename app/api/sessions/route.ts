@@ -30,9 +30,11 @@ export async function POST(request: Request) {
       },
     });
 
-    const tokens: Omit<Token, "createdAt" | "updatedAt" | "monsterId">[] =
+    const tokens: Omit<
+      Token,
+      "createdAt" | "updatedAt" | "monsterId" | "id"
+    >[] =
       game.characters?.map((character, index) => ({
-        id: character.id,
         name: character.name,
         type: "characters",
         xPercent: 10 + index * 5,
