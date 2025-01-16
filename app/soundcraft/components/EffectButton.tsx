@@ -62,7 +62,7 @@ export function EffectButton({
   };
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className={`flex flex-col gap-2 `}>
       <button
         onClick={onPlay}
         className={`${
@@ -72,7 +72,15 @@ export function EffectButton({
           isPlaying
             ? "bg-gradient-to-b from-gray-600 to-gray-700 ring-2 ring-white/30"
             : "bg-gradient-to-b from-gray-700 to-gray-800"
-        } hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out`}
+        } hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out bg-no-repeat`}
+        style={{
+          ...(size !== "small" && {
+            backgroundImage: `url(${effect.waveformUrl})`,
+            backgroundSize: "100% 100%",
+            backgroundPosition: "center",
+            backgroundBlendMode: "overlay",
+          }),
+        }}
       >
         {/* Only show favorite index and button for medium and large sizes */}
         {favoriteIndex !== undefined && size !== "small" && (
@@ -155,17 +163,41 @@ export function EffectButton({
             }}
           />
         )}
-
-        <span
-          className={`${sizeClasses[size].iconText} filter drop-shadow-md relative z-10 mb-2`}
-        >
-          {effect.icon}
-        </span>
-        <span
-          className={`text-white/90 ${sizeClasses[size].label} font-medium relative z-10`}
-        >
-          {effect.label}
-        </span>
+        {/* Label for medium and large sizes at the top */}
+        {size !== "small" && (
+          <div className="absolute top-8 left-0 right-0 z-10 px-2">
+            <span
+              className={`text-white/90 ${sizeClasses[size].label} font-medium text-center break-words`}
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: "2",
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+              title={effect.label}
+            >
+              {effect.label}
+            </span>
+          </div>
+        )}
+        <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-gray-900/70 to-transparent" />
+        {/* Label for small size in the center */}
+        {size === "small" && (
+          <div className="relative z-10 flex-1 flex items-center justify-center p-2">
+            <span
+              className={`text-white/90 ${sizeClasses[size].label} font-medium text-center break-words`}
+              style={{
+                display: "-webkit-box",
+                WebkitLineClamp: "3",
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }}
+              title={effect.label}
+            >
+              {effect.label}
+            </span>
+          </div>
+        )}
       </button>
       <input
         type="range"

@@ -10,7 +10,7 @@ export async function searchFreesound(query: string): Promise<Effect[]> {
     const response = await fetch(
       `${FREESOUND_API_URL}/search/text/?query=${encodeURIComponent(
         query
-      )}&token=${API_KEY}&fields=id,name,previews,duration,tags&page_size=20`
+      )}&token=${API_KEY}&fields=id,name,previews,duration,tags,images&page_size=20`
     );
     const data = await response.json();
 
@@ -22,6 +22,7 @@ export async function searchFreesound(query: string): Promise<Effect[]> {
       volume: 1,
       duration: sound.duration || 0,
       loop: false,
+      waveformUrl: sound.images.waveform_l,
     }));
   } catch (error) {
     console.error("Failed to fetch from Freesound:", error);
