@@ -19,6 +19,7 @@ import { BrushPreview } from "./BrushPreview";
 import { NavBar } from "./NavBar";
 import { FavoriteSounds } from "./FavoriteSounds";
 import { BoardContextProvider } from "../context/BoardContext";
+import { DetailComponent } from "./DetailComponent";
 
 interface GameBoardProps {
   sessionId: string;
@@ -178,6 +179,7 @@ export default function GameBoard({
   });
 
   const [showElements, setShowElements] = useState(UIElements);
+  const [detailToken, setDetailToken] = useState<Token | null>(null);
 
   // Update the WebSocket message handler for public view
   useEffect(() => {
@@ -204,6 +206,9 @@ export default function GameBoard({
       } else if (message.type === "backgroundImage") {
         const { url } = message.payload;
         setBackgroundImage(url);
+      } else if (message.type === "detailToken") {
+        const { token } = message.payload;
+        setDetailToken(token);
       }
     };
   }, [
@@ -216,6 +221,18 @@ export default function GameBoard({
     initialTokens,
     updateFogCanvas,
   ]);
+
+  // Add effect to sync detailToken
+  useEffect(() => {
+    if (isPublic) return;
+
+    ws.send(
+      JSON.stringify({
+        type: "detailToken",
+        payload: { token: detailToken || null },
+      })
+    );
+  }, [detailToken, isPublic, ws]);
 
   // Board event handlers
   const handleBoardMouseDown = (e: React.MouseEvent) => {
@@ -552,8 +569,12 @@ export default function GameBoard({
                 tokenType={contextMenu.tokenType}
                 token={tokens.find((t) => t.id === contextMenu.tokenId)!}
                 onSeeDetails={() => {
-                  // You can implement the details view logic here
-                  console.log("Show details for token:", contextMenu.tokenId);
+                  const token = tokens.find(
+                    (t) => t.id === contextMenu.tokenId
+                  );
+                  if (token) {
+                    setDetailToken(token);
+                  }
                   setContextMenu(null);
                 }}
                 onDuplicate={() => {
@@ -594,6 +615,14 @@ export default function GameBoard({
                   setNewTokenForm((prev) => ({ ...prev, isOpen: false }))
                 }
                 onSubmit={handleTokenFormSubmit}
+              />
+            )}
+
+            {!isFogControlActive && detailToken && (
+              <DetailComponent
+                isPublic={isPublic}
+                token={detailToken}
+                onClose={() => setDetailToken(null)}
               />
             )}
           </div>
