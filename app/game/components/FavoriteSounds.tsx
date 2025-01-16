@@ -34,6 +34,14 @@ export function FavoriteSounds() {
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      // Skip if target is an input element
+      if (
+        event.target instanceof HTMLInputElement ||
+        event.target instanceof HTMLTextAreaElement
+      ) {
+        return;
+      }
+
       const key = event.key;
       if (key >= "1" && key <= "9") {
         const index = parseInt(key) - 1;

@@ -16,8 +16,8 @@ export function DetailComponent({
   isPublic = true,
 }: DetailComponentProps) {
   const [position, setPosition] = useState({
-    x: isPublic ? 20 : window.innerWidth - 40,
-    y: isPublic ? 200 : window.innerHeight - 240,
+    x: isPublic ? 0 : 135,
+    y: isPublic ? 0 : 100,
   });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -79,13 +79,15 @@ export function DetailComponent({
           onClick={onClose}
           className={`${
             isPublic ? "absolute" : "sticky"
-          } top-2 right-2 float-right text-gray-500 hover:text-gray-700 z-10`}
+          } top-2 right-5 float-right text-gray-500 hover:text-gray-700 z-50`}
         >
           ✕
         </button>
 
         {monsterData ? (
-          <div className={isPublic ? "" : "overflow-y-auto"}>
+          <div
+            className={`${isPublic ? "" : "overflow-y-auto scrollbar-hide"}`}
+          >
             <MonsterComponent {...monsterData} />
           </div>
         ) : (
