@@ -28,7 +28,7 @@ async function sendColorCommand(
       value: color,
       brightness,
       transition: 0,
-      duration: 200,
+      duration: 1000,
     },
   };
 
