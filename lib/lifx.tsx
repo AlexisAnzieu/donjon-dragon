@@ -14,7 +14,11 @@ interface ColorCommand {
   };
 }
 
-export async function sendColorCommand(
+export async function sendHurtTokenColor(): Promise<void> {
+  sendColorCommand({ r: 255, g: 0, b: 0 });
+}
+
+async function sendColorCommand(
   color: RGBColor,
   brightness: number = 100
 ): Promise<void> {

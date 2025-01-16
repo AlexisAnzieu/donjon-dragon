@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Token } from "@prisma/client";
 import { TokenType } from "../game/type";
-import { sendColorCommand } from "@/lib/lifx";
+import { sendHurtTokenColor } from "@/lib/lifx";
 
 interface UseTokenManagementProps {
   initialTokens: Token[];
@@ -148,7 +148,7 @@ export function useTokenManagement({
               }
             : token
         );
-        sendColorCommand({ r: 255, g: 0, b: 0 }); // For red at 100% brightness
+        sendHurtTokenColor();
         notifyTokenUpdate(newTokens);
         return newTokens;
       });
