@@ -126,7 +126,7 @@ export function NavBar({
             showElements.VFXControls ? "text-green-400" : "text-gray-600"
           }`}
         />
-        <span>VFX</span>
+        <span>Sounds</span>
       </button>
     </>
   );

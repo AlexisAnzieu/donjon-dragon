@@ -88,7 +88,7 @@ export function FavoriteSounds() {
     <>
       <div className="bg-gray-800/90 rounded-lg p-3 w-full max-w-xs">
         <h2 className="text-lg font-semibold text-white/90 bor5der-b border-white/10 pb-1 mb-3 text-center">
-          VFX
+          Sounds
         </h2>
         <div className="space-y-3">
           {favoriteEffects.map((effect, index) =>

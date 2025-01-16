@@ -156,6 +156,17 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
         )}
       </div>
 
+      {favorites.length > 0 && (
+        <div className="space-y-4 mb-6">
+          <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
+            Favorites
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            {favorites.map((effect, index) => renderEffectItem(effect, index))}
+          </div>
+        </div>
+      )}
+
       {Object.entries(effectsByCategory).map(([category, categoryEffects]) => (
         <div key={category} className="space-y-4 mb-6">
           <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
