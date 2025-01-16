@@ -30,6 +30,7 @@ export function HitPointControls({
     return tokens.filter((token) =>
       token.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens, searchTerm, tokenStates]);
 
   const tokensByType = useMemo(
