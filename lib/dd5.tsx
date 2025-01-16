@@ -16,11 +16,23 @@ export const getMonsters = async (): Promise<Monster[]> => {
   return data;
 };
 
-export const getMonster = async (slug: string): Promise<Monster> => {
+export const getMonsterBySlug = async (slug: string): Promise<Monster> => {
   const response = await fetch(`${baseUrl}/api/monsters`);
   const data = await response.json();
 
   const monster = data.find((monster: Monster) => monster.slug === slug);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch monsters");
+  }
+  return monster;
+};
+
+export const getMonsterById = async (id: string): Promise<Monster> => {
+  const response = await fetch(`${baseUrl}/api/monsters`);
+  const data = await response.json();
+
+  const monster = data.find((monster: Monster) => monster.id === id);
 
   if (!response.ok) {
     throw new Error("Failed to fetch monsters");

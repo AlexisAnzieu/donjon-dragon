@@ -3,7 +3,7 @@
 import { type Monster } from "@/app/api/monsters/route";
 import MonsterComponent from "@/app/monsters/MonsterComponent";
 import PrintButton from "@/app/monsters/PrintButton";
-import { getMonster, getMonsters } from "@/lib/dd5";
+import { getMonsterBySlug, getMonsters } from "@/lib/dd5";
 
 export async function generateStaticParams() {
   const monsters = await getMonsters();
@@ -19,7 +19,7 @@ export default async function Monster({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const monster = await getMonster(slug);
+  const monster = await getMonsterBySlug(slug);
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 flex-column">
       <div className="p-8">

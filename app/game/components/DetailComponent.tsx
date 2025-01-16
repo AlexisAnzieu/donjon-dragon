@@ -1,5 +1,8 @@
 import { Token } from "@prisma/client";
-import { useState, MouseEvent } from "react";
+import { useState, MouseEvent, useEffect } from "react";
+import MonsterComponent from "@/app/monsters/MonsterComponent";
+import { Monster } from "@/app/api/monsters/route";
+import { getMonsterById } from "@/lib/dd5";
 
 interface DetailComponentProps {
   token: Token;
@@ -18,6 +21,22 @@ export function DetailComponent({
   });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [monsterData, setMonsterData] = useState<Monster | null>(null);
+
+  useEffect(() => {
+    const fetchMonsterData = async () => {
+      if (token.monsterId) {
+        try {
+          const data = await getMonsterById(token.monsterId);
+          setMonsterData(data);
+        } catch (error) {
+          console.error("Failed to fetch monster data:", error);
+        }
+      }
+    };
+
+    fetchMonsterData();
+  }, [token]);
 
   const handleMouseDown = (e: MouseEvent) => {
     setIsDragging(true);
@@ -52,34 +71,41 @@ export function DetailComponent({
       onMouseLeave={handleMouseUp}
     >
       <div
-        className={`bg-white rounded-lg p-6 shadow-xl cursor-move ${
+        className={`bg-white rounded-lg shadow-xl cursor-move ${
           isPublic ? "max-w-md" : "max-w-xs"
         }`}
       >
-        <div className="flex justify-between items-start mb-4">
-          <h2
-            className={`font-bold text-gray-800 ${
-              isPublic ? "text-2xl" : "text-lg"
-            }`}
-          >
-            {token.name}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            ✕
-          </button>
-        </div>
-        {token.icon && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={token.icon}
-            alt={token.name}
-            className={`w-full h-auto rounded-lg shadow-md ${
-              !isPublic && "max-h-32"
-            }`}
-          />
+        <button
+          onClick={onClose}
+          className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 z-10"
+        >
+          ✕
+        </button>
+
+        {monsterData ? (
+          <MonsterComponent {...monsterData} />
+        ) : (
+          <div className="p-6">
+            <div className="flex justify-between items-start mb-4">
+              <h2
+                className={`font-bold text-gray-800 ${
+                  isPublic ? "text-2xl" : "text-lg"
+                }`}
+              >
+                {token.name}
+              </h2>
+            </div>
+            {token.icon && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={token.icon}
+                alt={token.name}
+                className={`w-full h-auto rounded-lg shadow-md ${
+                  !isPublic && "max-h-32"
+                }`}
+              />
+            )}
+          </div>
         )}
       </div>
     </div>
