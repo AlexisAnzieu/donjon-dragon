@@ -16,8 +16,8 @@ export function DetailComponent({
   isPublic = true,
 }: DetailComponentProps) {
   const [position, setPosition] = useState({
-    x: isPublic ? 20 : window.innerWidth - 320,
-    y: isPublic ? 200 : window.innerHeight - 200,
+    x: isPublic ? 20 : window.innerWidth - 40,
+    y: isPublic ? 200 : window.innerHeight - 240,
   });
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -25,7 +25,7 @@ export function DetailComponent({
 
   useEffect(() => {
     const fetchMonsterData = async () => {
-      if (token.monsterId) {
+      if (token.monsterId && !isPublic) {
         try {
           const data = await getMonsterById(token.monsterId);
           setMonsterData(data);
@@ -36,7 +36,7 @@ export function DetailComponent({
     };
 
     fetchMonsterData();
-  }, [token]);
+  }, [token, isPublic]);
 
   const handleMouseDown = (e: MouseEvent) => {
     setIsDragging(true);
@@ -72,18 +72,22 @@ export function DetailComponent({
     >
       <div
         className={`bg-white rounded-lg shadow-xl cursor-move ${
-          isPublic ? "max-w-md" : "max-w-xs"
+          isPublic ? "max-w-md" : "max-w-xs max-h-[80vh] overflow-y-auto"
         }`}
       >
         <button
           onClick={onClose}
-          className="absolute right-2 top-2 text-gray-500 hover:text-gray-700 z-10"
+          className={`${
+            isPublic ? "absolute" : "sticky"
+          } top-2 right-2 float-right text-gray-500 hover:text-gray-700 z-10`}
         >
           ✕
         </button>
 
         {monsterData ? (
-          <MonsterComponent {...monsterData} />
+          <div className={isPublic ? "" : "overflow-y-auto"}>
+            <MonsterComponent {...monsterData} />
+          </div>
         ) : (
           <div className="p-6">
             <div className="flex justify-between items-start mb-4">
