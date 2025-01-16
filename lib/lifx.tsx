@@ -49,6 +49,5 @@ async function sendColorCommand(
     }
   } catch (error) {
     console.error("Failed to send color command:", error);
-    throw error;
   }
 }
