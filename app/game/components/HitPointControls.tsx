@@ -30,7 +30,7 @@ export function HitPointControls({
     return tokens.filter((token) =>
       token.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [tokens, searchTerm]);
+  }, [tokens, searchTerm, tokenStates]);
 
   const tokensByType = useMemo(
     () => groupBy(filteredTokens, "type") as Record<TokenType, Token[]>,
@@ -81,13 +81,18 @@ export function HitPointControls({
       const token = tokens.find((t) => t.id === tokenId);
       if (!token) return;
 
-      const currentHp = token.hitPoint ?? 0;
+      const currentHp = tokenStates[tokenId]?.temp ?? token.hitPoint ?? 0;
       const maxHp = token.maxHitPoint ?? 0;
       const newValue = Math.min(Math.max(0, currentHp + amount), maxHp);
 
+      setTokenStates((prev) => ({
+        ...prev,
+        [tokenId]: { ...prev[tokenId], temp: newValue },
+      }));
+
       onHitPointChange(tokenId, newValue);
     },
-    [tokens, onHitPointChange]
+    [tokens, tokenStates, onHitPointChange]
   );
 
   return (
