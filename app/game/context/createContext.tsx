@@ -3,7 +3,6 @@ import {
   useContext,
   ReactNode,
   useState,
-  useEffect,
 } from "react";
 
 export interface StorageOptions<T> {
@@ -11,9 +10,6 @@ export interface StorageOptions<T> {
   defaultValue: T;
   maxItems?: number;
   onUpdate?: (value: T) => void;
-  validate?: (value: T) => boolean;
-  serialize?: (value: T) => string;
-  deserialize?: (value: string) => T;
 }
 
 export function createStorageContext<T>({
@@ -21,9 +17,6 @@ export function createStorageContext<T>({
   defaultValue,
   maxItems,
   onUpdate,
-  validate = () => true,
-  serialize = JSON.stringify,
-  deserialize = JSON.parse,
 }: StorageOptions<T>) {
   type ContextValue = {
     data: T;
@@ -35,20 +28,6 @@ export function createStorageContext<T>({
   function Provider({ children }: { children: ReactNode }) {
     const [data, setDataInternal] = useState<T>(defaultValue);
 
-    useEffect(() => {
-      try {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          const parsed = deserialize(stored);
-          if (validate(parsed)) {
-            setDataInternal(parsed);
-          }
-        }
-      } catch (error) {
-        console.error(`Error loading ${key} from storage:`, error);
-      }
-    }, []);
-
     const setData = (valueOrUpdater: T | ((prev: T) => T)) => {
       setDataInternal((prev) => {
         const newValue =
@@ -56,23 +35,13 @@ export function createStorageContext<T>({
             ? (valueOrUpdater as (prev: T) => T)(prev)
             : valueOrUpdater;
 
-        // Handle maxItems constraint for array types
         const finalValue =
           Array.isArray(newValue) && maxItems
             ? (newValue.slice(0, maxItems) as T)
             : newValue;
 
-        if (validate(finalValue)) {
-          try {
-            localStorage.setItem(key, serialize(finalValue));
-            onUpdate?.(finalValue);
-          } catch (error) {
-            console.error(`Error saving ${key} to storage:`, error);
-          }
-          return finalValue;
-        }
-
-        return prev;
+        onUpdate?.(finalValue);
+        return finalValue;
       });
     };
 

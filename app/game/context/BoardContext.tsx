@@ -1,38 +1,75 @@
-import { ReactNode } from "react";
+import { ReactNode, createContext, useContext } from "react";
 import { createStorageContext } from "./createContext";
-import { Effect } from "@/app/soundcraft/effects";
+import { Sound } from "@prisma/client";
 
 export const FAVORITE_SOUNDS = "soundFavorites";
+
+const SessionContext = createContext<string | null>(null);
 
 export const {
   Provider: FavoritesProvider,
   useStorageContext: useFavoritesStorage,
-} = createStorageContext<Effect[]>({
+} = createStorageContext<Sound[]>({
   key: FAVORITE_SOUNDS,
   defaultValue: [],
   maxItems: 9,
 });
 
-export function useFavorites() {
-  const { data: favorites, setData: setFavorites } = useFavoritesStorage();
-
-  const toggleFavorite = (effect: Effect) => {
-    setFavorites(
-      favorites.map((f) => f.id).includes(effect.id)
-        ? favorites.filter((f) => f.id !== effect.id)
-        : favorites.length >= 9
-        ? favorites
-        : [...favorites, effect]
+function useSessionId() {
+  const sessionId = useContext(SessionContext);
+  if (!sessionId) {
+    throw new Error(
+      "Board components must be used within a BoardContextProvider with sessionId"
     );
-  };
-
-  return { favorites, toggleFavorite };
+  }
+  return sessionId;
 }
 
-export function BoardContextProvider({ children }: { children: ReactNode }) {
-  return providers.reduce(
-    (acc, Provider) => <Provider>{acc}</Provider>,
-    children
+export function useFavorites() {
+  const sessionId = useSessionId();
+  const { data: favorites, setData: setFavorites } = useFavoritesStorage();
+
+  const loadFavorites = async () => {
+    const response = await fetch(`/api/sessions?id=${sessionId}`);
+    const data = await response.json();
+    setFavorites(data.sounds);
+  };
+
+  const toggleFavorite = async (effect: Sound) => {
+    const newFavorites = favorites.map((f) => f.id).includes(effect.id)
+      ? favorites.filter((f) => f.id !== effect.id)
+      : favorites.length >= 9
+      ? favorites
+      : [...favorites, effect];
+
+    setFavorites(newFavorites);
+
+    await fetch(`/api/sessions?id=${sessionId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sounds: newFavorites }),
+    });
+  };
+
+  return { favorites, toggleFavorite, loadFavorites };
+}
+
+export function BoardContextProvider({
+  sessionId,
+  children,
+}: {
+  sessionId: string;
+  children: ReactNode;
+}) {
+  return (
+    <SessionContext.Provider value={sessionId}>
+      {providers.reduce(
+        (acc, Provider) => (
+          <Provider>{acc}</Provider>
+        ),
+        children
+      )}
+    </SessionContext.Provider>
   );
 }
 

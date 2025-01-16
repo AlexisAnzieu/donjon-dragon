@@ -1,7 +1,7 @@
+import { Sound } from "@prisma/client";
 import { useRef, useState, useCallback } from "react";
-import type { Effect } from "../effects";
 
-export const useAudio = (effects: Effect[]) => {
+export const useAudio = (effects: Sound[]) => {
   const initialLoopState = effects.reduce((acc, effect) => {
     acc[effect.id] = effect.loop ?? false;
     return acc;
@@ -34,7 +34,7 @@ export const useAudio = (effects: Effect[]) => {
   }, []);
 
   const playEffect = useCallback(
-    async (effect: Effect) => {
+    async (effect: Sound) => {
       try {
         let audio = audioRefs.current[effect.id];
 

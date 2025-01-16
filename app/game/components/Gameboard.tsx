@@ -425,7 +425,7 @@ export default function GameBoard({
 
   return (
     <div className="h-screen w-screen select-none">
-      <BoardContextProvider>
+      <BoardContextProvider sessionId={sessionId}>
         <div className="relative h-full w-full">
           <div
             className={`

@@ -70,6 +70,23 @@ model Session {
   name      String
   fogOfWar  String?  @db.LongText
   viewState Json?
+  sounds    Sound[]
+}
+
+model Sound {
+  cid         String   @id @default(cuid())
+  id          String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  label       String
+  category    String
+  url         String
+  volume      Float
+  duration    Float
+  loop        Boolean
+  waveformUrl String
+  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId   String
 }
 
 model Monster {

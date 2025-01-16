@@ -1,9 +1,10 @@
-import { Effect, Sound } from "@/app/soundcraft/effects";
+import { ImportedSound } from "@/app/soundcraft/effects";
+import { Sound } from "@prisma/client";
 
 const FREESOUND_API_URL = "https://freesound.org/apiv2";
 const API_KEY = process.env.NEXT_PUBLIC_FREESOUND_API_KEY;
 
-export async function searchFreesound(query: string): Promise<Effect[]> {
+export async function searchFreesound(query: string): Promise<Sound[]> {
   if (!query) return [];
 
   try {
@@ -14,8 +15,8 @@ export async function searchFreesound(query: string): Promise<Effect[]> {
     );
     const data = await response.json();
 
-    return data.results.map((sound: Sound) => ({
-      id: sound.id,
+    return data.results.map((sound: ImportedSound) => ({
+      id: sound.id.toString(),
       label: sound.name,
       category: sound.tags?.[0] || "Uncategorized",
       url: sound.previews["preview-hq-mp3"],

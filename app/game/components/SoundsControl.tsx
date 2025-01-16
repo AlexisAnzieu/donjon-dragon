@@ -4,7 +4,7 @@ import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
 import { useFavorites } from "../context/BoardContext";
 import { searchFreesound } from "@/app/services/freesound";
-import type { Effect } from "@/app/soundcraft/effects";
+import { Sound } from "@prisma/client";
 
 interface SoundsControlProps {
   onClose: () => void;
@@ -25,7 +25,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
   } = useAudio([]);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [effects, setEffects] = useState<Effect[]>([]);
+  const [effects, setEffects] = useState<Sound[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -80,14 +80,14 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       }
       acc[effect.category].push(effect);
       return acc;
-    }, {} as Record<string, Effect[]>);
+    }, {} as Record<string, Sound[]>);
   }, [effects]);
 
-  const handleToggleFavorite = (effect: Effect) => {
+  const handleToggleFavorite = (effect: Sound) => {
     toggleFavorite(effect);
   };
 
-  const renderEffectItem = (effect: Effect, favoriteIndex?: number) => (
+  const renderEffectItem = (effect: Sound, favoriteIndex?: number) => (
     <div key={effect.id} className="space-y-3">
       <EffectButton
         volume={volume[effect.id] ?? effect.volume ?? 1}

@@ -1,7 +1,7 @@
-import { Effect } from "../effects";
+import { Sound } from "@prisma/client";
 
 interface EffectButtonProps {
-  effect: Effect;
+  effect: Sound;
   isPlaying: boolean;
   isUsed: boolean;
   progress: number;

@@ -1,15 +1,4 @@
-export interface Effect {
-  id: string;
-  label: string;
-  category: string;
-  url: string;
-  volume: number;
-  duration: number;
-  loop: boolean;
-  waveformUrl: string;
-}
-
-export interface Sound {
+export interface ImportedSound {
   id: number;
   name: string;
   previews: {
@@ -27,6 +16,3 @@ export interface Sound {
   duration: number;
   tags: string[];
 }
-
-// No more local effects export
-export const effects: Effect[] = [];

@@ -71,6 +71,7 @@ export async function GET(request: Request) {
     where: { id },
     include: {
       tokens: true,
+      sounds: true,
     },
   });
 
@@ -79,7 +80,7 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { tokens, fogOfWar, viewState } = await request.json();
+    const { tokens, fogOfWar, viewState, sounds } = await request.json();
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get("id");
 
@@ -95,19 +96,18 @@ export async function PUT(request: Request) {
         where: { id: sessionId },
         data: { fogOfWar },
       });
-    } else if (tokens) {
-      // Delete existing tokens
-      await prisma.token.deleteMany({
-        where: { sessionId },
-      });
-
-      // Create new tokens
-      await prisma.token.createMany({
-        data: tokens.map((token: Token) => ({
-          ...token,
-          sessionId,
-        })),
-      });
+    } else if (tokens && tokens.length > 0) {
+      await prisma.$transaction([
+        prisma.token.deleteMany({
+          where: { sessionId },
+        }),
+        prisma.token.createMany({
+          data: tokens.map((token: Token) => ({
+            ...token,
+            sessionId,
+          })),
+        }),
+      ]);
     } else if (viewState) {
       await prisma.session.update({
         where: { id: sessionId },
@@ -115,15 +115,25 @@ export async function PUT(request: Request) {
           viewState,
         },
       });
+    } else if (sounds) {
+      await prisma.$transaction([
+        prisma.sound.deleteMany({
+          where: { sessionId },
+        }),
+        prisma.sound.createMany({
+          data: sounds.map((sound: Token) => ({
+            ...sound,
+            sessionId,
+          })),
+        }),
+      ]);
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("Error updating tokens:", error);
-    return NextResponse.json(
-      { error: "Failed to update tokens" },
-      { status: 500 }
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    console.log(error.message);
+    return NextResponse.json({ error }, { status: 500 });
   }
 }
 

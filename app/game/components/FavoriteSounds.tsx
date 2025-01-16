@@ -2,13 +2,13 @@
 import { useEffect, useState } from "react";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
-import { FAVORITE_SOUNDS, useFavorites } from "../context/BoardContext";
+import { useFavorites } from "../context/BoardContext";
 import { SoundsControl } from "./SoundsControl";
-import { Effect } from "@/app/soundcraft/effects";
+import { Sound } from "@prisma/client";
 
 export function FavoriteSounds() {
-  const { favorites, toggleFavorite } = useFavorites();
-  const [favoriteEffects, setFavoriteEffects] = useState<Effect[]>([]);
+  const { favorites, toggleFavorite, loadFavorites } = useFavorites();
+  const [favoriteEffects, setFavoriteEffects] = useState<Sound[]>([]);
   const {
     isPlaying,
     isUsed,
@@ -27,9 +27,12 @@ export function FavoriteSounds() {
   } | null>(null);
 
   useEffect(() => {
-    const storedEffects = localStorage.getItem(FAVORITE_SOUNDS);
-    const allEffects = storedEffects ? JSON.parse(storedEffects) : [];
-    setFavoriteEffects(allEffects);
+    loadFavorites();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    setFavoriteEffects(favorites);
   }, [favorites]);
 
   useEffect(() => {
@@ -55,7 +58,7 @@ export function FavoriteSounds() {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [favoriteEffects, playEffect]);
 
-  const renderEffectItem = (effect: Effect, favoriteIndex: number) => (
+  const renderEffectItem = (effect: Sound, favoriteIndex: number) => (
     <div key={effect.id} className="flex items-center gap-2">
       <span className="text-white/50 w-4">{favoriteIndex + 1}</span>
       <div

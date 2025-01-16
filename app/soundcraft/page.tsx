@@ -3,7 +3,7 @@ import { useMemo, useState, useEffect } from "react";
 import { useAudio } from "./hooks/useAudio";
 import { EffectButton } from "./components/EffectButton";
 import { searchFreesound } from "@/app/services/freesound";
-import type { Effect } from "./effects";
+import { Sound } from "@prisma/client";
 
 export default function VFXTriggers() {
   const {
@@ -17,11 +17,11 @@ export default function VFXTriggers() {
     toggleLoop,
   } = useAudio([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [favorites, setFavorites] = useState<Effect[]>([]);
-  const [dynamicEffects, setDynamicEffects] = useState<Effect[]>([]);
+  const [favorites, setFavorites] = useState<Sound[]>([]);
+  const [dynamicEffects, setDynamicEffects] = useState<Sound[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const toggleFavorite = (effect: Effect) => {
+  const toggleFavorite = (effect: Sound) => {
     setFavorites((prev) => {
       if (prev.some((f) => f.id === effect.id)) {
         return prev.filter((f) => f.id !== effect.id);
@@ -67,10 +67,10 @@ export default function VFXTriggers() {
       }
       acc[effect.category].push(effect);
       return acc;
-    }, {} as Record<string, Effect[]>);
+    }, {} as Record<string, Sound[]>);
   }, [dynamicEffects]);
 
-  const renderEffectItem = (effect: Effect, favoriteIndex?: number) => (
+  const renderEffectItem = (effect: Sound, favoriteIndex?: number) => (
     <div key={effect.id} className="space-y-3">
       <EffectButton
         size="large"
