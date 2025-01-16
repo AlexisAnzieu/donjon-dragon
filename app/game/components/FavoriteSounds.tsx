@@ -7,8 +7,12 @@ import { SoundsControl } from "./SoundsControl";
 import { Sound } from "@prisma/client";
 
 export function FavoriteSounds() {
-  const { favorites, toggleFavorite, loadFavorites } = useFavorites();
+  const { favorites, toggleFavorite, loadFavorites, updateSoundLabel } =
+    useFavorites();
   const [favoriteEffects, setFavoriteEffects] = useState<Sound[]>([]);
+  const [showRenameModal, setShowRenameModal] = useState(false);
+  const [effectToRename, setEffectToRename] = useState<Sound | null>(null);
+  const [newLabel, setNewLabel] = useState("");
   const {
     isPlaying,
     isUsed,
@@ -57,6 +61,22 @@ export function FavoriteSounds() {
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [favoriteEffects, playEffect]);
+
+  const handleRename = (effect: Sound) => {
+    setEffectToRename(effect);
+    setNewLabel(effect.label);
+    setShowRenameModal(true);
+    setContextMenu(null);
+  };
+
+  const saveLabel = async () => {
+    if (effectToRename && newLabel.trim()) {
+      await updateSoundLabel(effectToRename.id, newLabel.trim());
+    }
+    setShowRenameModal(false);
+    setEffectToRename(null);
+    setNewLabel("");
+  };
 
   const renderEffectItem = (effect: Sound, favoriteIndex: number) => (
     <div key={effect.id} className="flex items-center gap-2">
@@ -149,6 +169,17 @@ export function FavoriteSounds() {
               const effect = favoriteEffects.find(
                 (effect) => effect.id === contextMenu.effectId
               );
+              if (effect) handleRename(effect);
+            }}
+          >
+            Rename
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-white/90 hover:bg-gray-700"
+            onClick={() => {
+              const effect = favoriteEffects.find(
+                (effect) => effect.id === contextMenu.effectId
+              );
               if (effect) {
                 toggleFavorite(effect);
               }
@@ -172,6 +203,37 @@ export function FavoriteSounds() {
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="w-[90vw] max-w-4xl">
             <SoundsControl onClose={() => setShowSoundModal(false)} />
+          </div>
+        </div>
+      )}
+
+      {showRenameModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-gray-800 rounded-lg p-4 w-80">
+            <h3 className="text-lg font-semibold text-white/90 mb-4">
+              Rename Sound
+            </h3>
+            <input
+              type="text"
+              value={newLabel}
+              onChange={(e) => setNewLabel(e.target.value)}
+              className="w-full px-3 py-2 bg-gray-700 text-white rounded-lg mb-4"
+              autoFocus
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowRenameModal(false)}
+                className="px-4 py-2 text-white/90 hover:bg-gray-700 rounded"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveLabel}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}

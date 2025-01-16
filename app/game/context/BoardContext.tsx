@@ -51,7 +51,21 @@ export function useFavorites() {
     });
   };
 
-  return { favorites, toggleFavorite, loadFavorites };
+  const updateSoundLabel = async (soundId: string, newLabel: string) => {
+    const newFavorites = favorites.map((sound) =>
+      sound.id === soundId ? { ...sound, label: newLabel } : sound
+    );
+
+    setFavorites(newFavorites);
+
+    await fetch(`/api/sessions?id=${sessionId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sounds: newFavorites }),
+    });
+  };
+
+  return { favorites, toggleFavorite, loadFavorites, updateSoundLabel };
 }
 
 export function BoardContextProvider({
