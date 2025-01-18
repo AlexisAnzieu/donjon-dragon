@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String         @id @default(cuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  email        String         @unique
+  password     String
+  pseudo       String
+  characters   Character[]
+  hostedgames  Game[]
+  soundLibrary SoundLibrary[]
+}
+
 model Character {
   id            String   @id @default(cuid())
   createdAt     DateTime @default(now())
@@ -29,14 +41,18 @@ model Character {
   games         Game[]   @relation("GameCharacters")
   spells        Json?
   Token         Token[]
+  user          User?    @relation(fields: [userId], references: [id])
 }
 
 model Game {
-  id         String      @id @default(cuid())
-  createdAt  DateTime    @default(now())
-  updatedAt  DateTime    @updatedAt
-  characters Character[] @relation("GameCharacters")
-  sessions   Session[]
+  id           String         @id @default(cuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  characters   Character[]    @relation("GameCharacters")
+  sessions     Session[]
+  gameMaster   User?          @relation(fields: [gameMasterId], references: [id])
+  gameMasterId String?
+  soundLibrary SoundLibrary[]
 }
 
 model Token {
@@ -60,33 +76,47 @@ model Token {
 }
 
 model Session {
+  id           String         @id @default(cuid())
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  gameId       String
+  game         Game           @relation(fields: [gameId], references: [id])
+  tokens       Token[]
+  notes        String?        @db.LongText
+  name         String
+  fogOfWar     String?        @db.LongText
+  viewState    Json?
+  soundLibrary SoundLibrary[]
+}
+
+model SoundLibrary {
   id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  gameId    String
-  game      Game     @relation(fields: [gameId], references: [id])
-  tokens    Token[]
-  notes     String?  @db.LongText
   name      String
-  fogOfWar  String?  @db.LongText
-  viewState Json?
   sounds    Sound[]
+  session   Session? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  sessionId String?
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String?
+  game      Game?    @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId    String?
 }
 
 model Sound {
-  cid         String   @id @default(cuid())
-  id          String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  label       String
-  category    String
-  url         String
-  volume      Float
-  duration    Float
-  loop        Boolean
-  waveformUrl String
-  session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId   String
+  cid            String        @id @default(cuid())
+  id             String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  label          String
+  category       String
+  url            String
+  volume         Float
+  duration       Float
+  loop           Boolean
+  waveformUrl    String
+  soundLibrary   SoundLibrary? @relation(fields: [soundLibraryId], references: [id])
+  soundLibraryId String?
 }
 
 model Monster {

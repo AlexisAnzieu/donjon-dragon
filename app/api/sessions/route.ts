@@ -73,7 +73,7 @@ export async function GET(request: Request) {
     where: { id },
     include: {
       tokens: true,
-      sounds: true,
+      soundLibrary: true,
     },
   });
 
@@ -82,7 +82,8 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { tokens, fogOfWar, viewState, sounds } = await request.json();
+    const { tokens, fogOfWar, viewState, soundLibraries } =
+      await request.json();
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get("id");
 
@@ -117,14 +118,14 @@ export async function PUT(request: Request) {
           viewState,
         },
       });
-    } else if (sounds) {
+    } else if (soundLibraries) {
       await prisma.$transaction([
-        prisma.sound.deleteMany({
+        prisma.soundLibrary.deleteMany({
           where: { sessionId },
         }),
-        prisma.sound.createMany({
-          data: sounds.map((sound: Token) => ({
-            ...sound,
+        prisma.soundLibrary.createMany({
+          data: soundLibraries.map((soundLibrary: Token) => ({
+            ...soundLibrary,
             sessionId,
           })),
         }),

@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { GiDoubleDragon } from "react-icons/gi";
+import { useSession } from "next-auth/react";
 
-const categories = [
+const getCategories = (isAuthenticated: boolean) => [
   {
     title: "Personnage",
     items: [
@@ -27,11 +28,19 @@ const categories = [
     title: "Sons",
     href: "/soundcraft",
   },
+  {
+    title: isAuthenticated ? "My games" : "Se connecter",
+    href: isAuthenticated ? "/my-games" : "/signin",
+  },
 ];
 
 export default function DnDNavigation() {
+  const { data: session } = useSession();
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+
+  const categories = getCategories(!!session);
 
   const toggleDropdown = (title: string) => {
     setActiveDropdown(activeDropdown === title ? null : title);
