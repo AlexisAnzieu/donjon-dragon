@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
+import LeftNavbar from "./LeftNavbar";
 
 export const metadata: Metadata = {
   title: "D&D craft",
@@ -15,7 +16,10 @@ export default function Layout({
   return (
     <>
       <Navigation />
-      {children}
+      <div className="flex min-h-screen">
+        <LeftNavbar />
+        <main className="flex-1">{children}</main>
+      </div>
       <Footer />
     </>
   );

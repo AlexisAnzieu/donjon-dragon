@@ -22,17 +22,7 @@ export default async function Dashboard() {
   const userData = await getUserData(session.user!.id as string);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Dashboard</h1>
-        <Link
-          href="/sessions/new"
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
-        >
-          Create New Session
-        </Link>
-      </div>
-
+    <div className="p-8">
       <div className="grid gap-6 md:grid-cols-2">
         <section className="border rounded-lg p-6">
           <h2 className="text-xl font-semibold mb-4">Your Hosted Games</h2>
@@ -43,7 +33,7 @@ export default async function Dashboard() {
               {userData.hostedgames.map((game: any) => (
                 <li key={game.id} className="p-3 bg-gray-50 rounded">
                   <Link
-                    href={`/games/${game.id}`}
+                    href={`/game/${game.id}`}
                     className="hover:text-blue-600"
                   >
                     {game.name}
@@ -74,7 +64,7 @@ export default async function Dashboard() {
 
         {userData.soundLibrary && (
           <section className="border rounded-lg p-6 md:col-span-2">
-            <h2 className="text-xl font-semibold mb-4">Sound Library</h2>
+            <h2 className="text-xl font-semibold mb-4">User Sound Library</h2>
             {/* Add sound library content here */}
           </section>
         )}

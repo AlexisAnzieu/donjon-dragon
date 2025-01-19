@@ -59,3 +59,25 @@ export async function POST() {
     return NextResponse.json({ error }, { status: 500 });
   }
 }
+
+export async function PATCH(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get("id");
+  const { name } = await request.json();
+
+  if (!id) {
+    return new Response("Missing id", { status: 400 });
+  }
+
+  try {
+    const updatedGame = await prisma.game.update({
+      where: { id },
+      data: { name },
+    });
+
+    return new Response(JSON.stringify(updatedGame));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
+    return new Response(error.message, { status: 500 });
+  }
+}

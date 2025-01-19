@@ -15,6 +15,8 @@ export default function Game() {
   const { id } = useParams();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [sessionName, setSessionName] = useState("");
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [newName, setNewName] = useState("");
   const { data, isLoading } = useSWR<
     Prisma.GameGetPayload<{
       include: { characters: true; sessions: true };
@@ -59,16 +61,103 @@ export default function Game() {
     }
   };
 
+  const handleUpdateName = async () => {
+    try {
+      await fetch(`/api/games?id=${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: newName }),
+      });
+      mutate(`/api/games?id=${id}`);
+      setIsEditingName(false);
+    } catch (error) {
+      console.error("Error updating game name:", error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <div className=" py-6 mb-8 shadow-lg">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold">
-              {id === "cm3gc9o5l001euleokyus4z7d"
-                ? "Le Dragon de la Flèche de givre"
-                : "Personnages en jeu"}{" "}
-            </h1>
+            {isEditingName ? (
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="text-3xl font-bold px-2 py-1 border rounded"
+                  placeholder={data?.name}
+                  autoFocus
+                />
+                <button
+                  title="Update name"
+                  onClick={handleUpdateName}
+                  className="p-2 text-green-600 hover:text-green-800"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5 13l4 4L19 7"
+                    />
+                  </svg>
+                </button>
+                <button
+                  title="Cancel"
+                  onClick={() => {
+                    setIsEditingName(false);
+                    setNewName("");
+                  }}
+                  className="p-2 text-red-600 hover:text-red-800"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <div
+                className="flex items-center gap-2 group cursor-pointer"
+                onClick={() => {
+                  setIsEditingName(true);
+                  setNewName(data?.name || "");
+                }}
+              >
+                <h1 className="text-3xl font-bold">{data?.name}</h1>
+                <svg
+                  className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                  />
+                </svg>
+              </div>
+            )}
             <Link
               href={`/character/edit?gameId=${id}`}
               className="inline-flex items-center px-6 py-3  rounded-xl transition-all duration-200 transform hover:scale-105"
