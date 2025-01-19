@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useContext } from "react";
 import { createStorageContext } from "./createContext";
 import { Sound } from "@prisma/client";
+import { BoardSession } from "@/app/api/sessions/route";
 
 export const FAVORITE_SOUNDS = "soundFavorites";
 
@@ -31,8 +32,8 @@ export function useFavorites() {
 
   const loadFavorites = async () => {
     const response = await fetch(`/api/sessions?id=${sessionId}`);
-    const data = await response.json();
-    setFavorites(data.sounds);
+    const data: BoardSession = await response.json();
+    setFavorites(data.favoriteSongs);
   };
 
   const toggleFavorite = async (effect: Sound) => {

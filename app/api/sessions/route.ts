@@ -1,7 +1,14 @@
 import { DEFAULT_TOKEN_SIZE, raceIcons } from "@/app/game/type";
 import prisma from "@/prisma/db";
-import { Token } from "@prisma/client";
+import { Prisma, Token } from "@prisma/client";
 import { NextResponse } from "next/server";
+
+export type BoardSession = Prisma.SessionGetPayload<{
+  include: {
+    tokens: true;
+    favoriteSongs: true;
+  };
+}>;
 
 export async function POST(request: Request) {
   try {
@@ -73,7 +80,7 @@ export async function GET(request: Request) {
     where: { id },
     include: {
       tokens: true,
-      soundLibrary: true,
+      favoriteSongs: true,
     },
   });
 

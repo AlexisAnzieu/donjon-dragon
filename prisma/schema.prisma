@@ -78,17 +78,18 @@ model Token {
 }
 
 model Session {
-  id           String         @id @default(cuid())
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  gameId       String
-  game         Game           @relation(fields: [gameId], references: [id])
-  tokens       Token[]
-  notes        String?        @db.LongText
-  name         String
-  fogOfWar     String?        @db.LongText
-  viewState    Json?
-  soundLibrary SoundLibrary[]
+  id            String         @id @default(cuid())
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  gameId        String
+  game          Game           @relation(fields: [gameId], references: [id])
+  tokens        Token[]
+  notes         String?        @db.LongText
+  name          String
+  fogOfWar      String?        @db.LongText
+  viewState     Json?
+  soundLibrary  SoundLibrary[]
+  favoriteSongs Sound[]
 }
 
 model SoundLibrary {
@@ -119,6 +120,8 @@ model Sound {
   waveformUrl    String
   soundLibrary   SoundLibrary? @relation(fields: [soundLibraryId], references: [id])
   soundLibraryId String?
+  Session        Session?      @relation(fields: [sessionId], references: [id])
+  sessionId      String?
 }
 
 model Monster {
