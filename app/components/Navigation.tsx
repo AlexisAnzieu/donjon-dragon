@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { GiDoubleDragon } from "react-icons/gi";
 import { useSession } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 
 const getCategories = (isAuthenticated: boolean) => [
   {
@@ -34,7 +35,15 @@ const getCategories = (isAuthenticated: boolean) => [
   },
 ];
 
-export default function DnDNavigation() {
+export default function Navbar() {
+  return (
+    <SessionProvider>
+      <DnDNavigation />
+    </SessionProvider>
+  );
+}
+
+const DnDNavigation = () => {
   const { data: session } = useSession();
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -169,4 +178,4 @@ export default function DnDNavigation() {
       </div>
     </nav>
   );
-}
+};
