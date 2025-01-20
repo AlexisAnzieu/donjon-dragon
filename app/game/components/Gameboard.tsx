@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
 import { TokenComponent } from "./Token";
 import { HitPointControls } from "./HitPointControls";
 import { TokenType } from "../type";
@@ -20,6 +20,7 @@ import { NavBar } from "./NavBar";
 import { FavoriteSounds } from "./FavoriteSounds";
 import { BoardContextProvider } from "../context/BoardContext";
 import { DetailComponent } from "./DetailComponent";
+import { DragState } from "@/app/hooks/useTokenDrag";
 
 interface GameBoardProps {
   sessionId: string;
@@ -35,6 +36,22 @@ const UIElements = {
   VFXControls: true,
 };
 export type UIElementsKey = keyof typeof UIElements;
+
+// Extract token style calculation
+const createTokenStyle = (
+  token: Token,
+  draggingToken: DragState | null,
+  selectedTokens: Set<string>,
+  isPublic: boolean
+): CSSProperties => ({
+  position: "absolute",
+  left: `${token.xPercent}%`,
+  top: `${token.yPercent}%`,
+  zIndex: draggingToken?.id === token.id ? 50 : 10,
+  pointerEvents: isPublic ? "none" : "auto",
+  outline: selectedTokens.has(token.id) ? "4px solid white" : "none",
+  outlineOffset: "2px",
+});
 
 export default function GameBoard({
   sessionId,
@@ -130,7 +147,11 @@ export default function GameBoard({
     handleHitPointChange,
     convertToken,
     createToken,
-    duplicateToken, // Add this
+    duplicateToken,
+    selectedTokens,
+    setSelectedTokens,
+    toggleTokenSelection,
+    clearSelection,
   } = useTokenManagement({
     initialTokens,
     sessionId,
@@ -138,6 +159,7 @@ export default function GameBoard({
     isPublic,
     isAutoClearEnabled,
     clearFogAroundPoint,
+    boardRef,
   });
 
   // Background image management
@@ -245,6 +267,9 @@ export default function GameBoard({
     const isToken = (e.target as HTMLElement).closest('[class*="cursor-move"]');
     if (e.button === 0 && !isToken) {
       startPanning(e.clientX, e.clientY);
+      if (!e.metaKey && !e.ctrlKey) {
+        clearSelection();
+      }
       cleanMap();
     } else if (e.button === 2 && !isToken) {
       e.preventDefault();
@@ -291,10 +316,20 @@ export default function GameBoard({
     if (isPublic) return;
     e.preventDefault();
 
+    if (e.metaKey || e.ctrlKey) {
+      toggleTokenSelection(tokenId);
+      return;
+    }
+
+    // If clicking on an unselected token, clear other selections
+    if (!selectedTokens.has(tokenId)) {
+      clearSelection();
+      setSelectedTokens(new Set([tokenId])); // Select the clicked token
+    }
+
     const token = tokens.find((t) => t.id === tokenId);
     if (!token) return;
 
-    // Calculate the offset between mouse position and token position
     const board = boardRef.current;
     if (!board) return;
 
@@ -337,76 +372,11 @@ export default function GameBoard({
     zIndex: 1,
   };
 
-  const getTokenStyle = (token: Token): CSSProperties => ({
-    position: "absolute" as const,
-    left: `${token.xPercent}%`,
-    top: `${token.yPercent}%`,
-    zIndex: draggingToken?.id === token.id ? 50 : 10,
-    pointerEvents: isPublic ? "none" : "auto",
-  });
-
-  useEffect(() => {
-    if (!draggingToken || isPublic) return;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      const board = boardRef.current;
-      if (!board) return;
-
-      const rect = board.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-
-      // Apply the offset to maintain the grab position
-      const newX = Math.max(0, Math.min(100, x + draggingToken.offsetX));
-      const newY = Math.max(0, Math.min(100, y + draggingToken.offsetY));
-
-      setTokens((prev) => {
-        const newTokens = prev.map((token) =>
-          token.id === draggingToken.id
-            ? {
-                ...token,
-                xPercent: newX,
-                yPercent: newY,
-              }
-            : token
-        );
-
-        // Send update via websocket
-        if (!isPublic) {
-          ws.send(
-            JSON.stringify({ type: "tokens", payload: { tokens: newTokens } })
-          );
-        }
-
-        return newTokens;
-      });
-
-      // Auto-clear fog for character tokens
-      if (draggingToken.type === "characters" && isAutoClearEnabled) {
-        clearFogAroundPoint(newX, newY, 15);
-      }
-    };
-
-    const handleMouseUp = () => {
-      setDraggingToken(null);
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [
-    draggingToken,
-    isPublic,
-    ws,
-    isAutoClearEnabled,
-    clearFogAroundPoint,
-    setTokens,
-    setDraggingToken,
-  ]);
+  const getTokenStyle = useCallback(
+    (token: Token): CSSProperties =>
+      createTokenStyle(token, draggingToken, selectedTokens, isPublic),
+    [draggingToken, selectedTokens, isPublic]
+  );
 
   const handleTokenFormSubmit = (token: Token) => {
     createToken(token, {

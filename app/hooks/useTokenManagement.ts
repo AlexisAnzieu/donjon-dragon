@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { Token } from "@prisma/client";
 import { TokenType } from "../game/type";
 import { sendHurtTokenColor } from "@/lib/lifx";
+import { useTokenDrag } from "./useTokenDrag";
 
 interface UseTokenManagementProps {
   initialTokens: Token[];
@@ -12,6 +13,7 @@ interface UseTokenManagementProps {
   isPublic: boolean;
   isAutoClearEnabled?: boolean;
   clearFogAroundPoint?: (x: number, y: number, radius: number) => void;
+  boardRef: React.RefObject<HTMLDivElement>;
 }
 
 interface DraggingState {
@@ -28,8 +30,10 @@ export function useTokenManagement({
   isPublic,
   isAutoClearEnabled,
   clearFogAroundPoint,
+  boardRef,
 }: UseTokenManagementProps) {
   const [tokens, setTokens] = useState<Token[]>(initialTokens);
+  const [selectedTokens, setSelectedTokens] = useState<Set<string>>(new Set());
 
   const syncTimeoutRef = useRef<NodeJS.Timeout>();
   const isSyncingRef = useRef(false);
@@ -227,6 +231,51 @@ export function useTokenManagement({
     [tokens, notifyTokenUpdate]
   );
 
+  const toggleTokenSelection = useCallback((tokenId: string) => {
+    setSelectedTokens((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(tokenId)) {
+        newSet.delete(tokenId);
+      } else {
+        newSet.add(tokenId);
+      }
+      return newSet;
+    });
+  }, []);
+
+  const clearSelection = useCallback(() => {
+    setSelectedTokens(new Set());
+  }, []);
+
+  const handleTokensUpdate = useCallback(
+    (newTokens: Token[]) => {
+      setTokens(newTokens);
+      notifyTokenUpdate(newTokens);
+    },
+    [notifyTokenUpdate]
+  );
+
+  const handleFogUpdate = useCallback(
+    (x: number, y: number, radius: number) => {
+      if (isAutoClearEnabled && clearFogAroundPoint) {
+        clearFogAroundPoint(x, y, radius);
+      }
+    },
+    [isAutoClearEnabled, clearFogAroundPoint]
+  );
+
+  // Use the new drag hook
+  useTokenDrag({
+    tokens,
+    selectedTokens,
+    draggingToken,
+    setDraggingToken, // Add this line
+    boardRef,
+    isPublic,
+    onTokensUpdate: handleTokensUpdate,
+    onFogUpdate: handleFogUpdate,
+  });
+
   return {
     tokens,
     setTokens,
@@ -238,5 +287,9 @@ export function useTokenManagement({
     convertToken,
     createToken, // Add this to the return object
     duplicateToken,
+    selectedTokens,
+    setSelectedTokens,
+    toggleTokenSelection,
+    clearSelection,
   };
 }
