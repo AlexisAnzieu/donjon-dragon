@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { HiFolder, HiEye, HiUpload, HiRefresh } from "react-icons/hi";
+import { HiEye, HiUpload, HiRefresh, HiMenu } from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
 import { SessionSwitcher } from "./SessionSwitcher";
 
@@ -149,7 +149,7 @@ export function NavBar({
   return (
     <>
       <div className="absolute left-1 top-4 z-50 flex gap-3">
-        <MenuButton icon={HiFolder} label="Session" menuItems={fileMenuItems} />
+        <MenuButton icon={HiMenu} label="Menu" menuItems={fileMenuItems} />
         <MenuButton icon={HiEye} label="View" menuItems={viewMenuItems} />
       </div>
       {isSessionSwitcherOpen && (

@@ -458,7 +458,7 @@ export default function GameBoard({
                 {!isFogControlActive && (
                   <>
                     {showElements.HitPointControls && (
-                      <div className="absolute top-4 right-4  z-50 ">
+                      <div className="absolute top-4 right-1  z-50 ">
                         <HitPointControls
                           tokens={tokens}
                           onHitPointChange={handleHitPointChange}
@@ -466,7 +466,7 @@ export default function GameBoard({
                       </div>
                     )}
                     {showElements.VFXControls && (
-                      <div className="absolute top-20 left-4 z-50">
+                      <div className="absolute top-20 left-1 z-50">
                         <FavoriteSounds />
                       </div>
                     )}
