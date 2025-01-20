@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
 import { useFavorites } from "../context/BoardContext";
@@ -22,6 +22,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     setEffectVolume,
     isLooping,
     toggleLoop,
+    stopAllSounds,
   } = useAudio([]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,13 +45,18 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [favorites, playEffect, effects]);
 
+  const handleClose = useCallback(() => {
+    stopAllSounds();
+    onClose();
+  }, [stopAllSounds, onClose]);
+
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
         modalRef.current &&
         !modalRef.current.contains(event.target as Node)
       ) {
-        onClose();
+        handleClose();
       }
     };
 
@@ -58,7 +64,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [onClose]);
+  }, [handleClose]);
 
   useEffect(() => {
     const searchTimer = setTimeout(async () => {
@@ -113,14 +119,14 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       onClick={(e) => e.stopPropagation()}
     >
       <button
-        onClick={onClose}
+        onClick={handleClose}
         className="absolute top-2 right-2 text-white/60 hover:text-white/90 focus:outline-none focus:ring-2 focus:ring-white/20 rounded-lg p-1"
         aria-label="Close sound controls"
         role="button"
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            onClose();
+            handleClose();
           }
         }}
       >

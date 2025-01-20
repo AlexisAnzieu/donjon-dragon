@@ -90,6 +90,16 @@ export const useAudio = (effects: Sound[]) => {
     });
   }, []);
 
+  const stopAllSounds = useCallback(() => {
+    Object.entries(audioRefs.current).forEach(([effectId, audio]) => {
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        handleEnded(effectId);
+      }
+    });
+  }, [handleEnded]);
+
   return {
     isPlaying,
     isUsed,
@@ -99,5 +109,6 @@ export const useAudio = (effects: Sound[]) => {
     setEffectVolume,
     isLooping,
     toggleLoop,
+    stopAllSounds, // Add this to the returned object
   };
 };
