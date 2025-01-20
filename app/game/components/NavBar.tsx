@@ -102,11 +102,6 @@ export function NavBar({
           onChange={handleImageUpload}
         />
       </label>
-      <SessionSwitcher
-        currentSessionId={sessionId}
-        isOpen={isSessionSwitcherOpen}
-        onClose={() => setIsSessionSwitcherOpen(false)}
-      />
     </>
   );
 
@@ -152,9 +147,18 @@ export function NavBar({
   );
 
   return (
-    <div className="absolute left-1 top-4 z-50 flex gap-3">
-      <MenuButton icon={HiFolder} label="Session" menuItems={fileMenuItems} />
-      <MenuButton icon={HiEye} label="View" menuItems={viewMenuItems} />
-    </div>
+    <>
+      <div className="absolute left-1 top-4 z-50 flex gap-3">
+        <MenuButton icon={HiFolder} label="Session" menuItems={fileMenuItems} />
+        <MenuButton icon={HiEye} label="View" menuItems={viewMenuItems} />
+      </div>
+      {isSessionSwitcherOpen && (
+        <SessionSwitcher
+          currentSessionId={sessionId}
+          isOpen={isSessionSwitcherOpen}
+          onClose={() => setIsSessionSwitcherOpen(false)}
+        />
+      )}
+    </>
   );
 }

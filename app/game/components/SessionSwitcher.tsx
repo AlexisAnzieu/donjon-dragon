@@ -56,8 +56,8 @@ export function SessionSwitcher({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-gray-800 rounded-lg p-6 w-96 max-h-[80vh] flex flex-col">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="bg-gray-800/90 rounded-lg p-6 w-96 max-h-[80vh] flex flex-col mx-auto">
         <h2 className="text-white text-xl mb-4">Switch Session</h2>
         <div className="space-y-2 overflow-y-auto flex-1">
           {isLoading ? (
