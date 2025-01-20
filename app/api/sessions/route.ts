@@ -7,6 +7,17 @@ export type BoardSession = Prisma.SessionGetPayload<{
   include: {
     tokens: true;
     favoriteSongs: true;
+    game: {
+      select: {
+        sessions: {
+          select: {
+            id: true;
+            name: true;
+            createdAt: true;
+          };
+        };
+      };
+    };
   };
 }>;
 
@@ -81,6 +92,17 @@ export async function GET(request: Request) {
     include: {
       tokens: true,
       favoriteSongs: true,
+      game: {
+        select: {
+          sessions: {
+            select: {
+              id: true,
+              name: true,
+              createdAt: true,
+            },
+          },
+        },
+      },
     },
   });
 

@@ -471,6 +471,7 @@ export default function GameBoard({
                       </div>
                     )}
                     <NavBar
+                      sessionId={sessionId}
                       onImageUpload={handleImageUpload}
                       onToggleElements={handleToggleElements}
                       showElements={showElements}

@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { HiMap, HiEye, HiUpload } from "react-icons/hi";
+import { HiFolder, HiEye, HiUpload, HiRefresh } from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
+import { SessionSwitcher } from "./SessionSwitcher";
 
 interface NavBarProps {
+  sessionId: string;
   onImageUpload: (file: File) => void;
   onToggleElements: (element: UIElementsKey) => void;
   showElements: { [key: string]: boolean };
@@ -63,10 +65,13 @@ function MenuButton({
 }
 
 export function NavBar({
+  sessionId,
   onImageUpload,
   onToggleElements,
   showElements,
 }: NavBarProps) {
+  const [isSessionSwitcherOpen, setIsSessionSwitcherOpen] = useState(false);
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -75,19 +80,34 @@ export function NavBar({
   };
 
   const fileMenuItems = (
-    <label
-      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 cursor-pointer  rounded-lg
+    <>
+      <button
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg
                             transition-colors duration-150"
-    >
-      <HiUpload className="text-xl text-blue-400" />
-      <span>Import</span>
-      <input
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={handleImageUpload}
+        onClick={() => setIsSessionSwitcherOpen(true)}
+      >
+        <HiRefresh className="text-xl text-blue-400" />
+        <span>Switch Session</span>
+      </button>
+      <label
+        className="flex items-center gap-3 px-4 py-3 hover:bg-gray-700 cursor-pointer  rounded-lg
+                            transition-colors duration-150"
+      >
+        <HiUpload className="text-xl text-blue-400" />
+        <span>Import a map</span>
+        <input
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleImageUpload}
+        />
+      </label>
+      <SessionSwitcher
+        currentSessionId={sessionId}
+        isOpen={isSessionSwitcherOpen}
+        onClose={() => setIsSessionSwitcherOpen(false)}
       />
-    </label>
+    </>
   );
 
   const viewMenuItems = (
@@ -133,7 +153,7 @@ export function NavBar({
 
   return (
     <div className="absolute left-1 top-4 z-50 flex gap-3">
-      <MenuButton icon={HiMap} label="Map" menuItems={fileMenuItems} />
+      <MenuButton icon={HiFolder} label="Session" menuItems={fileMenuItems} />
       <MenuButton icon={HiEye} label="View" menuItems={viewMenuItems} />
     </div>
   );
