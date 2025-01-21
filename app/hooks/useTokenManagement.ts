@@ -95,19 +95,6 @@ export function useTokenManagement({
     };
   }, [tokens, sessionId, isPublic]);
 
-  const updateToken = useCallback(
-    (tokenId: string, updates: Partial<Token>) => {
-      setTokens((prev) => {
-        const newTokens = prev.map((token) =>
-          token.id === tokenId ? { ...token, ...updates, sessionId } : token
-        );
-        notifyTokenUpdate(newTokens);
-        return newTokens;
-      });
-    },
-    [notifyTokenUpdate, sessionId]
-  );
-
   const removeToken = useCallback(
     (tokenId: string) => {
       setTokens((prev) => {
@@ -294,7 +281,6 @@ export function useTokenManagement({
     setTokens,
     draggingToken,
     setDraggingToken,
-    updateToken,
     removeToken,
     handleHitPointChange,
     handleNameChange, // Add this to the return object

@@ -142,7 +142,6 @@ export default function GameBoard({
     setTokens,
     draggingToken,
     setDraggingToken,
-    updateToken,
     removeToken,
     handleHitPointChange,
     convertToken,
@@ -540,7 +539,6 @@ export default function GameBoard({
                 position={{ x: contextMenu.x, y: contextMenu.y }}
                 tokenId={contextMenu.tokenId}
                 tokenType={contextMenu.tokenType}
-                token={tokens.find((t) => t.id === contextMenu.tokenId)!}
                 onSeeDetails={() => {
                   const token = tokens.find(
                     (t) => t.id === contextMenu.tokenId
@@ -552,17 +550,6 @@ export default function GameBoard({
                 }}
                 onDuplicate={() => {
                   duplicateToken(contextMenu.tokenId);
-                  setContextMenu(null);
-                }}
-                onMarkAsDead={() => {
-                  const token = tokens.find(
-                    (t) => t.id === contextMenu.tokenId
-                  );
-                  if (token) {
-                    updateToken(contextMenu.tokenId, {
-                      hitPoint: token.hitPoint <= 0 ? 1 : 0,
-                    });
-                  }
                   setContextMenu(null);
                 }}
                 onConvertToEnemy={() => {

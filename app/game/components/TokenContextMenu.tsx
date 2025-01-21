@@ -1,8 +1,5 @@
-import { Token } from "@prisma/client";
 import { TokenType } from "../type";
 import {
-  GiHealthNormal,
-  GiSkullCrossedBones,
   GiTrashCan,
   GiCrownedSkull,
   GiCharacter,
@@ -14,8 +11,6 @@ interface TokenContextMenuProps {
   position: { x: number; y: number };
   tokenId: string;
   tokenType: TokenType;
-  token: Token;
-  onMarkAsDead: () => void;
   onConvertToEnemy?: () => void;
   onConvertToNpc?: () => void;
   onRemove?: () => void;
@@ -25,9 +20,7 @@ interface TokenContextMenuProps {
 
 export function TokenContextMenu({
   position,
-  token,
   tokenType,
-  onMarkAsDead,
   onConvertToEnemy,
   onConvertToNpc,
   onRemove,
@@ -103,22 +96,6 @@ export function TokenContextMenu({
       >
         <FaRegCopy className="text-lg" />
         <span>Duplicate</span>
-      </div>
-      <div
-        className="px-4 py-2 hover:bg-indigo-50 flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors duration-150"
-        onClick={onMarkAsDead}
-      >
-        {token.hitPoint <= 0 ? (
-          <>
-            <GiHealthNormal className="text-lg" />
-            <span>Revive</span>
-          </>
-        ) : (
-          <>
-            <GiSkullCrossedBones className="text-lg" />
-            <span>Mark as dead</span>
-          </>
-        )}
       </div>
 
       <div
