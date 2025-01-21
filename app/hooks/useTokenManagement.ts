@@ -160,6 +160,19 @@ export function useTokenManagement({
     [notifyTokenUpdate]
   );
 
+  const handleNameChange = useCallback(
+    (tokenId: string, newName: string) => {
+      setTokens((prev) => {
+        const newTokens = prev.map((token) =>
+          token.id === tokenId ? { ...token, name: newName } : token
+        );
+        notifyTokenUpdate(newTokens);
+        return newTokens;
+      });
+    },
+    [notifyTokenUpdate]
+  );
+
   useEffect(() => {
     if (!isPublic) {
       notifyTokenUpdate(initialTokens);
@@ -284,6 +297,7 @@ export function useTokenManagement({
     updateToken,
     removeToken,
     handleHitPointChange,
+    handleNameChange, // Add this to the return object
     convertToken,
     createToken, // Add this to the return object
     duplicateToken,

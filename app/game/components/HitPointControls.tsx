@@ -11,16 +11,25 @@ interface HitPointControlsProps {
     newValue: number,
     isMax?: boolean
   ) => void;
+  onNameChange?: (tokenId: string, newName: string) => void;
 }
 
 export function HitPointControls({
   tokens,
   onHitPointChange,
+  onNameChange,
 }: HitPointControlsProps) {
   const [tokenStates, setTokenStates] = useState<
     Record<
       string,
-      { temp?: number; maxTemp?: number; saving?: boolean; saved?: boolean }
+      {
+        temp?: number;
+        maxTemp?: number;
+        saving?: boolean;
+        saved?: boolean;
+        isEditingName?: boolean;
+        tempName?: string;
+      }
     >
   >({});
   const [searchTerm, setSearchTerm] = useState("");
@@ -96,6 +105,19 @@ export function HitPointControls({
     [tokens, tokenStates, onHitPointChange]
   );
 
+  const handleNameEdit = useCallback(
+    (tokenId: string, newName: string) => {
+      if (!onNameChange) return;
+
+      onNameChange(tokenId, newName);
+      setTokenStates((prev) => ({
+        ...prev,
+        [tokenId]: { ...prev[tokenId], isEditingName: false },
+      }));
+    },
+    [onNameChange]
+  );
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -153,9 +175,52 @@ export function HitPointControls({
                         className="bg-gray-700 rounded p-2"
                       >
                         <div className="flex items-center gap-2">
-                          <span className="font-bold w-24 truncate">
-                            {token.name}
-                          </span>
+                          {tokenStates[token.id]?.isEditingName ? (
+                            <input
+                              type="text"
+                              className="w-24 bg-gray-600 rounded px-1"
+                              value={
+                                tokenStates[token.id]?.tempName ?? token.name
+                              }
+                              onChange={(e) =>
+                                setTokenStates((prev) => ({
+                                  ...prev,
+                                  [token.id]: {
+                                    ...prev[token.id],
+                                    tempName: e.target.value,
+                                  },
+                                }))
+                              }
+                              onBlur={(e) =>
+                                handleNameEdit(token.id, e.target.value)
+                              }
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  handleNameEdit(
+                                    token.id,
+                                    e.currentTarget.value
+                                  );
+                                }
+                              }}
+                              autoFocus
+                            />
+                          ) : (
+                            <span
+                              className="font-bold w-24 truncate cursor-pointer hover:text-purple-400"
+                              onClick={() =>
+                                setTokenStates((prev) => ({
+                                  ...prev,
+                                  [token.id]: {
+                                    ...prev[token.id],
+                                    isEditingName: true,
+                                    tempName: token.name,
+                                  },
+                                }))
+                              }
+                            >
+                              {token.name}
+                            </span>
+                          )}
                           <div className="flex items-center gap-1">
                             <input
                               type="number"

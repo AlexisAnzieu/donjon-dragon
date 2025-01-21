@@ -152,6 +152,7 @@ export default function GameBoard({
     setSelectedTokens,
     toggleTokenSelection,
     clearSelection,
+    handleNameChange,
   } = useTokenManagement({
     initialTokens,
     sessionId,
@@ -462,6 +463,7 @@ export default function GameBoard({
                         <HitPointControls
                           tokens={tokens}
                           onHitPointChange={handleHitPointChange}
+                          onNameChange={handleNameChange}
                         />
                       </div>
                     )}
