@@ -4,6 +4,8 @@ import { useState, useRef, useEffect } from "react";
 import { HiEye, HiUpload, HiRefresh, HiMenu } from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
 import { SessionSwitcher } from "./SessionSwitcher";
+import { HiBackward } from "react-icons/hi2";
+import Link from "next/link";
 
 interface NavBarProps {
   sessionId: string;
@@ -72,6 +74,9 @@ export function NavBar({
 }: NavBarProps) {
   const [isSessionSwitcherOpen, setIsSessionSwitcherOpen] = useState(false);
 
+  const gameId =
+    typeof window !== "undefined" ? window.location.pathname.split("/")[2] : "";
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -81,6 +86,14 @@ export function NavBar({
 
   const fileMenuItems = (
     <>
+      <Link
+        href={`/game/${gameId}`}
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg
+                            transition-colors duration-150"
+      >
+        <HiBackward className="text-xl text-blue-400" />
+        <span>Back to Dashboard</span>
+      </Link>
       <button
         className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg
                             transition-colors duration-150"

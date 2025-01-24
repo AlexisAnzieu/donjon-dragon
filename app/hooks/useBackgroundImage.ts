@@ -15,6 +15,12 @@ export function useBackgroundImage({
 
   const uploadToCloudinary = useCallback(
     async (file: File): Promise<string> => {
+      // Check file size before upload (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        alert("File size exceeds 10MB limit. Please choose a smaller file.");
+        throw new Error("File size exceeds 10MB limit");
+      }
+
       const formData = new FormData();
       formData.append(
         "folder",
