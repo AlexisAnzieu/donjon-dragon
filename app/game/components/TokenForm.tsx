@@ -267,7 +267,7 @@ export function TokenForm({
       name: monster.name,
       hitPoint: monster.hit_points,
       maxHitPoint: monster.hit_points,
-      icon: monster.imageUrl || "😈",
+      icon: monster.imageUrl || undefined, // Remove the emoji fallback here
       monsterId: monster.id,
       size:
         MONSTER_SIZE_SCALE[monster.size as keyof typeof MONSTER_SIZE_SCALE] ||

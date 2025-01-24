@@ -21,7 +21,7 @@ const getTokenColor = (isDead: boolean, type: TokenType) => {
     case "enemies":
       return "bg-red-500";
     case "npcs":
-      return "bg-gray-500";
+      return "bg-white";
   }
 };
 
