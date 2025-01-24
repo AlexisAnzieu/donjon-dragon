@@ -100,6 +100,25 @@ export const useAudio = (effects: Sound[]) => {
     });
   }, [handleEnded]);
 
+  const setCurrentTime = useCallback((effectId: string, time: number) => {
+    const audio = audioRefs.current[effectId];
+    if (audio) {
+      audio.currentTime = Math.min(time, audio.duration);
+    }
+  }, []);
+
+  const stopEffect = useCallback(
+    (effectId: string) => {
+      const audio = audioRefs.current[effectId];
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+        handleEnded(effectId);
+      }
+    },
+    [handleEnded]
+  );
+
   return {
     isPlaying,
     isUsed,
@@ -109,6 +128,8 @@ export const useAudio = (effects: Sound[]) => {
     setEffectVolume,
     isLooping,
     toggleLoop,
-    stopAllSounds, // Add this to the returned object
+    stopAllSounds,
+    setCurrentTime,
+    stopEffect,
   };
 };

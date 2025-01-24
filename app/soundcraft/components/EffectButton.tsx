@@ -7,14 +7,22 @@ interface EffectButtonProps {
   progress: number;
   isLooping: boolean;
   isFavorite: boolean;
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "line";
   onPlay: () => void;
   onToggleFavorite?: () => void;
   onToggleLoop: () => void;
   volume: number;
   onVolumeChange: (effectId: string, volume: number) => void;
   favoriteIndex?: number;
+  onTimeSet?: (time: number) => void;
+  onStop?: () => void;
 }
+
+const formatDuration = (seconds: number) => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = Math.floor(seconds % 60);
+  return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+};
 
 export function EffectButton({
   effect,
@@ -30,6 +38,8 @@ export function EffectButton({
   volume,
   onVolumeChange,
   favoriteIndex,
+  onTimeSet,
+  onStop,
 }: EffectButtonProps) {
   const sizeClasses = {
     small: {
@@ -59,27 +69,59 @@ export function EffectButton({
       favorite: "text-base",
       volume: "h-2",
     },
+    line: {
+      button: "w-full",
+      icon: "w-8 h-8",
+      controls: "w-8 h-8",
+      iconText: "text-4xl",
+      label: "text-sm",
+      favorite: "text-sm",
+      volume: "h-1.5",
+    },
+  };
+
+  const handleButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (size === "line") {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const percentage = x / rect.width;
+      const time = effect.duration * percentage;
+      onTimeSet?.(time);
+      if (!isPlaying) {
+        onPlay();
+      }
+    } else {
+      onPlay();
+    }
+  };
+
+  const handleStopClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onStop?.();
   };
 
   return (
-    <div className={`flex flex-col gap-2 `}>
+    <div
+      className={`flex ${
+        size === "line" ? "flex-row gap-4 h-[60px]" : "flex-col gap-2"
+      } px-3`}
+    >
       <button
-        onClick={onPlay}
-        className={`${
-          sizeClasses[size].button
-        } aspect-square rounded-xl flex flex-col items-center justify-center relative overflow-hidden
+        onClick={handleButtonClick}
+        className={`${sizeClasses[size].button} ${
+          size === "line" ? "h-full" : "aspect-square"
+        } rounded-xl flex flex-col items-center justify-center relative overflow-hidden
         ${
           isPlaying
             ? "bg-gradient-to-b from-gray-600 to-gray-700 ring-2 ring-white/30"
             : "bg-gradient-to-b from-gray-700 to-gray-800"
         } hover:scale-105 hover:shadow-xl transition-all duration-200 ease-out bg-no-repeat`}
         style={{
-          ...(size !== "small" && {
-            backgroundImage: `url(${effect.waveformUrl})`,
-            backgroundSize: "100% 100%",
-            backgroundPosition: "center",
-            backgroundBlendMode: "overlay",
-          }),
+          backgroundImage: `url(${effect.waveformUrl})`,
+          backgroundSize: "100% 100%",
+          backgroundPosition: "center",
+          backgroundBlendMode: "overlay",
         }}
       >
         {/* Only show favorite index and button for medium and large sizes */}
@@ -198,16 +240,37 @@ export function EffectButton({
             </span>
           </div>
         )}
+        {/* Add duration display for line size */}
+        {size === "line" && (
+          <div className="absolute bottom-2 right-2 text-xs text-white/75 font-medium px-1.5 py-0.5 bg-black/30 rounded">
+            {formatDuration(effect.duration)}
+          </div>
+        )}
+        {/* Replace the button with div for stop control */}
+        {size === "line" && isPlaying && (
+          <div
+            role="button"
+            onClick={handleStopClick}
+            className="absolute bottom-2 left-2 w-6 h-6 bg-black/30 rounded flex items-center justify-center text-white/75 hover:text-white cursor-pointer z-30"
+            title="Stop"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+              <path d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" />
+            </svg>
+          </div>
+        )}
       </button>
-      <input
-        type="range"
-        min="0"
-        max="1"
-        step="0.1"
-        value={volume}
-        onChange={(e) => onVolumeChange(effect.id, Number(e.target.value))}
-        className={`${sizeClasses[size].button} appearance-none ${sizeClasses[size].volume} rounded-full bg-gray-700 accent-white/75 hover:accent-white transition-all cursor-pointer`}
-      />
+      {size !== "line" && (
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={volume}
+          onChange={(e) => onVolumeChange(effect.id, Number(e.target.value))}
+          className={`${sizeClasses[size].button} appearance-none ${sizeClasses[size].volume} rounded-full bg-gray-700 accent-white/75 hover:accent-white transition-all cursor-pointer`}
+        />
+      )}
     </div>
   );
 }

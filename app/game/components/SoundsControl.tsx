@@ -23,6 +23,8 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     isLooping,
     toggleLoop,
     stopAllSounds,
+    setCurrentTime,
+    stopEffect,
   } = useAudio([]);
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -108,6 +110,9 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
         onPlay={() => playEffect(effect)}
         onToggleFavorite={() => handleToggleFavorite(effect)}
         onToggleLoop={() => toggleLoop(effect.id)}
+        onTimeSet={(time) => setCurrentTime(effect.id, time)}
+        size="line"
+        onStop={() => stopEffect(effect.id)}
       />
     </div>
   );
@@ -167,7 +172,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
           <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
             Favorites
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="space-y-4">
             {favorites.map((effect, index) => renderEffectItem(effect, index))}
           </div>
         </div>
@@ -178,7 +183,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
           <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
             {category}
           </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+          <div className="space-y-4">
             {categoryEffects.map((effect) =>
               renderEffectItem(
                 effect,
