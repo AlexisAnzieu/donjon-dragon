@@ -15,7 +15,7 @@ export const BrushPreview = ({
 
   return (
     <div
-      className="pointer-events-none fixed z-50 border-2 border-purple-500/50 bg-purple-500/20 rounded-full"
+      className="pointer-events-none fixed z-50 border-2 border-gray-500/50 bg-gray-500/40 rounded-full"
       style={{
         width: scaledSize * 2,
         height: scaledSize * 2,

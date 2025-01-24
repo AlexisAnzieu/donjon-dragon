@@ -57,7 +57,7 @@ export const FogControls = ({
             onClick={() => setIsFogControlActive(!isFogControlActive)}
             className={`flex items-center justify-center gap-1.5 px-3  rounded-lg text-sm font-medium transition-all duration-300 ${
               isFogControlActive
-                ? "bg-gradient-to-r from-purple-600 to-purple-700 text-white"
+                ? "bg-gradient-to-r from-gray-600 to-gray-700 text-white"
                 : "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-700 hover:from-gray-200 hover:to-gray-300"
             }`}
             style={{
@@ -117,7 +117,7 @@ export const FogControls = ({
                   ) : (
                     <FaEraser className="h-4 w-4" />
                   )}
-                  <span>{isDrawingFog ? "Dessiner" : "Gommer"}</span>
+                  <span>{isDrawingFog ? "Draw" : "Clear"}</span>
                 </button>
               </div>
 
@@ -129,9 +129,9 @@ export const FogControls = ({
                     max="500"
                     value={brushSize}
                     onChange={(e) => setBrushSize(parseInt(e.target.value))}
-                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-purple-600"
+                    className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-600"
                     style={{
-                      background: `linear-gradient(to right, rgb(147, 51, 234) ${
+                      background: `linear-gradient(to right, rgb(75, 85, 99) ${
                         (brushSize / 500) * 100
                       }%, rgb(229, 231, 235) ${(brushSize / 500) * 100}%)`,
                     }}
@@ -152,7 +152,7 @@ export const FogControls = ({
               >
                 <span>Suivi</span>
                 <div
-                  className={`w-2 h-2 rounded-full ${
+                  className={`w-2 h-2 ml-2 rounded-full ${
                     isAutoClearEnabled
                       ? "bg-white animate-pulse"
                       : "bg-gray-400"

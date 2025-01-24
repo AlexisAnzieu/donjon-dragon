@@ -408,7 +408,7 @@ export default function GameBoard({
             border-4
             transition-colors
             duration-200
-            ${isFogControlActive ? "border-violet-600" : "border-black"}
+            ${isFogControlActive ? "border-gray-600" : "border-black"}
             ${isPublic ? "cursor-default" : ""}
           `}
           >
