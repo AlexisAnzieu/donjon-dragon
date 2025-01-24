@@ -44,8 +44,12 @@ const TokenContent = ({ token }: { token: Token }) => (
         alt={token.name}
         className="w-9 h-9 rounded-full"
       />
+    ) : token.icon ? (
+      token.icon
+    ) : token.type === "ennemies" ? (
+      "👹"
     ) : (
-      token.icon ?? "👹"
+      "👤"
     )}
   </span>
 );

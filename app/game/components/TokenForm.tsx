@@ -28,6 +28,7 @@ interface TokenConfiguratorProps {
   maxHitPoint: number;
   size: number;
   icon?: string;
+  type: TokenType; // Add this prop
   onChange: (field: string, value: number) => void;
 }
 
@@ -122,7 +123,7 @@ const TokenTypeSelector = ({
             : "text-gray-600 hover:bg-gray-50"
         }`}
       >
-        {type === "enemies" ? "👹 Enemy" : "👥 NPC"}
+        {type === "enemies" ? "👹 Enemy" : "👤 NPC"}
       </button>
     ))}
   </div>
@@ -132,6 +133,7 @@ const TokenConfigurator = ({
   maxHitPoint,
   size,
   icon,
+  type,
   onChange,
 }: TokenConfiguratorProps) => (
   <div className="bg-gray-50 p-3 rounded-lg">
@@ -147,7 +149,7 @@ const TokenConfigurator = ({
           />
         ) : (
           <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-3xl shadow-sm">
-            👹
+            {type === "enemies" ? "👹" : "👤"}
           </div>
         )}
       </div>
@@ -370,6 +372,7 @@ export function TokenForm({
             maxHitPoint={formState.maxHitPoint}
             size={formState.size}
             icon={formState.icon}
+            type={formState.type} // Add this prop
             onChange={(field, value) =>
               setFormState((prev) => ({
                 ...prev,
