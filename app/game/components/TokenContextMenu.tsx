@@ -4,6 +4,7 @@ import {
   GiCrownedSkull,
   GiCharacter,
   GiMagnifyingGlass,
+  GiInvisible,
 } from "react-icons/gi";
 import { FaRegCopy } from "react-icons/fa6";
 
@@ -16,6 +17,8 @@ interface TokenContextMenuProps {
   onRemove?: () => void;
   onDuplicate: () => void;
   onSeeDetails?: () => void;
+  onToggleVisibility?: () => void;
+  isHidden?: boolean;
 }
 
 export function TokenContextMenu({
@@ -26,6 +29,8 @@ export function TokenContextMenu({
   onRemove,
   onDuplicate,
   onSeeDetails,
+  onToggleVisibility,
+  isHidden,
 }: TokenContextMenuProps) {
   return (
     <div
@@ -48,6 +53,18 @@ export function TokenContextMenu({
           </div>
         </>
       )}
+
+      {onToggleVisibility && (
+        <div
+          className="px-4 py-2 hover:bg-indigo-50 flex items-center gap-2 text-gray-700 hover:text-indigo-600 transition-colors duration-150"
+          onClick={onToggleVisibility}
+        >
+          <GiInvisible className="text-lg" />
+          <span>{isHidden ? "Make Visible" : "Make Hidden"}</span>
+        </div>
+      )}
+
+      <div className="border-b border-gray-200 my-1" />
 
       {tokenType === "characters" && onConvertToEnemy && (
         <>

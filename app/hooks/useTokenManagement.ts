@@ -264,6 +264,25 @@ export function useTokenManagement({
     [isAutoClearEnabled, clearFogAroundPoint]
   );
 
+  const toggleTokenVisibility = useCallback(
+    (tokenId: string) => {
+      setTokens((prev) => {
+        const newTokens = prev.map((token) =>
+          token.id === tokenId
+            ? {
+                ...token,
+                visibility:
+                  token.visibility === "hidden" ? "visible" : "hidden",
+              }
+            : token
+        );
+        notifyTokenUpdate(newTokens);
+        return newTokens;
+      });
+    },
+    [notifyTokenUpdate]
+  );
+
   // Use the new drag hook
   useTokenDrag({
     tokens,
@@ -291,5 +310,6 @@ export function useTokenManagement({
     setSelectedTokens,
     toggleTokenSelection,
     clearSelection,
+    toggleTokenVisibility,
   };
 }

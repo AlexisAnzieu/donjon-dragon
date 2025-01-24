@@ -75,6 +75,7 @@ model Token {
   monster     Monster?   @relation(fields: [monsterId], references: [id])
   characterId String?
   character   Character? @relation(fields: [characterId], references: [id])
+  visibility  String     @default("visible")
 }
 
 model Session {

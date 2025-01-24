@@ -51,6 +51,7 @@ const createTokenStyle = (
   pointerEvents: isPublic ? "none" : "auto",
   outline: selectedTokens.has(token.id) ? "4px solid white" : "none",
   outlineOffset: "2px",
+  opacity: token.visibility === "hidden" ? 0.6 : 1,
 });
 
 export default function GameBoard({
@@ -152,6 +153,7 @@ export default function GameBoard({
     toggleTokenSelection,
     clearSelection,
     handleNameChange,
+    toggleTokenVisibility,
   } = useTokenManagement({
     initialTokens,
     sessionId,
@@ -417,21 +419,27 @@ export default function GameBoard({
               onMouseDown={handleBoardMouseDown}
               onContextMenu={(e) => e.preventDefault()}
             >
-              {tokens.map((token: Token) => (
-                <TokenComponent
-                  zoom={zoom}
-                  key={token.id}
-                  token={token}
-                  type={token.type as TokenType}
-                  onMouseDown={(e) =>
-                    handleTokenMouseDown(e, token.type as TokenType, token.id)
-                  }
-                  onContextMenu={(e) =>
-                    handleTokenContextMenu(e, token.type as TokenType, token.id)
-                  }
-                  style={getTokenStyle(token)}
-                />
-              ))}
+              {tokens
+                .filter((token) => !(isPublic && token.visibility === "hidden"))
+                .map((token: Token) => (
+                  <TokenComponent
+                    zoom={zoom}
+                    key={token.id}
+                    token={token}
+                    type={token.type as TokenType}
+                    onMouseDown={(e) =>
+                      handleTokenMouseDown(e, token.type as TokenType, token.id)
+                    }
+                    onContextMenu={(e) =>
+                      handleTokenContextMenu(
+                        e,
+                        token.type as TokenType,
+                        token.id
+                      )
+                    }
+                    style={getTokenStyle(token)}
+                  />
+                ))}
             </div>
 
             <canvas
@@ -564,6 +572,14 @@ export default function GameBoard({
                   removeToken(contextMenu.tokenId);
                   setContextMenu(null);
                 }}
+                onToggleVisibility={() => {
+                  toggleTokenVisibility(contextMenu.tokenId);
+                  setContextMenu(null);
+                }}
+                isHidden={
+                  tokens.find((t) => t.id === contextMenu.tokenId)
+                    ?.visibility === "hidden"
+                }
               />
             )}
 
