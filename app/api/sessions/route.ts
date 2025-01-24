@@ -63,6 +63,7 @@ export async function POST(request: Request) {
         sessionId: session.id,
         characterId: character.id,
         icon: raceIcons[character.race!],
+        visibility: "visible",
       })) || [];
 
     await prisma.token.createMany({
