@@ -34,6 +34,7 @@ export default async function SessionPage({
       initialTokens={session.tokens}
       fogOfWar={session.fogOfWar}
       isPublic={!isEditable}
+      sessionName={session.name}
       initialViewState={
         session.viewState as {
           zoom: number;

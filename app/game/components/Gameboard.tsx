@@ -28,6 +28,7 @@ interface GameBoardProps {
   fogOfWar: string | null;
   isPublic: boolean;
   initialViewState?: { zoom: number; position: { x: number; y: number } };
+  sessionName: string; // Add this line
 }
 
 const UIElements = {
@@ -60,6 +61,7 @@ export default function GameBoard({
   fogOfWar,
   isPublic,
   initialViewState,
+  sessionName, // Add this line
 }: GameBoardProps) {
   const ws = useWebsocket(sessionId);
   const boardRef = useRef<HTMLDivElement>(null);
@@ -399,6 +401,13 @@ export default function GameBoard({
     <div className="h-screen w-screen select-none">
       <BoardContextProvider sessionId={sessionId}>
         <div className="relative h-full w-full">
+          {!isFogControlActive && (
+            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
+              <h1 className="text-xl font-bold text-white bg-black/50 px-4 py-2 rounded-lg">
+                {sessionName}
+              </h1>
+            </div>
+          )}
           <div
             className={`
             game-board

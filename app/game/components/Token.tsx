@@ -46,7 +46,7 @@ const TokenContent = ({ token }: { token: Token }) => (
       />
     ) : token.icon ? (
       token.icon
-    ) : token.type === "ennemies" ? (
+    ) : token.type === "enemies" ? (
       "👹"
     ) : (
       "👤"
