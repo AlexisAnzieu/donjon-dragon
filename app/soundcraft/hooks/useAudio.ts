@@ -102,8 +102,8 @@ export const useAudio = (effects: Sound[]) => {
 
   const setCurrentTime = useCallback((effectId: string, time: number) => {
     const audio = audioRefs.current[effectId];
-    if (audio) {
-      audio.currentTime = Math.min(time, audio.duration);
+    if (audio && !isNaN(audio.duration)) {
+      audio.currentTime = Math.max(0, Math.min(time, audio.duration));
     }
   }, []);
 
