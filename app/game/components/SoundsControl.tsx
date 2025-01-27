@@ -247,23 +247,29 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
           </div>
         )}
 
-        {Object.entries(effectsByCategory).map(
-          ([category, categoryEffects]) => (
-            <div key={category} className="space-y-4 mb-6">
-              <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
-                {category}
-              </h2>
-              <div className="space-y-4">
-                {categoryEffects.map((effect) =>
-                  renderEffectItem(
-                    effect,
-                    favorites.some((f) => f.id === effect.id)
-                      ? favorites.findIndex((f) => f.id === effect.id)
-                      : undefined
-                  )
-                )}
+        {effects.length === 0 && searchTerm.length >= 2 && !isLoading ? (
+          <div className="text-center text-white/70 py-8">
+            {` No sounds found for "${searchTerm}"`}
+          </div>
+        ) : (
+          Object.entries(effectsByCategory).map(
+            ([category, categoryEffects]) => (
+              <div key={category} className="space-y-4 mb-6">
+                <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
+                  {category}
+                </h2>
+                <div className="space-y-4">
+                  {categoryEffects.map((effect) =>
+                    renderEffectItem(
+                      effect,
+                      favorites.some((f) => f.id === effect.id)
+                        ? favorites.findIndex((f) => f.id === effect.id)
+                        : undefined
+                    )
+                  )}
+                </div>
               </div>
-            </div>
+            )
           )
         )}
       </div>
