@@ -4,15 +4,47 @@ import { Sound } from "@prisma/client";
 const FREESOUND_API_URL = "https://freesound.org/apiv2";
 const API_KEY = process.env.NEXT_PUBLIC_FREESOUND_API_KEY;
 
-export async function searchFreesound(query: string): Promise<Sound[]> {
+export async function searchFreesound(
+  query: string,
+  minDuration?: number,
+  maxDuration?: number | null,
+  pageSize: number = 20
+): Promise<Sound[]> {
   if (!query) return [];
 
   try {
-    const response = await fetch(
-      `${FREESOUND_API_URL}/search/text/?query=${encodeURIComponent(
-        query
-      )}&token=${API_KEY}&fields=id,name,previews,duration,tags,images&page_size=20`
-    );
+    if (!API_KEY) {
+      throw new Error("Freesound API key is not configured");
+    }
+
+    const validatedPageSize = Math.min(Math.max(1, pageSize), 100);
+
+    const params = new URLSearchParams({
+      query: query,
+      token: API_KEY,
+      fields: "id,name,previews,duration,tags,images",
+      page_size: validatedPageSize.toString(),
+    });
+
+    if (
+      minDuration !== undefined &&
+      maxDuration !== undefined &&
+      maxDuration !== null
+    ) {
+      params.append("filter", `duration:[${minDuration} TO ${maxDuration}]`);
+    } else if (minDuration !== undefined) {
+      params.append("filter", `duration:[${minDuration} TO *]`);
+    } else if (maxDuration !== undefined && maxDuration !== null) {
+      params.append("filter", `duration:[0 TO ${maxDuration}]`);
+    }
+
+    const url = `${FREESOUND_API_URL}/search/text/?${params.toString()}`;
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Freesound API error: ${response.statusText}`);
+    }
+
     const data = await response.json();
 
     return data.results.map((sound: ImportedSound) => ({
