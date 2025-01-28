@@ -368,7 +368,7 @@ export default function GameBoard({
   const boardStyle: React.CSSProperties = {
     ...getBoardTransformStyle(),
     backgroundImage: `url('${backgroundImage}')`,
-    backgroundSize: "100% 100%", // Changed from 'cover' to '100% 100%'
+    backgroundSize: "contain", // Changed from 'cover' to '100% 100%'
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat", // Added to prevent repeating
     cursor: isFogControlActive ? "crosshair" : isPanning ? "grabbing" : "grab",
