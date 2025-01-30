@@ -42,14 +42,32 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     debounce(async (term: string, duration: [number, number | null]) => {
       if (term.length >= 2) {
         setIsLoading(true);
-        const results = await searchFreesound(
-          term,
-          duration[0],
-          duration[1],
-          pageSize
-        );
-        setEffects(results);
+        try {
+          // Fetch both sources simultaneously
+          const [freesoundResults, internalResults] = await Promise.all([
+            searchFreesound(term, duration[0], duration[1], pageSize),
+            fetch(`/api/sounds?search=${encodeURIComponent(term)}`).then(
+              (res) => res.json()
+            ),
+          ]);
+
+          // Modify internal results to have a specific category
+          const modifiedInternalResults = internalResults.map(
+            (sound: Sound) => ({
+              ...sound,
+              category: "Already Used in Game",
+            })
+          );
+
+          // Combine both results
+          setEffects([...modifiedInternalResults, ...freesoundResults]);
+        } catch (error) {
+          console.error("Error fetching sounds:", error);
+          setEffects([]);
+        }
         setIsLoading(false);
+      } else {
+        setEffects([]);
       }
     }, 300),
     [pageSize]
@@ -113,20 +131,36 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
-
   const effectsByCategory = useMemo(() => {
-    const grouped = effects.reduce((acc, effect) => {
-      if (!acc[effect.category]) {
-        acc[effect.category] = [];
-      }
-      acc[effect.category].push(effect);
-      return acc;
-    }, {} as Record<string, Sound[]>);
+    const alreadyUsedCategory = "Already Used in Game";
+    const groupedEffects = new Map<string, Sound[]>();
 
-    // Sort categories by number of sounds in descending order
-    return Object.fromEntries(
-      Object.entries(grouped).sort(([, a], [, b]) => b.length - a.length)
-    );
+    // First pass: group all effects by category
+    for (const effect of effects) {
+      const category = effect.category;
+      const existingCategory = groupedEffects.get(category) ?? [];
+      existingCategory.push(effect);
+      groupedEffects.set(category, existingCategory);
+    }
+
+    // Create final ordered object
+    const ordered: Record<string, Sound[]> = {};
+
+    // Add "Already Used in Game" first if it exists
+    const alreadyUsed = groupedEffects.get(alreadyUsedCategory);
+    if (alreadyUsed) {
+      ordered[alreadyUsedCategory] = alreadyUsed;
+      groupedEffects.delete(alreadyUsedCategory);
+    }
+
+    // Sort remaining categories by size and add them
+    Array.from(groupedEffects.entries())
+      .sort(([, a], [, b]) => b.length - a.length)
+      .forEach(([category, sounds]) => {
+        ordered[category] = sounds;
+      });
+
+    return ordered;
   }, [effects]);
 
   const handleToggleFavorite = (effect: Sound) => {
