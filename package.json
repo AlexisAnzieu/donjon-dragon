@@ -19,6 +19,7 @@
     "@types/esc-pos-encoder": "^1.3.4",
     "@types/jsdom": "^21.1.7",
     "canvas": "^2.11.2",
+    "cloudinary": "^2.5.1",
     "date-fns": "^4.1.0",
     "dotenv-cli": "^7.4.2",
     "esc-pos-encoder": "^3.0.0",

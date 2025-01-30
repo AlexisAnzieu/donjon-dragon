@@ -15,31 +15,23 @@ export function useBackgroundImage({
 
   const uploadToCloudinary = useCallback(
     async (file: File): Promise<string> => {
-      // Check file size before upload (10MB limit)
       if (file.size > 10 * 1024 * 1024) {
         alert("File size exceeds 10MB limit. Please choose a smaller file.");
         throw new Error("File size exceeds 10MB limit");
       }
 
       const formData = new FormData();
-      formData.append(
-        "folder",
-        `${process.env.NEXT_PUBLIC_CLOUDINARY_FOLDER}/${sessionId}`
-      );
       formData.append("file", file);
-      formData.append(
-        "upload_preset",
-        process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!
-      );
-      formData.append("public_id", "background");
+      formData.append("sessionId", sessionId);
 
-      const response = await fetch(
-        `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/upload`,
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+      const response = await fetch("/api/upload_background_image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error("Upload failed");
+      }
 
       const data = await response.json();
       return data.secure_url;
