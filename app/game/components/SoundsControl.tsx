@@ -3,17 +3,19 @@ import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import debounce from "lodash/debounce";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
-import { useFavorites } from "../context/BoardContext";
+import { useSoundLibraries } from "../context/BoardContext";
 import { searchFreesound } from "@/app/services/freesound";
 import { Sound } from "@prisma/client";
+import { SoundLibraryWithSounds } from "@/app/game/types/sound";
 
 interface SoundsControlProps {
   onClose: () => void;
+  soundLibrary: SoundLibraryWithSounds;
 }
 
-export function SoundsControl({ onClose }: SoundsControlProps) {
+export function SoundsControl({ onClose, soundLibrary }: SoundsControlProps) {
   const modalRef = useRef<HTMLDivElement>(null);
-  const { favorites, toggleFavorite } = useFavorites();
+  const { toggleFavorite } = useSoundLibraries();
   const {
     isPlaying,
     isUsed,
@@ -42,32 +44,14 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
     debounce(async (term: string, duration: [number, number | null]) => {
       if (term.length >= 2) {
         setIsLoading(true);
-        try {
-          // Fetch both sources simultaneously
-          const [freesoundResults, internalResults] = await Promise.all([
-            searchFreesound(term, duration[0], duration[1], pageSize),
-            fetch(`/api/sounds?search=${encodeURIComponent(term)}`).then(
-              (res) => res.json()
-            ),
-          ]);
-
-          // Modify internal results to have a specific category
-          const modifiedInternalResults = internalResults.map(
-            (sound: Sound) => ({
-              ...sound,
-              category: "Already Used in Game",
-            })
-          );
-
-          // Combine both results
-          setEffects([...modifiedInternalResults, ...freesoundResults]);
-        } catch (error) {
-          console.error("Error fetching sounds:", error);
-          setEffects([]);
-        }
+        const results = await searchFreesound(
+          term,
+          duration[0],
+          duration[1],
+          pageSize
+        );
+        setEffects(results);
         setIsLoading(false);
-      } else {
-        setEffects([]);
       }
     }, 300),
     [pageSize]
@@ -94,8 +78,10 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       const key = event.key;
       if (key >= "1" && key <= "9") {
         const index = parseInt(key) - 1;
-        if (index < favorites.length) {
-          const effect = effects.find((e) => e.id === favorites[index].id)!;
+        if (index < soundLibrary.sounds.length) {
+          const effect = effects.find(
+            (e) => e.id === soundLibrary.sounds[index].id
+          )!;
           playEffect(effect);
         }
       }
@@ -103,7 +89,7 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
 
     window.addEventListener("keydown", handleKeyPress);
     return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [favorites, playEffect, effects]);
+  }, [soundLibrary.sounds, playEffect, effects]);
 
   const handleClose = useCallback(() => {
     stopAllSounds();
@@ -131,41 +117,21 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
+
   const effectsByCategory = useMemo(() => {
-    const alreadyUsedCategory = "Already Used in Game";
-    const groupedEffects = new Map<string, Sound[]>();
+    const grouped = effects.reduce((acc, effect) => {
+      if (!acc[effect.category]) {
+        acc[effect.category] = [];
+      }
+      acc[effect.category].push(effect);
+      return acc;
+    }, {} as Record<string, Sound[]>);
 
-    // First pass: group all effects by category
-    for (const effect of effects) {
-      const category = effect.category;
-      const existingCategory = groupedEffects.get(category) ?? [];
-      existingCategory.push(effect);
-      groupedEffects.set(category, existingCategory);
-    }
-
-    // Create final ordered object
-    const ordered: Record<string, Sound[]> = {};
-
-    // Add "Already Used in Game" first if it exists
-    const alreadyUsed = groupedEffects.get(alreadyUsedCategory);
-    if (alreadyUsed) {
-      ordered[alreadyUsedCategory] = alreadyUsed;
-      groupedEffects.delete(alreadyUsedCategory);
-    }
-
-    // Sort remaining categories by size and add them
-    Array.from(groupedEffects.entries())
-      .sort(([, a], [, b]) => b.length - a.length)
-      .forEach(([category, sounds]) => {
-        ordered[category] = sounds;
-      });
-
-    return ordered;
+    // Sort categories by number of sounds in descending order
+    return Object.fromEntries(
+      Object.entries(grouped).sort(([, a], [, b]) => b.length - a.length)
+    );
   }, [effects]);
-
-  const handleToggleFavorite = (effect: Sound) => {
-    toggleFavorite(effect);
-  };
 
   const renderEffectItem = (effect: Sound, favoriteIndex?: number) => (
     <div key={effect.id} className="space-y-3">
@@ -177,10 +143,10 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
         isUsed={isUsed[effect.id]}
         progress={progress[effect.id] || 0}
         isLooping={isLooping[effect.id]}
-        isFavorite={favorites.map((f) => f.id).includes(effect.id)}
+        isFavorite={soundLibrary.sounds.map((f) => f.id).includes(effect.id)}
         favoriteIndex={favoriteIndex}
         onPlay={() => playEffect(effect)}
-        onToggleFavorite={() => handleToggleFavorite(effect)}
+        onToggleFavorite={() => toggleFavorite(effect, soundLibrary.id)}
         onToggleLoop={() => toggleLoop(effect.id)}
         onTimeSet={(time) => setCurrentTime(effect.id, time)}
         size="line"
@@ -268,13 +234,13 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
       </div>
 
       <div className="flex-1 overflow-y-auto p-4">
-        {favorites.length > 0 && (
+        {soundLibrary.sounds.length > 0 && (
           <div className="space-y-4 mb-6">
             <h2 className="text-xl font-semibold text-white/90 border-b border-white/10 pb-2">
               Favorites
             </h2>
             <div className="space-y-4">
-              {favorites.map((effect, index) =>
+              {soundLibrary.sounds.map((effect, index) =>
                 renderEffectItem(effect, index)
               )}
             </div>
@@ -296,8 +262,10 @@ export function SoundsControl({ onClose }: SoundsControlProps) {
                   {categoryEffects.map((effect) =>
                     renderEffectItem(
                       effect,
-                      favorites.some((f) => f.id === effect.id)
-                        ? favorites.findIndex((f) => f.id === effect.id)
+                      soundLibrary.sounds.some((f) => f.id === effect.id)
+                        ? soundLibrary.sounds.findIndex(
+                            (f) => f.id === effect.id
+                          )
                         : undefined
                     )
                   )}

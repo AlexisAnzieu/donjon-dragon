@@ -2,13 +2,17 @@
 import { useEffect, useState } from "react";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
-import { useFavorites } from "../context/BoardContext";
+import { useSoundLibraries } from "../context/BoardContext";
 import { SoundsControl } from "./SoundsControl";
 import { Sound } from "@prisma/client";
 
 export function FavoriteSounds() {
-  const { favorites, toggleFavorite, loadFavorites, updateSoundLabel } =
-    useFavorites();
+  const {
+    soundLibraries,
+    toggleFavorite,
+    loadSoundLibraries,
+    updateSoundLabel,
+  } = useSoundLibraries();
   const [favoriteEffects, setFavoriteEffects] = useState<Sound[]>([]);
   const [showRenameModal, setShowRenameModal] = useState(false);
   const [effectToRename, setEffectToRename] = useState<Sound | null>(null);
@@ -31,13 +35,15 @@ export function FavoriteSounds() {
   } | null>(null);
 
   useEffect(() => {
-    loadFavorites();
+    loadSoundLibraries();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    setFavoriteEffects(favorites);
-  }, [favorites]);
+    setFavoriteEffects(
+      soundLibraries.filter((f) => f.isDefault)[0]?.sounds ?? []
+    );
+  }, [soundLibraries]);
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -71,7 +77,7 @@ export function FavoriteSounds() {
 
   const saveLabel = async () => {
     if (effectToRename && newLabel.trim()) {
-      await updateSoundLabel(effectToRename.id, newLabel.trim());
+      await updateSoundLabel(effectToRename.cid, newLabel.trim());
     }
     setShowRenameModal(false);
     setEffectToRename(null);
@@ -119,15 +125,17 @@ export function FavoriteSounds() {
     <>
       <div className="bg-gray-800/90 rounded-lg p-3 w-full max-w-xs">
         <h2 className="text-lg font-semibold text-white/90 bor5der-b border-white/10 pb-1 mb-3 text-center">
-          Sounds
+          {soundLibraries.filter((f) => f.isDefault)[0]?.name}
         </h2>
         <div className="space-y-3">
           {favoriteEffects.map((effect, index) =>
             renderEffectItem(effect, index)
           )}
-          {favorites.length < 9 && (
+          {favoriteEffects.length < 9 && (
             <div className="flex items-center gap-2">
-              <span className="text-white/50 w-4">{favorites.length + 1}</span>
+              <span className="text-white/50 w-4">
+                {favoriteEffects.length + 1}
+              </span>
               <button
                 title="Open Sound Library"
                 onClick={() => setShowSoundModal(true)}
@@ -181,7 +189,10 @@ export function FavoriteSounds() {
                 (effect) => effect.id === contextMenu.effectId
               );
               if (effect) {
-                toggleFavorite(effect);
+                toggleFavorite(
+                  effect,
+                  soundLibraries.filter((s) => s.isDefault)[0].id
+                );
               }
               setContextMenu(null);
             }}
@@ -202,7 +213,10 @@ export function FavoriteSounds() {
       {showSoundModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="w-[90vw] max-w-4xl">
-            <SoundsControl onClose={() => setShowSoundModal(false)} />
+            <SoundsControl
+              onClose={() => setShowSoundModal(false)}
+              soundLibrary={soundLibraries.filter((s) => s.isDefault)[0]}
+            />
           </div>
         </div>
       )}

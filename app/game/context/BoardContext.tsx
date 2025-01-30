@@ -1,17 +1,20 @@
 import { ReactNode, createContext, useContext } from "react";
 import { createStorageContext } from "./createContext";
 import { Sound } from "@prisma/client";
-import { BoardSession } from "@/app/api/sessions/route";
+import {
+  SoundContextState,
+  SoundLibraryWithSounds,
+} from "@/app/game/types/sound";
 
-export const FAVORITE_SOUNDS = "soundFavorites";
+export const SOUND_LIBRARIES_KEY = "soundLibraries";
 
 const SessionContext = createContext<string | null>(null);
 
 export const {
   Provider: FavoritesProvider,
-  useStorageContext: useFavoritesStorage,
-} = createStorageContext<Sound[]>({
-  key: FAVORITE_SOUNDS,
+  useStorageContext: useSoundLibrariesStorage,
+} = createStorageContext<SoundLibraryWithSounds[]>({
+  key: SOUND_LIBRARIES_KEY,
   defaultValue: [],
   maxItems: 9,
 });
@@ -26,47 +29,87 @@ function useSessionId() {
   return sessionId;
 }
 
-export function useFavorites() {
+export function useSoundLibraries(): SoundContextState {
   const sessionId = useSessionId();
-  const { data: favorites, setData: setFavorites } = useFavoritesStorage();
+  const { data: soundLibraries, setData: setSoundLibraries } =
+    useSoundLibrariesStorage();
 
-  const loadFavorites = async () => {
-    const response = await fetch(`/api/sessions?id=${sessionId}`);
-    const data: BoardSession = await response.json();
-    setFavorites(data.favoriteSongs);
+  const updateLibraryState = (
+    soundLibraryId: string,
+    updater: (library: SoundLibraryWithSounds) => SoundLibraryWithSounds
+  ) => {
+    setSoundLibraries(
+      soundLibraries.map((library) =>
+        library.id === soundLibraryId ? updater(library) : library
+      )
+    );
   };
 
-  const toggleFavorite = async (effect: Sound) => {
-    const newFavorites = favorites.map((f) => f.id).includes(effect.id)
-      ? favorites.filter((f) => f.id !== effect.id)
-      : favorites.length >= 9
-      ? favorites
-      : [...favorites, effect];
+  const loadSoundLibraries = async () => {
+    try {
+      const response = await fetch(`/api/soundlibrary?sessionId=${sessionId}`);
+      if (!response.ok) throw new Error("Failed to load sound libraries");
+      const data: SoundLibraryWithSounds[] = await response.json();
+      setSoundLibraries(data);
+    } catch (error) {
+      console.error("Error loading sound libraries:", error);
+    }
+  };
 
-    setFavorites(newFavorites);
+  const toggleFavorite = async (effect: Sound, soundLibraryId: string) => {
+    const library = soundLibraries.find((s) => s.id === soundLibraryId);
+    if (!library) return;
 
-    await fetch(`/api/sessions?id=${sessionId}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sounds: newFavorites }),
-    });
+    const exists = library.sounds.some((s) => s.cid === effect.cid);
+
+    try {
+      if (exists) {
+        await fetch(`/api/sounds?cid=${effect.cid}`, { method: "DELETE" });
+        updateLibraryState(soundLibraryId, (lib) => ({
+          ...lib,
+          sounds: lib.sounds.filter((s) => s.cid !== effect.cid),
+        }));
+      } else if (soundLibraries.length < 9) {
+        const response = await fetch("/api/sounds", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...effect, soundLibraryId }),
+        });
+        if (!response.ok) throw new Error("Failed to add sound");
+        const newSound = await response.json();
+        updateLibraryState(soundLibraryId, (lib) => ({
+          ...lib,
+          sounds: [...lib.sounds, newSound],
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      // Handle error in UI if needed
+    }
   };
 
   const updateSoundLabel = async (soundId: string, newLabel: string) => {
-    const newFavorites = favorites.map((sound) =>
-      sound.id === soundId ? { ...sound, label: newLabel } : sound
-    );
-
-    setFavorites(newFavorites);
-
-    await fetch(`/api/sessions?id=${sessionId}`, {
+    const response = await fetch(`/api/sounds?cid=${soundId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ sounds: newFavorites }),
+      body: JSON.stringify({ label: newLabel }),
     });
+    const updatedSound: Sound = await response.json();
+
+    updateLibraryState(updatedSound.soundLibraryId!, (lib) => ({
+      ...lib,
+      sounds: lib.sounds.map((sound) =>
+        sound.cid === soundId ? updatedSound : sound
+      ),
+    }));
   };
 
-  return { favorites, toggleFavorite, loadFavorites, updateSoundLabel };
+  return {
+    soundLibraries,
+    toggleFavorite,
+    loadSoundLibraries,
+    updateSoundLabel,
+  };
 }
 
 export function BoardContextProvider({

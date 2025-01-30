@@ -1,12 +1,11 @@
 import { DEFAULT_TOKEN_SIZE, raceIcons } from "@/app/game/type";
 import prisma from "@/prisma/db";
-import { Prisma, Sound, Token } from "@prisma/client";
+import { Prisma, Token } from "@prisma/client";
 import { NextResponse } from "next/server";
 
 export type BoardSession = Prisma.SessionGetPayload<{
   include: {
     tokens: true;
-    favoriteSongs: true;
     game: {
       select: {
         sessions: {
@@ -45,6 +44,12 @@ export async function POST(request: Request) {
       data: {
         gameId,
         name,
+        soundLibrary: {
+          create: {
+            name: "Favorites",
+            isDefault: true,
+          },
+        },
       },
     });
 
@@ -92,7 +97,6 @@ export async function GET(request: Request) {
     where: { id },
     include: {
       tokens: true,
-      favoriteSongs: true,
       game: {
         select: {
           sessions: {
@@ -112,7 +116,7 @@ export async function GET(request: Request) {
 
 export async function PUT(request: Request) {
   try {
-    const { tokens, fogOfWar, viewState, sounds } = await request.json();
+    const { tokens, fogOfWar, viewState } = await request.json();
     const { searchParams } = new URL(request.url);
     const sessionId = searchParams.get("id");
 
@@ -147,18 +151,6 @@ export async function PUT(request: Request) {
           viewState,
         },
       });
-    } else if (sounds) {
-      await prisma.$transaction([
-        prisma.sound.deleteMany({
-          where: { sessionId },
-        }),
-        prisma.sound.createMany({
-          data: sounds.map((sound: Sound) => ({
-            ...sound,
-            sessionId,
-          })),
-        }),
-      ]);
     }
 
     return NextResponse.json({ success: true });
