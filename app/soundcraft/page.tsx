@@ -79,7 +79,6 @@ export default function VFXTriggers() {
         isUsed={isUsed[effect.id]}
         progress={progress[effect.id] || 0}
         isLooping={isLooping[effect.id]}
-        isFavorite={favorites.some((f) => f.id === effect.id)}
         favoriteIndex={favoriteIndex}
         onPlay={() => playEffect(effect)}
         onToggleFavorite={() => toggleFavorite(effect)}

@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         name,
         soundLibrary: {
           create: {
-            name: "Favorites",
+            name: "Default",
             isDefault: true,
           },
         },

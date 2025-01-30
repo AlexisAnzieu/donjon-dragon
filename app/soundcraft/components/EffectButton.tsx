@@ -6,10 +6,10 @@ interface EffectButtonProps {
   isUsed: boolean;
   progress: number;
   isLooping: boolean;
-  isFavorite: boolean;
   size?: "small" | "medium" | "large" | "line";
   onPlay: () => void;
   onToggleFavorite?: () => void;
+  onFavoriteClick?: () => void;
   onToggleLoop: () => void;
   volume: number;
   onVolumeChange: (effectId: string, volume: number) => void;
@@ -30,10 +30,10 @@ export function EffectButton({
   isUsed,
   progress,
   isLooping,
-  isFavorite,
   size = "medium",
   onPlay,
   onToggleFavorite,
+  onFavoriteClick,
   onToggleLoop,
   volume,
   onVolumeChange,
@@ -124,7 +124,10 @@ export function EffectButton({
           backgroundBlendMode: "overlay",
         }}
       >
-        {/* Only show favorite index and button for medium and large sizes */}
+        {/* Add gray overlay */}
+        <div className="absolute inset-0 bg-gray-900/40" />
+
+        {/* Only show favorite index for medium and large sizes */}
         {favoriteIndex !== undefined && size !== "small" && (
           <div className="absolute top-0 left-0 right-0 h-8 flex items-center justify-center">
             <div
@@ -135,24 +138,115 @@ export function EffectButton({
           </div>
         )}
 
-        {size !== "small" && (
+        {/* Add/Remove button positioning based on state */}
+        {size === "line" && (
           <div
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              onToggleFavorite!();
+              onToggleFavorite?.();
+            }}
+            className={`absolute ${
+              effect.soundLibraryId
+                ? "top-0 right-0 bg-black/30"
+                : "bottom-2 left-2 bg-gray-600/80 hover:bg-gray-500/80"
+            } w-6 h-6 rounded flex items-center justify-center cursor-pointer z-30
+            ${
+              effect.soundLibraryId
+                ? "text-red-400 hover:text-red-500"
+                : "text-white"
+            }`}
+            title={
+              effect.soundLibraryId ? "Remove from library" : "Add to library"
+            }
+          >
+            {effect.soundLibraryId ? (
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            ) : (
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                className="w-4 h-4"
+                stroke="currentColor"
+                strokeWidth={2}
+              >
+                <path
+                  d="M12 4.5v15m7.5-7.5h-15"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            )}
+          </div>
+        )}
+
+        {/* Loop button (only for non-line sizes) */}
+        {size !== "line" && (
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onToggleLoop();
+            }}
+            className={`absolute top-0 right-0 ${
+              sizeClasses[size].controls
+            } flex items-center justify-center rounded-br-xl transition-all duration-200 z-20 cursor-pointer
+            ${
+              isLooping
+                ? "bg-white/30 text-white"
+                : "text-gray-400 hover:bg-gray-600/80 hover:text-white"
+            }`}
+            title="Toggle loop"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              className="w-4 h-4"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                d="M17 3L21 7M21 7L17 11M21 7H7C4.79086 7 3 8.79086 3 11V13M7 21L3 17M3 17L7 13M3 17H17C19.2091 17 21 15.2091 21 13V11"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </div>
+        )}
+
+        {/* Only show favorite star if sound is in library */}
+        {size !== "small" && effect.soundLibraryId && (
+          <div
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onFavoriteClick?.();
             }}
             className={`absolute top-0 left-0 ${
               sizeClasses[size].controls
             } flex items-center justify-center rounded-bl-xl transition-all duration-200 z-20 cursor-pointer
             ${
-              isFavorite ? "text-yellow-400" : "text-gray-400 hover:text-white"
+              effect.isFavorite
+                ? "text-yellow-400"
+                : "text-gray-400 hover:text-white"
             }`}
             title="Toggle favorite"
           >
             <svg
               viewBox="0 0 24 24"
-              fill={isFavorite ? "currentColor" : "none"}
+              fill={effect.isFavorite ? "currentColor" : "none"}
               className="w-4 h-4"
               stroke="currentColor"
               strokeWidth={2}
@@ -161,40 +255,6 @@ export function EffectButton({
             </svg>
           </div>
         )}
-
-        {/* Keep loop button for all sizes */}
-        <div
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            onToggleLoop();
-          }}
-          className={`absolute top-0 ${
-            size === "small" ? "right-0" : "right-0"
-          } ${
-            sizeClasses[size].controls
-          } flex items-center justify-center rounded-br-xl transition-all duration-200 z-20 cursor-pointer
-          ${
-            isLooping
-              ? "bg-white/30 text-white"
-              : "text-gray-400 hover:bg-gray-600/80 hover:text-white"
-          }`}
-          title="Toggle loop"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            className="w-4 h-4"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              d="M17 3L21 7M21 7L17 11M21 7H7C4.79086 7 3 8.79086 3 11V13M7 21L3 17M3 17L7 13M3 17H17C19.2091 17 21 15.2091 21 13V11"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-        </div>
 
         {isUsed && (
           <div

@@ -88,19 +88,31 @@ export function useSoundLibraries(): SoundContextState {
     }
   };
 
-  const updateSoundLabel = async (soundId: string, newLabel: string) => {
-    const response = await fetch(`/api/sounds?cid=${soundId}`, {
+  const updateSoundLabel = async (sound: Sound, newLabel: string) => {
+    const response = await fetch(`/api/sounds`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ label: newLabel }),
+      body: JSON.stringify({ ...sound, label: newLabel }),
     });
     const updatedSound: Sound = await response.json();
 
     updateLibraryState(updatedSound.soundLibraryId!, (lib) => ({
       ...lib,
-      sounds: lib.sounds.map((sound) =>
-        sound.cid === soundId ? updatedSound : sound
-      ),
+      sounds: lib.sounds.map((s) => (s.cid === sound.cid ? updatedSound : s)),
+    }));
+  };
+
+  const toggleFavoriteSound = async (sound: Sound) => {
+    const response = await fetch(`/api/sounds`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...sound, isFavorite: !sound.isFavorite }),
+    });
+    const updatedSound: Sound = await response.json();
+
+    updateLibraryState(updatedSound.soundLibraryId!, (lib) => ({
+      ...lib,
+      sounds: lib.sounds.map((s) => (s.cid === sound.cid ? updatedSound : s)),
     }));
   };
 
@@ -109,6 +121,7 @@ export function useSoundLibraries(): SoundContextState {
     toggleFavorite,
     loadSoundLibraries,
     updateSoundLabel,
+    toggleFavoriteSound,
   };
 }
 

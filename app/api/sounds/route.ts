@@ -46,19 +46,12 @@ export async function DELETE(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const cid = searchParams.get("cid");
-
-  if (!cid) {
-    return NextResponse.json({ error: "Missing sound CID" }, { status: 400 });
-  }
-
   try {
-    const { label } = await request.json();
+    const data = await request.json();
 
     const updatedSound = await prisma.sound.update({
-      where: { cid },
-      data: { label },
+      where: { cid: data.cid },
+      data,
     });
 
     return NextResponse.json(updatedSound);

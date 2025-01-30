@@ -12,5 +12,6 @@ export interface SoundContextState {
   soundLibraries: SoundLibraryWithSounds[];
   toggleFavorite: (effect: Sound, soundLibraryId: string) => Promise<void>;
   loadSoundLibraries: () => Promise<void>;
-  updateSoundLabel: (soundId: string, newLabel: string) => Promise<void>;
+  updateSoundLabel: (sound: Sound, newLabel: string) => Promise<void>;
+  toggleFavoriteSound: (sound: Sound) => Promise<void>;
 }

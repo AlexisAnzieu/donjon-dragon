@@ -41,7 +41,9 @@ export function FavoriteSounds() {
 
   useEffect(() => {
     setFavoriteEffects(
-      soundLibraries.filter((f) => f.isDefault)[0]?.sounds ?? []
+      soundLibraries
+        .filter((f) => f.isDefault)[0]
+        ?.sounds.filter((s) => s.isFavorite) ?? []
     );
   }, [soundLibraries]);
 
@@ -77,7 +79,7 @@ export function FavoriteSounds() {
 
   const saveLabel = async () => {
     if (effectToRename && newLabel.trim()) {
-      await updateSoundLabel(effectToRename.cid, newLabel.trim());
+      await updateSoundLabel(effectToRename, newLabel.trim());
     }
     setShowRenameModal(false);
     setEffectToRename(null);
@@ -111,7 +113,6 @@ export function FavoriteSounds() {
           isUsed={isUsed[effect.id]}
           progress={progress[effect.id] || 0}
           isLooping={isLooping[effect.id]}
-          isFavorite={true}
           onPlay={() => playEffect(effect)}
           onToggleLoop={() => toggleLoop(effect.id)}
           volume={volume[effect.id] ?? effect.volume ?? 1}
@@ -123,10 +124,13 @@ export function FavoriteSounds() {
 
   return (
     <>
-      <div className="bg-gray-800/90 rounded-lg p-3 w-full max-w-xs">
-        <h2 className="text-lg font-semibold text-white/90 bor5der-b border-white/10 pb-1 mb-3 text-center">
-          {soundLibraries.filter((f) => f.isDefault)[0]?.name}
-        </h2>
+      <div className="bg-gray-800/90 rounded-lg p-3 w-32">
+        <div className="text-center mb-3 border-b border-white/10 pb-1">
+          <h2 className="text-lg font-semibold text-white/90 truncate">
+            {soundLibraries.filter((f) => f.isDefault)[0]?.name}
+          </h2>
+          <h3 className="text-sm text-white/70">Favorites</h3>
+        </div>
         <div className="space-y-3">
           {favoriteEffects.map((effect, index) =>
             renderEffectItem(effect, index)
@@ -212,7 +216,7 @@ export function FavoriteSounds() {
 
       {showSoundModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="w-[90vw] max-w-4xl">
+          <div className="w-[90vw] max-w-5xl">
             <SoundsControl
               onClose={() => setShowSoundModal(false)}
               soundLibrary={soundLibraries.filter((s) => s.isDefault)[0]}
