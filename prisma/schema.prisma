@@ -50,8 +50,8 @@ model Game {
   updatedAt         DateTime       @updatedAt
   characters        Character[]    @relation("GameCharacters")
   sessions          Session[]
-  gameMaster        User?          @relation(fields: [gameMasterId], references: [id])
-  gameMasterId      String?
+  gameMaster        User           @relation(fields: [gameMasterId], references: [id])
+  gameMasterId      String
   soundLibrary      SoundLibrary[]
   name              String         @default("My new campaign")
   googleCalendarUrl String?

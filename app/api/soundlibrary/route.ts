@@ -4,6 +4,8 @@ import { NextRequest, NextResponse } from "next/server";
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
   const sessionId = searchParams.get("sessionId") || "";
+  const gameId = searchParams.get("gameId") || "";
+  const userId = searchParams.get("gameMasterId") || "";
 
   try {
     const soundLibraries = await prisma.soundLibrary.findMany({
@@ -14,7 +16,7 @@ export async function GET(request: NextRequest) {
         sounds: true,
       },
       where: {
-        sessionId,
+        OR: [{ sessionId }, { gameId }, { userId }],
       },
       orderBy: {
         createdAt: "desc",

@@ -8,7 +8,13 @@ import {
 
 export const SOUND_LIBRARIES_KEY = "soundLibraries";
 
-const SessionContext = createContext<string | null>(null);
+interface SessionContextType {
+  sessionId: string;
+  gameMasterId: string;
+  gameId: string;
+}
+
+const SessionContext = createContext<SessionContextType | null>(null);
 
 export const {
   Provider: FavoritesProvider,
@@ -19,18 +25,18 @@ export const {
   maxItems: 9,
 });
 
-function useSessionId() {
-  const sessionId = useContext(SessionContext);
-  if (!sessionId) {
+function useVariableContext() {
+  const context = useContext(SessionContext);
+  if (!context) {
     throw new Error(
-      "Board components must be used within a BoardContextProvider with sessionId"
+      "Board components must be used within a BoardContextProvider"
     );
   }
-  return sessionId;
+  return context;
 }
 
 export function useSoundLibraries(): SoundContextState {
-  const sessionId = useSessionId();
+  const { sessionId, gameId, gameMasterId } = useVariableContext();
   const { data: soundLibraries, setData: setSoundLibraries } =
     useSoundLibrariesStorage();
 
@@ -47,7 +53,9 @@ export function useSoundLibraries(): SoundContextState {
 
   const loadSoundLibraries = async () => {
     try {
-      const response = await fetch(`/api/soundlibrary?sessionId=${sessionId}`);
+      const response = await fetch(
+        `/api/soundlibrary?sessionId=${sessionId}&gameId=${gameId}&gameMasterId=${gameMasterId}`
+      );
       if (!response.ok) throw new Error("Failed to load sound libraries");
       const data: SoundLibraryWithSounds[] = await response.json();
       setSoundLibraries(data);
@@ -127,13 +135,17 @@ export function useSoundLibraries(): SoundContextState {
 
 export function BoardContextProvider({
   sessionId,
+  gameMasterId,
+  gameId,
   children,
 }: {
   sessionId: string;
+  gameMasterId: string;
+  gameId: string;
   children: ReactNode;
 }) {
   return (
-    <SessionContext.Provider value={sessionId}>
+    <SessionContext.Provider value={{ sessionId, gameMasterId, gameId }}>
       {providers.reduce(
         (acc, Provider) => (
           <Provider>{acc}</Provider>

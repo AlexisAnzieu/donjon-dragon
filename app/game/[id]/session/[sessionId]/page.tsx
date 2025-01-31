@@ -6,6 +6,11 @@ async function getSession(sessionId: string) {
     where: { id: sessionId },
     include: {
       tokens: true,
+      game: {
+        select: {
+          gameMasterId: true,
+        },
+      },
     },
   });
   return session;
@@ -30,6 +35,8 @@ export default async function SessionPage({
 
   return (
     <GameBoard
+      gameMasterId={session.game.gameMasterId}
+      gameId={session.gameId}
       sessionId={resolvedParams.sessionId}
       initialTokens={session.tokens}
       fogOfWar={session.fogOfWar}

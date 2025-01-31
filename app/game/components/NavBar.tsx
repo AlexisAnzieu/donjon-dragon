@@ -1,7 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { HiEye, HiUpload, HiRefresh, HiMenu } from "react-icons/hi";
+import {
+  HiEye,
+  HiUpload,
+  HiRefresh,
+  HiMenu,
+  HiVolumeUp,
+  HiPlus,
+} from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
 import { SessionSwitcher } from "./SessionSwitcher";
 import { HiBackward } from "react-icons/hi2";
@@ -159,11 +166,28 @@ export function NavBar({
     </>
   );
 
+  const soundsMenuItems = (
+    <>
+      <button
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg
+                            transition-colors duration-150"
+      >
+        <HiPlus className="text-xl text-blue-400" />
+        <span>Add library</span>
+      </button>
+    </>
+  );
+
   return (
     <>
       <div className="absolute left-1 top-4 z-50 flex gap-3">
         <MenuButton icon={HiMenu} label="Menu" menuItems={fileMenuItems} />
         <MenuButton icon={HiEye} label="View" menuItems={viewMenuItems} />
+        <MenuButton
+          icon={HiVolumeUp}
+          label="Sounds"
+          menuItems={soundsMenuItems}
+        />
       </div>
       {isSessionSwitcherOpen && (
         <SessionSwitcher
