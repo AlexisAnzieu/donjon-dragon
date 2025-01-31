@@ -1,32 +1,10 @@
 "use client";
 
 import { Printer, Search, Database } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
 
 export default function Home() {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const createNewSession = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetch("/api/games", {
-        method: "POST",
-      });
-      const data = await response.json();
-
-      if (!response.ok) throw new Error(data.error);
-
-      router.push(`/game/${data.gameId}`);
-    } catch (error) {
-      console.error("Failed to create game:", error);
-      setIsLoading(false);
-    }
-  };
-
   return (
     <>
       <Navigation />
@@ -42,15 +20,6 @@ export default function Home() {
             système d'index innovant. Imprimez, filtrez et accédez au contenu de
             D&D 5e comme jamais auparavant !`}
             </p>
-            <button
-              onClick={createNewSession}
-              disabled={isLoading}
-              className="bg-red-700 text-white p-5 text-xl rounded-lg font-semibold hover:bg-red-600 transition-colors disabled:bg-red-400 disabled:cursor-not-allowed"
-            >
-              {isLoading
-                ? "Création en cours..."
-                : "Créer une nouvelle campagne"}
-            </button>
           </section>
 
           <section id="features" className="container mx-auto px-4 py-20">

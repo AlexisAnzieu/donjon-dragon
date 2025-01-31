@@ -43,23 +43,6 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST() {
-  try {
-    const game = await prisma.game.create({
-      data: {
-        characters: {
-          create: [],
-        },
-      },
-    });
-
-    return NextResponse.json({ gameId: game.id });
-  } catch (error) {
-    console.error("Failed to create game:", error);
-    return NextResponse.json({ error }, { status: 500 });
-  }
-}
-
 export async function PATCH(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
