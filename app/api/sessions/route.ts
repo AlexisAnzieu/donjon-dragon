@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         name,
         soundLibrary: {
           create: {
-            name: "Default",
+            name: "Session",
             isDefault: true,
           },
         },

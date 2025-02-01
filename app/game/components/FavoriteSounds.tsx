@@ -167,21 +167,29 @@ export function FavoriteSounds() {
   return (
     <>
       <div className="bg-gray-800/90 rounded-lg p-3 w-32">
-        <div className="text-center mb-3 border-b border-white/10 pb-1">
+        <div className="mb-3 border-b border-white/10 pb-1">
           {isLoading ? (
             <div className="w-full h-7 bg-gray-700 rounded animate-pulse" />
           ) : (
-            <select
-              value={selectedLibraryId}
-              onChange={(e) => setSelectedLibraryId(e.target.value)}
-              className="w-full bg-gray-700 text-white/90 rounded px-2 py-1 mb-2 text-sm"
-            >
+            <div className="flex flex-wrap gap-1">
               {soundLibraries.map((library) => (
-                <option key={library.id} value={library.id}>
+                <button
+                  key={library.id}
+                  onClick={() => setSelectedLibraryId(library.id)}
+                  className={`
+                    px-1.5 py-0.5 rounded-full text-[10px] font-medium
+                    transition-all duration-150 ease-in-out
+                    ${
+                      selectedLibraryId === library.id
+                        ? "bg-blue-500 text-white ring-1 ring-blue-400"
+                        : "bg-gray-700/50 text-white/70 hover:bg-gray-700 hover:text-white/90"
+                    }
+                  `}
+                >
                   {library.name}
-                </option>
+                </button>
               ))}
-            </select>
+            </div>
           )}
         </div>
         <div className="space-y-3">
