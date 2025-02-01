@@ -115,6 +115,7 @@ export function MidiControlModal({ isOpen, onClose }: MidiControlModalProps) {
         }
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, squares]);
 
   // Add this new useEffect to update squares when bindings change
