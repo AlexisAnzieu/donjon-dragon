@@ -123,72 +123,71 @@ export function LibraryTypeModal({
 
         {/* Existing Libraries */}
         <div className="mb-6 space-y-3">
-          {libraries.map((library) => (
-            <div
-              key={library.id}
-              className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
-            >
-              <div className="flex items-center gap-2">
-                {editingLibrary === library.id ? (
-                  <input
-                    type="text"
-                    value={newName}
-                    onChange={(e) => setNewName(e.target.value)}
-                    onKeyPress={(e) =>
-                      e.key === "Enter" && handleRename(library.id)
-                    }
-                    className="bg-gray-600 text-white px-2 py-1 rounded"
-                    autoFocus
-                  />
-                ) : (
-                  <>
-                    <span className="text-white">{library.name}</span>
-                    <Tooltip
-                      text={LIBRARY_TYPES[getLibraryType(library)].description}
-                    >
-                      <span
-                        className={`text-xs px-2 py-1 rounded ${
-                          TYPE_BADGES[getLibraryType(library)].class
-                        }`}
-                      >
-                        {TYPE_BADGES[getLibraryType(library)].label}
-                      </span>
-                    </Tooltip>
-                  </>
-                )}
-              </div>
-              <div className="flex gap-2">
-                {editingLibrary === library.id ? (
-                  <button
-                    onClick={() => handleRename(library.id)}
-                    className="text-blue-400 hover:text-blue-300"
-                  >
-                    Save
-                  </button>
-                ) : (
-                  <>
+          {libraries.map((library) => {
+            const type = getLibraryType(library); // computed once per library
+            return (
+              <div
+                key={library.id}
+                className="flex items-center justify-between p-3 bg-gray-700 rounded-lg"
+              >
+                <div className="flex items-center gap-2">
+                  {editingLibrary === library.id ? (
+                    <input
+                      type="text"
+                      value={newName}
+                      onChange={(e) => setNewName(e.target.value)}
+                      onKeyPress={(e) =>
+                        e.key === "Enter" && handleRename(library.id)
+                      }
+                      className="bg-gray-600 text-white px-2 py-1 rounded"
+                      autoFocus
+                    />
+                  ) : (
+                    <>
+                      <span className="text-white">{library.name}</span>
+                      <Tooltip text={LIBRARY_TYPES[type].description}>
+                        <span
+                          className={`text-xs px-2 py-1 rounded ${TYPE_BADGES[type].class}`}
+                        >
+                          {TYPE_BADGES[type].label}
+                        </span>
+                      </Tooltip>
+                    </>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {editingLibrary === library.id ? (
                     <button
-                      title="Edit library"
-                      onClick={() => {
-                        setEditingLibrary(library.id);
-                        setNewName(library.name);
-                      }}
+                      onClick={() => handleRename(library.id)}
                       className="text-blue-400 hover:text-blue-300"
                     >
-                      <HiPencil />
+                      Save
                     </button>
-                    <button
-                      title="Delete library"
-                      onClick={() => onDelete(library.id)}
-                      className="text-red-400 hover:text-red-300"
-                    >
-                      <HiTrash />
-                    </button>
-                  </>
-                )}
+                  ) : (
+                    <>
+                      <button
+                        title="Edit library"
+                        onClick={() => {
+                          setEditingLibrary(library.id);
+                          setNewName(library.name);
+                        }}
+                        className="text-blue-400 hover:text-blue-300"
+                      >
+                        <HiPencil />
+                      </button>
+                      <button
+                        title="Delete library"
+                        onClick={() => onDelete(library.id)}
+                        className="text-red-400 hover:text-red-300"
+                      >
+                        <HiTrash />
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Create New Library Form */}
@@ -222,10 +221,16 @@ export function LibraryTypeModal({
                       className="w-full text-left"
                     >
                       <h3 className="text-white font-medium mb-2">
-                        {LIBRARY_TYPES[type].title}
+                        {
+                          LIBRARY_TYPES[type as "session" | "game" | "user"]
+                            .title
+                        }
                       </h3>
                       <p className="text-gray-300 text-sm">
-                        {LIBRARY_TYPES[type].description}
+                        {
+                          LIBRARY_TYPES[type as "session" | "game" | "user"]
+                            .description
+                        }
                       </p>
                     </button>
                   </div>
