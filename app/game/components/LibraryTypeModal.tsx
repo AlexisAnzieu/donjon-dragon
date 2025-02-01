@@ -56,15 +56,14 @@ function Tooltip({
   const [showTooltip, setShowTooltip] = useState(false);
 
   return (
-    <div className="relative inline-block">
-      <div
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
-      >
-        {children}
-      </div>
+    <div
+      className="relative inline-block"
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+    >
+      {children}
       {showTooltip && (
-        <div className="absolute z-50 p-2 text-sm text-white bg-gray-900 rounded-md shadow-lg -top-12 left-1/2 transform -translate-x-1/2 w-64">
+        <div className="pointer-events-none absolute z-50 p-2 text-sm text-white bg-gray-900 rounded-md shadow-lg -top-12 left-1/2 transform -translate-x-1/2 w-64">
           {text}
         </div>
       )}
