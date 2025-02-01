@@ -11,9 +11,9 @@ export function FavoriteSounds() {
   const [isLoading, setIsLoading] = useState(true);
   const {
     soundLibraries,
-    toggleFavorite,
     loadSoundLibraries,
     updateSoundLabel,
+    toggleFavoriteSound, // Add this import
   } = useSoundLibraries();
   const [selectedLibraryId, setSelectedLibraryId] = useState<string>("");
   const [favoriteEffects, setFavoriteEffects] = useState<Sound[]>([]);
@@ -268,7 +268,7 @@ export function FavoriteSounds() {
                 (effect) => effect.id === contextMenu.effectId
               );
               if (effect) {
-                toggleFavorite(effect, selectedLibraryId);
+                toggleFavoriteSound(effect);
               }
               setContextMenu(null);
             }}
