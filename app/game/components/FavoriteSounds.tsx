@@ -90,6 +90,15 @@ export function FavoriteSounds() {
     return () => window.removeEventListener("keydown", handleKeyPress);
   }, [favoriteEffects, playEffect]);
 
+  useEffect(() => {
+    if (soundLibraries.length > 0) {
+      const lastLibrary = soundLibraries[soundLibraries.length - 1];
+      if (lastLibrary) {
+        setSelectedLibraryId(lastLibrary.id);
+      }
+    }
+  }, [soundLibraries]);
+
   const handleRename = (effect: Sound) => {
     setEffectToRename(effect);
     setNewLabel(effect.label);

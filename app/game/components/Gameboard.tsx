@@ -498,6 +498,8 @@ export default function GameBoard({
                     )}
                     <NavBar
                       sessionId={sessionId}
+                      gameId={gameId}
+                      userId={gameMasterId}
                       onImageUpload={handleImageUpload}
                       onToggleElements={handleToggleElements}
                       showElements={showElements}

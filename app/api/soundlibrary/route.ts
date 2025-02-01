@@ -13,6 +13,9 @@ export async function GET(request: NextRequest) {
         id: true,
         name: true,
         isDefault: true,
+        sessionId: true,
+        gameId: true,
+        userId: true,
         sounds: true,
       },
       where: {
@@ -36,9 +39,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { sessionId, name } = body;
+    const { sessionId, name, gameId, userId } = body;
 
-    if (!sessionId || !name) {
+    if (!name || (!sessionId && !gameId && !userId)) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -49,6 +52,8 @@ export async function POST(request: NextRequest) {
       data: {
         sessionId,
         name,
+        gameId,
+        userId,
       },
     });
 
@@ -83,6 +88,36 @@ export async function DELETE(request: NextRequest) {
     console.error("Failed to delete sound library:", error);
     return NextResponse.json(
       { error: "Failed to delete sound library" },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, name } = body;
+
+    if (typeof id !== "string" || typeof name !== "string") {
+      return NextResponse.json(
+        { error: "Invalid input types" },
+        { status: 400 }
+      );
+    }
+
+    const updatedLibrary = await prisma.soundLibrary.update({
+      where: { id },
+      data: { name },
+      include: {
+        sounds: true,
+      },
+    });
+
+    return NextResponse.json(updatedLibrary);
+  } catch (error) {
+    console.error("Failed to update soundLibrary:", error);
+    return NextResponse.json(
+      { error: "Failed to update soundLibrary" },
       { status: 500 }
     );
   }

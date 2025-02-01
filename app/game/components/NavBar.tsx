@@ -7,15 +7,19 @@ import {
   HiRefresh,
   HiMenu,
   HiVolumeUp,
-  HiPlus,
+  HiFolder,
 } from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
 import { SessionSwitcher } from "./SessionSwitcher";
 import { HiBackward } from "react-icons/hi2";
 import Link from "next/link";
+import { LibraryTypeModal } from "./LibraryTypeModal";
+import { useSoundLibraries } from "../context/BoardContext";
 
 interface NavBarProps {
   sessionId: string;
+  gameId: string;
+  userId: string;
   onImageUpload: (file: File) => void;
   onToggleElements: (element: UIElementsKey) => void;
   showElements: { [key: string]: boolean };
@@ -75,19 +79,38 @@ function MenuButton({
 
 export function NavBar({
   sessionId,
+  userId,
+  gameId,
   onImageUpload,
   onToggleElements,
   showElements,
 }: NavBarProps) {
   const [isSessionSwitcherOpen, setIsSessionSwitcherOpen] = useState(false);
+  const [isLibraryTypeModalOpen, setIsLibraryTypeModalOpen] = useState(false);
 
-  const gameId =
-    typeof window !== "undefined" ? window.location.pathname.split("/")[2] : "";
+  const { createSoundLibrary, deleteLibrary, renameLibrary, soundLibraries } =
+    useSoundLibraries();
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       onImageUpload(file);
+    }
+  };
+  const handleLibraryTypeSelect = async (
+    type: "session" | "game" | "user",
+    name: string
+  ) => {
+    const idMap = {
+      session: sessionId,
+      game: gameId,
+      user: userId,
+    };
+
+    try {
+      await createSoundLibrary(name, type, idMap[type]);
+    } catch (error) {
+      console.error("Error creating library:", error);
     }
   };
 
@@ -170,10 +193,11 @@ export function NavBar({
     <>
       <button
         className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg
-                            transition-colors duration-150"
+                   transition-colors duration-150"
+        onClick={() => setIsLibraryTypeModalOpen(true)}
       >
-        <HiPlus className="text-xl text-blue-400" />
-        <span>Add library</span>
+        <HiFolder className="text-xl text-blue-400" />
+        <span>Manage libraries</span>
       </button>
     </>
   );
@@ -196,6 +220,17 @@ export function NavBar({
           onClose={() => setIsSessionSwitcherOpen(false)}
         />
       )}
+      <LibraryTypeModal
+        isOpen={isLibraryTypeModalOpen}
+        onClose={() => setIsLibraryTypeModalOpen(false)}
+        onSelect={handleLibraryTypeSelect}
+        onDelete={deleteLibrary}
+        onRename={renameLibrary}
+        sessionId={sessionId}
+        gameId={gameId}
+        userId={userId}
+        libraries={soundLibraries}
+      />
     </>
   );
 }

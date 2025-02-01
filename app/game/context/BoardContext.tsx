@@ -124,12 +124,83 @@ export function useSoundLibraries(): SoundContextState {
     }));
   };
 
+  const createSoundLibrary = async (name: string, type: string, id: string) => {
+    try {
+      const response = await fetch("/api/soundlibrary", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          [`${type}Id`]: id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to create sound library");
+      }
+
+      const newLibrary = await response.json();
+      setSoundLibraries((prev) => [...prev, { ...newLibrary, sounds: [] }]);
+      return newLibrary;
+    } catch (error) {
+      console.error("Error creating sound library:", error);
+      throw error;
+    }
+  };
+
+  const deleteLibrary = async (libraryId: string) => {
+    try {
+      const response = await fetch(`/api/soundlibrary?id=${libraryId}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) throw new Error("Failed to delete library");
+      setSoundLibraries((libraries) =>
+        libraries.filter((lib) => lib.id !== libraryId)
+      );
+    } catch (error) {
+      console.error("Error deleting library:", error);
+    }
+  };
+
+  const renameLibrary = async (libraryId: string, newName: string) => {
+    try {
+      if (!libraryId || !newName.trim()) {
+        throw new Error("Invalid input");
+      }
+
+      const response = await fetch(`/api/soundlibrary`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: libraryId, name: newName.trim() }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to rename library");
+      }
+
+      await response.json();
+      setSoundLibraries((libraries) =>
+        libraries.map((lib) =>
+          lib.id === libraryId ? { ...lib, name: newName.trim() } : lib
+        )
+      );
+    } catch (error) {
+      console.error("Error renaming library:", error);
+      throw error;
+    }
+  };
+
   return {
     soundLibraries,
     toggleFavorite,
     loadSoundLibraries,
     updateSoundLabel,
     toggleFavoriteSound,
+    createSoundLibrary,
+    deleteLibrary,
+    renameLibrary,
   };
 }
 
