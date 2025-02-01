@@ -7,6 +7,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Setting {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  value     Json
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  @@unique([userId, name])
+}
+
 model User {
   id           String         @id @default(cuid())
   createdAt    DateTime       @default(now())
@@ -17,6 +29,7 @@ model User {
   characters   Character[]
   hostedgames  Game[]
   soundLibrary SoundLibrary[]
+  settings     Setting[]
 }
 
 model Character {

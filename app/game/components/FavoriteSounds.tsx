@@ -5,6 +5,7 @@ import { EffectButton } from "@/app/soundcraft/components/EffectButton";
 import { useSoundLibraries } from "../context/BoardContext";
 import { SoundsControl } from "./SoundsControl";
 import { Sound } from "@prisma/client";
+import { useMidi } from "../context/MidiContext";
 
 export function FavoriteSounds() {
   const [isLoading, setIsLoading] = useState(true);
@@ -35,6 +36,7 @@ export function FavoriteSounds() {
     y: number;
     effectId: string;
   } | null>(null);
+  const { bindings, currentSignal, isAssigning } = useMidi();
 
   useEffect(() => {
     const loadLibraries = async () => {
@@ -98,6 +100,15 @@ export function FavoriteSounds() {
       }
     }
   }, [soundLibraries]);
+
+  useEffect(() => {
+    if (!currentSignal || !favoriteEffects.length || isAssigning) return;
+
+    const binding = bindings.find((b) => b.signal === currentSignal);
+    if (binding && binding.index < favoriteEffects.length) {
+      playEffect(favoriteEffects[binding.index]);
+    }
+  }, [currentSignal, bindings, favoriteEffects, playEffect, isAssigning]);
 
   const handleRename = (effect: Sound) => {
     setEffectToRename(effect);

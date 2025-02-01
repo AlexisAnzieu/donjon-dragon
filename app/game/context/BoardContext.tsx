@@ -5,6 +5,7 @@ import {
   SoundContextState,
   SoundLibraryWithSounds,
 } from "@/app/game/types/sound";
+import { MidiProvider } from "./MidiContext";
 
 export const SOUND_LIBRARIES_KEY = "soundLibraries";
 
@@ -228,6 +229,7 @@ export function BoardContextProvider({
 }
 
 const providers = [
+  MidiProvider,
   FavoritesProvider,
   // Add future providers here
 ];

@@ -8,6 +8,7 @@ import {
   HiMenu,
   HiVolumeUp,
   HiFolder,
+  HiMusicNote,
 } from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
 import { SessionSwitcher } from "./SessionSwitcher";
@@ -15,6 +16,7 @@ import { HiBackward } from "react-icons/hi2";
 import Link from "next/link";
 import { LibraryTypeModal } from "./LibraryTypeModal";
 import { useSoundLibraries } from "../context/BoardContext";
+import { MidiControlModal } from "./MidiControlModal";
 
 interface NavBarProps {
   sessionId: string;
@@ -87,6 +89,7 @@ export function NavBar({
 }: NavBarProps) {
   const [isSessionSwitcherOpen, setIsSessionSwitcherOpen] = useState(false);
   const [isLibraryTypeModalOpen, setIsLibraryTypeModalOpen] = useState(false);
+  const [isMidiControlModalOpen, setIsMidiControlModalOpen] = useState(false);
 
   const { createSoundLibrary, deleteLibrary, renameLibrary, soundLibraries } =
     useSoundLibraries();
@@ -199,6 +202,13 @@ export function NavBar({
         <HiFolder className="text-xl text-blue-400" />
         <span>Manage libraries</span>
       </button>
+      <button
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg transition-colors duration-150"
+        onClick={() => setIsMidiControlModalOpen(true)}
+      >
+        <HiMusicNote className="text-xl text-blue-400" />
+        <span>Midi Control</span>
+      </button>
     </>
   );
 
@@ -231,6 +241,12 @@ export function NavBar({
         userId={userId}
         libraries={soundLibraries}
       />
+      {isMidiControlModalOpen && (
+        <MidiControlModal
+          isOpen={isMidiControlModalOpen}
+          onClose={() => setIsMidiControlModalOpen(false)}
+        />
+      )}
     </>
   );
 }
