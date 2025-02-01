@@ -71,10 +71,12 @@ export function FavoriteSounds() {
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      // Skip if target is an input element
+      // Skip if target is any form input element
       if (
         event.target instanceof HTMLInputElement ||
-        event.target instanceof HTMLTextAreaElement
+        event.target instanceof HTMLTextAreaElement ||
+        event.target instanceof HTMLSelectElement ||
+        (event.target instanceof HTMLElement && event.target.isContentEditable)
       ) {
         return;
       }

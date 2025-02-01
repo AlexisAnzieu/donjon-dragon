@@ -73,24 +73,6 @@ export function SoundsControl({ onClose, soundLibrary }: SoundsControlProps) {
     [debouncedSearch, searchTerm]
   );
 
-  useEffect(() => {
-    const handleKeyPress = (event: KeyboardEvent) => {
-      const key = event.key;
-      if (key >= "1" && key <= "9") {
-        const index = parseInt(key) - 1;
-        if (index < soundLibrary.sounds.length) {
-          const effect = effects.find(
-            (e) => e.id === soundLibrary.sounds[index].id
-          )!;
-          playEffect(effect);
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyPress);
-    return () => window.removeEventListener("keydown", handleKeyPress);
-  }, [soundLibrary.sounds, playEffect, effects]);
-
   const handleClose = useCallback(() => {
     stopAllSounds();
     onClose();
