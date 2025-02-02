@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { RGBColor, sendColorCommand } from "../../../lib/lifx";
 import { LightButton } from "./LightButton";
 import { useLightPresets } from "../context/LightContext";

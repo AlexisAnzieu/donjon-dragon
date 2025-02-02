@@ -49,6 +49,7 @@ export function FavoriteSounds() {
     };
     loadLibraries();
     loadLightPresets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
