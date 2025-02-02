@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   const { name } = await params;
 
@@ -29,7 +29,7 @@ export async function GET(
 
 export async function POST(
   request: Request,
-  { params }: { params: { name: string } }
+  { params }: { params: Promise<{ name: string }> }
 ) {
   const { name } = await params;
 
