@@ -1,8 +1,13 @@
 import { auth } from "@/lib/auth";
 import prisma from "@/prisma/db";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET() {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { name: string } }
+) {
+  const { name } = await params;
+
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -12,7 +17,7 @@ export async function GET() {
     const setting = await prisma.setting.findFirst({
       where: {
         userId: session.user.id,
-        name: "midi-attribution",
+        name,
       },
     });
 
@@ -22,7 +27,12 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(
+  request: Request,
+  { params }: { params: { name: string } }
+) {
+  const { name } = await params;
+
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -35,7 +45,7 @@ export async function POST(request: Request) {
       where: {
         userId_name: {
           userId: session.user.id,
-          name: "midi-attribution",
+          name,
         },
       },
       update: {
@@ -43,7 +53,7 @@ export async function POST(request: Request) {
       },
       create: {
         userId: session.user.id,
-        name: "midi-attribution",
+        name,
         value,
       },
     });

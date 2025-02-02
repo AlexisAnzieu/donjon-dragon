@@ -3,11 +3,15 @@ import { useEffect, useState } from "react";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
 import { useSoundLibraries } from "../context/BoardContext";
+import { useLightPresets } from "../context/LightContext";
 import { SoundsControl } from "./SoundsControl";
 import { Sound } from "@prisma/client";
 import { useMidi } from "../context/MidiContext";
+import { LightButton } from "./LightButton";
+import { sendColorCommand } from "@/lib/lifx";
 
 export function FavoriteSounds() {
+  const { lightPresets, loadLightPresets } = useLightPresets();
   const [isLoading, setIsLoading] = useState(true);
   const {
     soundLibraries,
@@ -44,7 +48,7 @@ export function FavoriteSounds() {
       setIsLoading(false);
     };
     loadLibraries();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadLightPresets();
   }, []);
 
   useEffect(() => {
@@ -164,6 +168,24 @@ export function FavoriteSounds() {
     </div>
   );
 
+  const renderLightControls = () => (
+    <div className="space-y-3">
+      <h3 className="text-white/70 text-sm font-medium mb-2">Light Presets</h3>
+      <div className="grid grid-cols-2 gap-2">
+        {lightPresets.map((light) => (
+          <LightButton
+            key={light.id}
+            name={light.name}
+            color={light.color}
+            brightness={light.brightness}
+            size="normal"
+            onActivate={() => sendColorCommand(light.color, light.brightness)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+
   return (
     <>
       <div className="bg-gray-800/90 rounded-lg p-3 w-32">
@@ -243,6 +265,10 @@ export function FavoriteSounds() {
             </>
           )}
         </div>
+      </div>
+
+      <div className="bg-gray-800/90 rounded-lg p-3 w-32 mt-4">
+        {renderLightControls()}
       </div>
 
       {contextMenu && (

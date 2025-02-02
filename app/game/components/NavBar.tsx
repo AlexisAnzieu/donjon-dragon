@@ -9,6 +9,7 @@ import {
   HiVolumeUp,
   HiFolder,
   HiMusicNote,
+  HiLightBulb,
 } from "react-icons/hi";
 import { UIElementsKey } from "./Gameboard";
 import { SessionSwitcher } from "./SessionSwitcher";
@@ -17,6 +18,7 @@ import Link from "next/link";
 import { LibraryTypeModal } from "./LibraryTypeModal";
 import { useSoundLibraries } from "../context/BoardContext";
 import { MidiControlModal } from "./MidiControlModal";
+import { LightControlModal } from "./LightControlModal";
 
 interface NavBarProps {
   sessionId: string;
@@ -90,6 +92,7 @@ export function NavBar({
   const [isSessionSwitcherOpen, setIsSessionSwitcherOpen] = useState(false);
   const [isLibraryTypeModalOpen, setIsLibraryTypeModalOpen] = useState(false);
   const [isMidiControlModalOpen, setIsMidiControlModalOpen] = useState(false);
+  const [isLightControlModalOpen, setIsLightControlModalOpen] = useState(false);
 
   const { createSoundLibrary, deleteLibrary, renameLibrary, soundLibraries } =
     useSoundLibraries();
@@ -187,7 +190,7 @@ export function NavBar({
             showElements.VFXControls ? "text-green-400" : "text-gray-600"
           }`}
         />
-        <span>Sounds</span>
+        <span>Effects</span>
       </button>
     </>
   );
@@ -212,6 +215,19 @@ export function NavBar({
     </>
   );
 
+  const lightMenuItems = (
+    <>
+      <button
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg
+                   transition-colors duration-150"
+        onClick={() => setIsLightControlModalOpen(true)}
+      >
+        <HiLightBulb className="text-xl text-blue-400" />
+        <span>Manage Lights</span>
+      </button>
+    </>
+  );
+
   return (
     <>
       <div className="absolute left-1 top-4 z-50 flex gap-3">
@@ -221,6 +237,11 @@ export function NavBar({
           icon={HiVolumeUp}
           label="Sounds"
           menuItems={soundsMenuItems}
+        />
+        <MenuButton
+          icon={HiLightBulb}
+          label="Light"
+          menuItems={lightMenuItems}
         />
       </div>
       {isSessionSwitcherOpen && (
@@ -247,6 +268,10 @@ export function NavBar({
           onClose={() => setIsMidiControlModalOpen(false)}
         />
       )}
+      <LightControlModal
+        isOpen={isLightControlModalOpen}
+        onClose={() => setIsLightControlModalOpen(false)}
+      />
     </>
   );
 }
