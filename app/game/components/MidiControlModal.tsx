@@ -19,7 +19,7 @@ export function MidiControlModal({ isOpen, onClose }: MidiControlModalProps) {
     const initialSquares = Array.from({ length: 9 }, (_, i) => ({
       number: i + 1,
       waiting: false,
-      label: `Sound ${i + 1}`,
+      label: `${i + 1}`,
       midiSignal: "",
     }));
 

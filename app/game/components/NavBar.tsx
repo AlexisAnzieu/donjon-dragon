@@ -151,6 +151,13 @@ export function NavBar({
           onChange={handleImageUpload}
         />
       </label>
+      <button
+        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg transition-colors duration-150"
+        onClick={() => setIsMidiControlModalOpen(true)}
+      >
+        <HiMusicNote className="text-xl text-blue-400" />
+        <span>Midi Control</span>
+      </button>
     </>
   );
 
@@ -204,13 +211,6 @@ export function NavBar({
       >
         <HiFolder className="text-xl text-blue-400" />
         <span>Manage libraries</span>
-      </button>
-      <button
-        className="flex items-center gap-3 w-full px-4 py-3 hover:bg-gray-700 cursor-pointer rounded-lg transition-colors duration-150"
-        onClick={() => setIsMidiControlModalOpen(true)}
-      >
-        <HiMusicNote className="text-xl text-blue-400" />
-        <span>Midi Control</span>
       </button>
     </>
   );
