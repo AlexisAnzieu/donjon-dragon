@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useMidi } from "../context/MidiContext";
+import { MidiBinding, useMidi } from "../context/MidiContext";
 
 interface MidiControlModalProps {
   isOpen: boolean;
@@ -16,16 +16,18 @@ interface SquareData {
 export function MidiControlModal({ isOpen, onClose }: MidiControlModalProps) {
   const { bindings, setBindings, setIsAssigning, saveBindings } = useMidi();
   const [squares, setSquares] = useState<SquareData[]>(() => {
-    const initialSquares = Array.from({ length: 9 }, (_, i) => ({
+    const initialSquares = Array.from({ length: 10 }, (_, i) => ({
       number: i + 1,
       waiting: false,
-      label: `${i + 1}`,
+      label: i === 9 ? "Mode Toggle" : `${i + 1}`,
       midiSignal: "",
     }));
 
     // Apply bindings to initial state
     bindings.forEach((binding) => {
-      if (binding.index < initialSquares.length) {
+      if (binding.type === "mode-toggle") {
+        initialSquares[9].midiSignal = binding.signal;
+      } else if (binding.index < 9) {
         initialSquares[binding.index].midiSignal = binding.signal;
       }
     });
@@ -93,12 +95,18 @@ export function MidiControlModal({ isOpen, onClose }: MidiControlModalProps) {
         });
 
         const newBindings = squares
-          .map((square, index) => ({
-            signal:
-              index === waitingIndex ? midiSignal : square.midiSignal || "",
-            index,
-          }))
-          .filter((binding) => binding.signal);
+          .map((square, index) => {
+            const signal =
+              index === waitingIndex ? midiSignal : square.midiSignal || "";
+            if (!signal) return null;
+
+            return {
+              signal,
+              index: index === 9 ? -1 : index,
+              type: index === 9 ? "mode-toggle" : "action",
+            } as MidiBinding;
+          })
+          .filter((binding): binding is MidiBinding => binding !== null);
 
         setBindings(newBindings);
         saveBindings(newBindings);
@@ -178,7 +186,7 @@ export function MidiControlModal({ isOpen, onClose }: MidiControlModalProps) {
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-6">
-          {squares.map((square, index) => (
+          {squares.slice(0, 9).map((square, index) => (
             <div
               key={square.number}
               onClick={() => handleSquareClick(index)}
@@ -210,6 +218,38 @@ export function MidiControlModal({ isOpen, onClose }: MidiControlModalProps) {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mb-6">
+          <div
+            onClick={() => handleSquareClick(9)}
+            className={`
+              p-4 border-2 rounded-lg cursor-pointer
+              transition-all duration-200
+              ${
+                squares[9].waiting
+                  ? "border-blue-500 bg-blue-500/20"
+                  : "border-gray-600 bg-gray-700"
+              }
+              ${squares[9].midiSignal ? "border-green-500" : ""}
+              hover:border-blue-400
+            `}
+          >
+            <div className="text-white text-center">
+              <div className="font-medium mb-1">{squares[9].label}</div>
+              {squares[9].midiSignal ? (
+                <div className="text-xs text-green-400">
+                  Signal: {squares[9].midiSignal}
+                </div>
+              ) : (
+                <div className="text-xs text-gray-400">
+                  {squares[9].waiting
+                    ? "Waiting for input..."
+                    : "Click to assign"}
+                </div>
+              )}
+            </div>
+          </div>
         </div>
 
         <div className="flex justify-between items-center">

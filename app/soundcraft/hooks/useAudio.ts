@@ -1,5 +1,5 @@
 import { Sound } from "@prisma/client";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 
 export const useAudio = (effects: Sound[]) => {
   const initialLoopState = effects.reduce((acc, effect) => {
@@ -13,6 +13,8 @@ export const useAudio = (effects: Sound[]) => {
   const [volume, setVolume] = useState<Record<string, number>>({});
   const [isLooping, setIsLooping] =
     useState<Record<string, boolean>>(initialLoopState);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const dummyAudioRef = useRef<HTMLAudioElement | null>(null);
 
   const audioRefs = useRef<Record<string, HTMLAudioElement>>({});
 
@@ -33,8 +35,49 @@ export const useAudio = (effects: Sound[]) => {
     setIsPlaying((prev) => ({ ...prev, [effectId]: false }));
   }, []);
 
+  const initializeAudio = useCallback(() => {
+    if (isInitialized) return;
+
+    const silentAudio = new Audio(
+      "data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4LjI5LjEwMAAAAAAAAAAAAAAA//OEAAAAAAAAAAAAAAAAAAAAAAAASW5mbwAAAA8AAAAEAAABIADAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV6urq6urq6urq6urq6urq6urq6urq6urq6v////////////////////////////////8AAAAATGF2YzU4LjU0AAAAAAAAAAAAAAAAJAAAAAAAAAAAASDs90hvAAAAAAAAAAAAAAAAAAAA//MUZAAAAAGkAAAAAAAAA0gAAAAATEFN//MUZAMAAAGkAAAAAAAAA0gAAAAARTMz//MUZAYAAAGkAAAAAAAAA0gAAAAAOTku//MUZAkAAAGkAAAAAAAAA0gAAAAANVVV"
+    );
+    silentAudio
+      .play()
+      .then(() => {
+        setIsInitialized(true);
+        dummyAudioRef.current = silentAudio;
+      })
+      .catch(console.error);
+  }, [isInitialized]);
+
+  useEffect(() => {
+    const handleInteraction = () => {
+      initializeAudio();
+    };
+
+    document.addEventListener("click", handleInteraction);
+    document.addEventListener("keydown", handleInteraction);
+    document.addEventListener("touchstart", handleInteraction);
+
+    return () => {
+      document.removeEventListener("click", handleInteraction);
+      document.removeEventListener("keydown", handleInteraction);
+      document.removeEventListener("touchstart", handleInteraction);
+    };
+  }, [initializeAudio]);
+
   const playEffect = useCallback(
     async (effect: Sound) => {
+      if (!isInitialized) {
+        initializeAudio();
+        const checkInitAndPlay = setInterval(() => {
+          if (isInitialized) {
+            clearInterval(checkInitAndPlay);
+          }
+        }, 100);
+        return;
+      }
+
       try {
         let audio = audioRefs.current[effect.id];
 
@@ -70,7 +113,15 @@ export const useAudio = (effects: Sound[]) => {
         setIsPlaying((prev) => ({ ...prev, [effect.id]: false }));
       }
     },
-    [isPlaying, volume, isLooping, handleEnded, updateProgress]
+    [
+      isPlaying,
+      volume,
+      isLooping,
+      handleEnded,
+      updateProgress,
+      isInitialized,
+      initializeAudio,
+    ]
   );
 
   const setEffectVolume = useCallback((effectId: string, value: number) => {
@@ -119,6 +170,14 @@ export const useAudio = (effects: Sound[]) => {
     [handleEnded]
   );
 
+  useEffect(() => {
+    return () => {
+      if (dummyAudioRef.current) {
+        dummyAudioRef.current.remove();
+      }
+    };
+  }, []);
+
   return {
     isPlaying,
     isUsed,
@@ -131,5 +190,6 @@ export const useAudio = (effects: Sound[]) => {
     stopAllSounds,
     setCurrentTime,
     stopEffect,
+    isInitialized,
   };
 };

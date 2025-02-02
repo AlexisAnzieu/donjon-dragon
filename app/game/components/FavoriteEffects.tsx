@@ -1,14 +1,15 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useAudio } from "@/app/soundcraft/hooks/useAudio";
 import { EffectButton } from "@/app/soundcraft/components/EffectButton";
 import { useSoundLibraries } from "../context/BoardContext";
 import { useLightPresets } from "../context/LightContext";
 import { SoundsControl } from "./SoundsControl";
 import { Sound } from "@prisma/client";
-import { useMidi } from "../context/MidiContext";
+import { MidiBinding, useMidi } from "../context/MidiContext";
 import { LightButton } from "./LightButton";
 import { sendColorCommand } from "@/lib/lumia";
+import { debounce } from "lodash";
 
 export function FavoriteEffects() {
   const { lightPresets, isLumiaAvailable } = useLightPresets();
@@ -33,6 +34,7 @@ export function FavoriteEffects() {
     setEffectVolume,
     isLooping,
     toggleLoop,
+    isInitialized, // Add this
   } = useAudio([]);
   const [showSoundModal, setShowSoundModal] = useState(false);
   const [contextMenu, setContextMenu] = useState<{
@@ -111,26 +113,47 @@ export function FavoriteEffects() {
     }
   }, [soundLibraries]);
 
+  // Create a debounced version of the signal handler
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedHandleSignal = useCallback(
+    debounce((binding: MidiBinding) => {
+      if (binding.type === "mode-toggle") {
+        setMode((prev) => (prev === "sounds" ? "lights" : "sounds"));
+        return;
+      }
+
+      if (binding.type === "action") {
+        if (mode === "sounds" && binding.index < favoriteEffects.length) {
+          playEffect(favoriteEffects[binding.index]);
+        } else if (mode === "lights" && binding.index < lightPresets.length) {
+          const light = lightPresets[binding.index];
+          sendColorCommand(light.color, light.brightness);
+        }
+      }
+    }, 80),
+    [favoriteEffects, lightPresets, mode, playEffect]
+  );
+
   useEffect(() => {
-    if (!currentSignal || isAssigning) return;
+    if (!currentSignal || isAssigning || !isLumiaAvailable || !isInitialized)
+      return;
 
     const binding = bindings.find((b) => b.signal === currentSignal);
-    if (binding) {
-      if (mode === "sounds" && binding.index < favoriteEffects.length) {
-        playEffect(favoriteEffects[binding.index]);
-      } else if (mode === "lights" && binding.index < lightPresets.length) {
-        const light = lightPresets[binding.index];
-        sendColorCommand(light.color, light.brightness);
-      }
-    }
+    if (!binding) return;
+
+    debouncedHandleSignal(binding);
+
+    // Cleanup
+    return () => {
+      debouncedHandleSignal.cancel();
+    };
   }, [
     currentSignal,
     bindings,
-    favoriteEffects,
-    lightPresets,
-    playEffect,
     isAssigning,
-    mode,
+    isLumiaAvailable,
+    debouncedHandleSignal,
+    isInitialized,
   ]);
 
   useEffect(() => {

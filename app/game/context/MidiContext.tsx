@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
-interface MidiBinding {
+export interface MidiBinding {
   signal: string;
   index: number;
+  type?: "action" | "mode-toggle"; // Add this
 }
 
 interface MidiContextType {
@@ -39,10 +40,15 @@ export function MidiProvider({ children }: { children: React.ReactNode }) {
 
   const saveBindings = async (newBindings: MidiBinding[]) => {
     try {
+      const formattedBindings = newBindings.map((b) => ({
+        ...b,
+        type: b.type || "action",
+      }));
+
       await fetch("/api/settings/midi-attribution", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ value: newBindings }),
+        body: JSON.stringify({ value: formattedBindings }),
       });
     } catch (error) {
       console.error("Failed to save MIDI bindings:", error);
