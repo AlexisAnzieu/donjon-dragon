@@ -7,7 +7,4 @@ export const useWebsocket = (sessionId: string) =>
         ? "donjon-dragon-party.alexisanzieu.partykit.dev"
         : "localhost:1999",
     room: `dnd-session-${sessionId}`,
-    onError(e) {
-      console.log(e);
-    },
   });
