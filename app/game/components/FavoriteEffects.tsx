@@ -112,13 +112,26 @@ export function FavoriteEffects() {
   }, [soundLibraries]);
 
   useEffect(() => {
-    if (!currentSignal || !favoriteEffects.length || isAssigning) return;
+    if (!currentSignal || isAssigning) return;
 
     const binding = bindings.find((b) => b.signal === currentSignal);
-    if (binding && binding.index < favoriteEffects.length) {
-      playEffect(favoriteEffects[binding.index]);
+    if (binding) {
+      if (mode === "sounds" && binding.index < favoriteEffects.length) {
+        playEffect(favoriteEffects[binding.index]);
+      } else if (mode === "lights" && binding.index < lightPresets.length) {
+        const light = lightPresets[binding.index];
+        sendColorCommand(light.color, light.brightness);
+      }
     }
-  }, [currentSignal, bindings, favoriteEffects, playEffect, isAssigning]);
+  }, [
+    currentSignal,
+    bindings,
+    favoriteEffects,
+    lightPresets,
+    playEffect,
+    isAssigning,
+    mode,
+  ]);
 
   useEffect(() => {
     const handleCtrlPress = (event: KeyboardEvent) => {
