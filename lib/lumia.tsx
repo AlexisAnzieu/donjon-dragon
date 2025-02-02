@@ -16,10 +16,6 @@ interface ColorCommand {
 
 const LUMIA_TOKEN = "lumia892089382";
 
-export async function sendHurtTokenColor(): Promise<void> {
-  sendColorCommand({ r: 255, g: 0, b: 0 });
-}
-
 export interface LumiaLight {
   id: string;
   name: string;

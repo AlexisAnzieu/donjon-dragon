@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from "react";
 import { Token } from "@prisma/client";
 import { TokenType } from "../game/type";
-import { sendHurtTokenColor } from "@/lib/lumia";
 import { useTokenDrag } from "./useTokenDrag";
 
 interface UseTokenManagementProps {
@@ -139,7 +138,6 @@ export function useTokenManagement({
               }
             : token
         );
-        sendHurtTokenColor();
         notifyTokenUpdate(newTokens);
         return newTokens;
       });
