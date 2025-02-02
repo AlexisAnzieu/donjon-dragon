@@ -10,6 +10,7 @@ import { MidiBinding, useMidi } from "../context/MidiContext";
 import { LightButton } from "./LightButton";
 import { sendColorCommand } from "@/lib/lumia";
 import { debounce } from "lodash";
+import { LightControlModal } from "./LightControlModal";
 
 export function FavoriteEffects() {
   const { lightPresets, isLumiaAvailable } = useLightPresets();
@@ -44,6 +45,7 @@ export function FavoriteEffects() {
   } | null>(null);
   const { bindings, currentSignal, isAssigning } = useMidi();
   const [mode, setMode] = useState<"sounds" | "lights">("sounds");
+  const [showLightModal, setShowLightModal] = useState(false);
 
   useEffect(() => {
     const loadLibraries = async () => {
@@ -368,6 +370,36 @@ export function FavoriteEffects() {
             />
           </div>
         ))}
+        {lightPresets.length < 9 && (
+          <div className="flex items-center gap-2">
+            <span className="text-white/50 w-4">{lightPresets.length + 1}</span>
+            <button
+              title="Open Light Control"
+              onClick={() => setShowLightModal(true)}
+              className="aspect-square w-16 flex items-center justify-center rounded-lg
+                bg-gradient-to-r from-purple-500/80 to-blue-500/80
+                hover:from-purple-500 hover:to-blue-500
+                transition-all duration-300 ease-in-out
+                text-white/90 hover:text-white
+                border border-white/10 hover:border-white/20
+                shadow-lg hover:shadow-xl
+                transform hover:scale-[1.02]"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -471,6 +503,13 @@ export function FavoriteEffects() {
             </div>
           </div>
         </div>
+      )}
+
+      {showLightModal && (
+        <LightControlModal
+          isOpen={showLightModal}
+          onClose={() => setShowLightModal(false)}
+        />
       )}
     </>
   );
