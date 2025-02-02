@@ -14,8 +14,27 @@ interface ColorCommand {
   };
 }
 
+const LUMIA_TOKEN = "lumia892089382";
+
 export async function sendHurtTokenColor(): Promise<void> {
   sendColorCommand({ r: 255, g: 0, b: 0 });
+}
+
+export async function getSettings(): Promise<void> {
+  try {
+    const response = await fetch(
+      `http://localhost:39231/api/retrieve?token=${LUMIA_TOKEN}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const settings = await response.json();
+    console.log("Settings:", settings);
+  } catch (error) {
+    console.error("Failed to get settings:", error);
+  }
 }
 
 export async function sendColorCommand(
@@ -33,7 +52,7 @@ export async function sendColorCommand(
 
   try {
     const response = await fetch(
-      "http://localhost:39231/api/send?token=lumia892089382",
+      `http://localhost:39231/api/send?token=${LUMIA_TOKEN}`,
       {
         method: "POST",
         headers: {

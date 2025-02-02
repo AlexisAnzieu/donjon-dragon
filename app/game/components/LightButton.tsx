@@ -1,4 +1,4 @@
-import { RGBColor } from "../../../lib/lifx";
+import { RGBColor } from "../../../lib/lumia";
 
 interface LightButtonProps {
   name: string;

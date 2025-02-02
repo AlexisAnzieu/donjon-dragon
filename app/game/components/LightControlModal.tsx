@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { RGBColor, sendColorCommand } from "../../../lib/lifx";
+import { RGBColor, sendColorCommand } from "../../../lib/lumia";
 import { LightButton } from "./LightButton";
 import { useLightPresets } from "../context/LightContext";
 

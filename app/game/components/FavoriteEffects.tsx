@@ -8,7 +8,7 @@ import { SoundsControl } from "./SoundsControl";
 import { Sound } from "@prisma/client";
 import { useMidi } from "../context/MidiContext";
 import { LightButton } from "./LightButton";
-import { sendColorCommand } from "@/lib/lifx";
+import { sendColorCommand } from "@/lib/lumia";
 
 export function FavoriteEffects() {
   const { lightPresets, loadLightPresets } = useLightPresets();
