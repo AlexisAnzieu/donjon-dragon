@@ -10,7 +10,7 @@ import { useMidi } from "../context/MidiContext";
 import { LightButton } from "./LightButton";
 import { sendColorCommand } from "@/lib/lifx";
 
-export function FavoriteSounds() {
+export function FavoriteEffects() {
   const { lightPresets, loadLightPresets } = useLightPresets();
   const [isLoading, setIsLoading] = useState(true);
   const {

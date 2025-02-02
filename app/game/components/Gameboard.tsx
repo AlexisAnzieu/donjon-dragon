@@ -17,7 +17,7 @@ import { TokenContextMenu } from "./TokenContextMenu";
 import { CSSProperties } from "react";
 import { BrushPreview } from "./BrushPreview";
 import { NavBar } from "./NavBar";
-import { FavoriteSounds } from "./FavoriteSounds";
+import { FavoriteEffects } from "./FavoriteEffects";
 import { BoardContextProvider } from "../context/BoardContext";
 import { DetailComponent } from "./DetailComponent";
 import { DragState } from "@/app/hooks/useTokenDrag";
@@ -493,7 +493,7 @@ export default function GameBoard({
                     )}
                     {showElements.VFXControls && (
                       <div className="absolute top-20 left-1 z-50">
-                        <FavoriteSounds />
+                        <FavoriteEffects />
                       </div>
                     )}
                     <NavBar
