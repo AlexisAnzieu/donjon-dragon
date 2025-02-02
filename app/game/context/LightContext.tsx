@@ -1,5 +1,7 @@
 import { createStorageContext } from "./createContext";
 import { Light } from "../components/LightControlModal";
+import { useState, useEffect } from "react";
+import { getSettings, LumiaLight } from "../../../lib/lumia";
 
 export const LIGHT_PRESETS_KEY = "lightPresets";
 
@@ -15,6 +17,18 @@ export const {
 export function useLightPresets() {
   const { data: lightPresets, setData: setLightPresets } =
     useLightPresetsStorage();
+  const [isLumiaAvailable, setIsLumiaAvailable] = useState<LumiaLight[] | null>(
+    null
+  );
+
+  useEffect(() => {
+    checkLumiaAvailability();
+  }, []);
+
+  const checkLumiaAvailability = async () => {
+    const res = await getSettings();
+    setIsLumiaAvailable(res?.data?.lights || null);
+  };
 
   const saveLightPresetsToDb = async (lights: Light[]) => {
     try {
@@ -49,5 +63,6 @@ export function useLightPresets() {
     lightPresets,
     loadLightPresets: loadLightPresetsFromDb,
     updateLightPresets,
+    isLumiaAvailable,
   };
 }

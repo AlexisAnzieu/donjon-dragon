@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { RGBColor, sendColorCommand } from "../../../lib/lumia";
+import { useEffect, useState } from "react";
+import { LumiaLight, RGBColor, sendColorCommand } from "../../../lib/lumia";
 import { LightButton } from "./LightButton";
 import { useLightPresets } from "../context/LightContext";
 
@@ -35,13 +35,39 @@ function rgbToHex(color: RGBColor): string {
   );
 }
 
+const ConnectedLightsTooltip = ({ lights }: { lights: LumiaLight[] }) => (
+  <div className="absolute right-0 mt-2 w-64 bg-gray-900 rounded-lg shadow-lg p-3 text-sm text-gray-300 z-50">
+    <div className="font-semibold mb-2 text-white">Connected Lights:</div>
+    <div className="space-y-1">
+      {lights.map((light) => (
+        <div key={light.id} className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+          <span>{light.name}</span>
+          <span className="text-gray-500 text-xs">{light.type}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
 export function LightControlModal({ isOpen, onClose }: LightControlModalProps) {
-  const { lightPresets, updateLightPresets } = useLightPresets();
+  const {
+    lightPresets,
+    updateLightPresets,
+    isLumiaAvailable,
+    loadLightPresets,
+  } = useLightPresets();
   const [name, setName] = useState("");
   const [color, setColor] = useState<RGBColor>({ r: 255, g: 255, b: 255 });
   const [brightness, setBrightness] = useState(100);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
+  const [showTooltip, setShowTooltip] = useState(false);
+
+  useEffect(() => {
+    loadLightPresets();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!isOpen) return null;
 
@@ -84,12 +110,29 @@ export function LightControlModal({ isOpen, onClose }: LightControlModalProps) {
     await updateLightPresets(newLights);
     setEditingId(null);
   };
-
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-gray-800 rounded-lg p-6 w-[500px]">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-white text-xl font-bold">Light Management</h2>
+          {!isLumiaAvailable ? (
+            <div className="text-xs text-red-400 bg-red-900/20 px-2 py-1 rounded">
+              Lumia Unavailable
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 relative">
+              <div
+                className="text-xs text-green-400 bg-green-900/20 px-2 py-1 rounded cursor-help"
+                onMouseEnter={() => setShowTooltip(true)}
+                onMouseLeave={() => setShowTooltip(false)}
+              >
+                Lumia Connected ({isLumiaAvailable.length})
+                {showTooltip && (
+                  <ConnectedLightsTooltip lights={isLumiaAvailable} />
+                )}
+              </div>
+            </div>
+          )}
           <button onClick={onClose} className="text-white hover:text-gray-300">
             <span className="sr-only">Close</span>✕
           </button>

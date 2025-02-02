@@ -20,7 +20,17 @@ export async function sendHurtTokenColor(): Promise<void> {
   sendColorCommand({ r: 255, g: 0, b: 0 });
 }
 
-export async function getSettings(): Promise<void> {
+export interface LumiaLight {
+  id: string;
+  name: string;
+  type: string;
+}
+export interface LumiaSettings {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: { lights: LumiaLight[] };
+}
+
+export async function getSettings(): Promise<LumiaSettings | null> {
   try {
     const response = await fetch(
       `http://localhost:39231/api/retrieve?token=${LUMIA_TOKEN}`
@@ -31,9 +41,10 @@ export async function getSettings(): Promise<void> {
     }
 
     const settings = await response.json();
-    console.log("Settings:", settings);
+    return settings;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    console.error("Failed to get settings:", error);
+    return null;
   }
 }
 

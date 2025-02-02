@@ -11,7 +11,7 @@ import { LightButton } from "./LightButton";
 import { sendColorCommand } from "@/lib/lumia";
 
 export function FavoriteEffects() {
-  const { lightPresets, loadLightPresets } = useLightPresets();
+  const { lightPresets, isLumiaAvailable } = useLightPresets();
   const [isLoading, setIsLoading] = useState(true);
   const {
     soundLibraries,
@@ -49,7 +49,6 @@ export function FavoriteEffects() {
       setIsLoading(false);
     };
     loadLibraries();
-    loadLightPresets();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -123,14 +122,14 @@ export function FavoriteEffects() {
 
   useEffect(() => {
     const handleCtrlPress = (event: KeyboardEvent) => {
-      if (event.key === "Control") {
+      if (event.key === "Control" && isLumiaAvailable) {
         setMode((prev) => (prev === "sounds" ? "lights" : "sounds"));
       }
     };
 
     window.addEventListener("keydown", handleCtrlPress);
     return () => window.removeEventListener("keydown", handleCtrlPress);
-  }, []);
+  }, [isLumiaAvailable]);
 
   const handleRename = (effect: Sound) => {
     setEffectToRename(effect);
@@ -206,71 +205,75 @@ export function FavoriteEffects() {
     </div>
   );
 
-  const renderControls = () => (
-    <div className="relative mb-5">
-      <div className="text-[9px] text-white/40 mb-2 text-center">
-        [Press Ctrl key]
-      </div>
-      <div
-        className={`
-          w-full h-7 bg-gray-700/50 rounded-full p-0.5
-          flex items-center cursor-pointer
-          transition-colors duration-200
-        `}
-        onClick={() => setMode(mode === "sounds" ? "lights" : "sounds")}
-      >
+  const renderControls = () => {
+    if (!isLumiaAvailable) return null;
+
+    return (
+      <div className="relative mb-5">
+        <div className="text-[9px] text-white/40 mb-2 text-center">
+          [Press Ctrl key]
+        </div>
         <div
           className={`
-            absolute h-6 w-[calc(50%-2px)] bg-blue-500 rounded-full
-            transition-transform duration-300 ease-in-out
-            ${
-              mode === "lights"
-                ? "translate-x-[calc(100%+2px)]"
-                : "translate-x-0"
-            }
+            w-full h-7 bg-gray-700/50 rounded-full p-0.5
+            flex items-center cursor-pointer
+            transition-colors duration-200
           `}
-        />
-        <div className="relative flex w-full">
+          onClick={() => setMode(mode === "sounds" ? "lights" : "sounds")}
+        >
           <div
             className={`
-            flex-1 flex items-center justify-center z-10
-            text-[10px] font-medium transition-colors duration-200
-            ${mode === "sounds" ? "text-white" : "text-white/50"}
-          `}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              absolute h-6 w-[calc(50%-2px)] bg-blue-500 rounded-full
+              transition-transform duration-300 ease-in-out
+              ${
+                mode === "lights"
+                  ? "translate-x-[calc(100%+2px)]"
+                  : "translate-x-0"
+              }
+            `}
+          />
+          <div className="relative flex w-full">
+            <div
+              className={`
+              flex-1 flex items-center justify-center z-10
+              text-[10px] font-medium transition-colors duration-200
+              ${mode === "sounds" ? "text-white" : "text-white/50"}
+            `}
             >
-              <path
-                fillRule="evenodd"
-                d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-          <div
-            className={`
-            flex-1 flex items-center justify-center z-10
-            text-[10px] font-medium transition-colors duration-200
-            ${mode === "lights" ? "text-white" : "text-white/50"}
-          `}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-3 w-3 mr-1"
-              viewBox="0 0 20 20"
-              fill="currentColor"
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3 w-3 mr-1"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div
+              className={`
+              flex-1 flex items-center justify-center z-10
+              text-[10px] font-medium transition-colors duration-200
+              ${mode === "lights" ? "text-white" : "text-white/50"}
+            `}
             >
-              <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-            </svg>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-3 w-3 mr-1"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
+              </svg>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     if (mode === "sounds") {
