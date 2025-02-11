@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
-import { useAudio } from "@/app/soundcraft/hooks/useAudio";
-import { EffectButton } from "@/app/soundcraft/components/EffectButton";
+import { useAudio } from "@/app/game/hooks/useAudio";
+import { EffectButton } from "@/app/game/components/EffectButton";
 import { useSoundLibraries } from "../context/BoardContext";
 import { useLightPresets } from "../context/LightContext";
 import { SoundsControl } from "./SoundsControl";

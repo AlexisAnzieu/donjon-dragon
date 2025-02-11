@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import debounce from "lodash/debounce";
-import { useAudio } from "@/app/soundcraft/hooks/useAudio";
-import { EffectButton } from "@/app/soundcraft/components/EffectButton";
+import { useAudio } from "@/app/game/hooks/useAudio";
+import { EffectButton } from "@/app/game/components/EffectButton";
 import { useSoundLibraries } from "../context/BoardContext";
-import { searchFreesound } from "@/app/services/freesound";
+import { searchFreesound } from "@/lib/freesound";
 import { Sound } from "@prisma/client";
 import { SoundLibraryWithSounds } from "@/app/game/types/sound";
 

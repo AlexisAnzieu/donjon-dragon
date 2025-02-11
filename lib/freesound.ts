@@ -1,4 +1,4 @@
-import { ImportedSound } from "@/app/soundcraft/effects";
+import { ImportedSound } from "@/lib/effects";
 import { Sound } from "@prisma/client";
 
 const FREESOUND_API_URL = "https://freesound.org/apiv2";

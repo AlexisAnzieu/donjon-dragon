@@ -34,7 +34,6 @@ const NAVIGATION_CATEGORIES = (isAuthenticated: boolean): Category[] => {
         { name: "Armures", href: "/armors" },
       ],
     },
-    { title: "Sons", href: "/soundcraft" },
   ];
 
   const authSection: Category = isAuthenticated
