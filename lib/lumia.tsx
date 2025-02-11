@@ -14,7 +14,7 @@ interface ColorCommand {
   };
 }
 
-const LUMIA_TOKEN = "lumia892089382";
+const LUMIA_TOKEN = process.env.NEXT_PUBLIC_LUMIA_TOKEN || "";
 
 export interface LumiaLight {
   id: string;

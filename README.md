@@ -57,6 +57,7 @@ cp .env.example .env.local
 # - Database URL
 # - Cloudinary credentials
 # - Freesound API key
+# - Lumia Stream token
 # - Auth secret (generate with: openssl rand -base64 32)
 ```
 
