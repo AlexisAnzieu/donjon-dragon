@@ -96,13 +96,28 @@ export const TokenComponent = ({
           key={`flash-${token.id}-${token.hitPoint}`}
         />
 
-        <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap text-white text-lg">
-          {token.name.length > 13
-            ? `${token.name.substring(0, 13)}...`
-            : token.name}
-        </div>
-
         <TokenContent token={token} />
+
+        {zoom > 1.7 && (
+          <div
+            className="absolute -bottom-3 left-1/2 text-white text-center bg-gray-800/80 rounded"
+            style={{
+              transform: `translateX(-50%) scale(${1 / scale})`,
+              transformOrigin: "top center",
+              fontSize: "6px",
+              maxWidth: "60px",
+              maxHeight: "23px",
+              display: "-webkit-box",
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              lineHeight: 1.1,
+              padding: "1px 2px 1px 2px",
+            }}
+          >
+            {token.name}
+          </div>
+        )}
 
         {token.maxHitPoint > 0 && (
           <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-gray-200 rounded-full overflow-hidden">
