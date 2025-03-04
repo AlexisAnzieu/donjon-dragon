@@ -243,7 +243,7 @@ export function SoundsControl({ onClose, soundLibrary }: SoundsControlProps) {
           <div className="flex-1 overflow-y-auto p-4">
             {effects.length === 0 && searchTerm.length >= 2 && !isLoading ? (
               <div className="text-center text-white/70 py-8">
-                {' No sounds found for "{searchTerm}"'}
+                {` No sounds found for "${searchTerm}"`}
               </div>
             ) : (
               <div className="space-y-6">
