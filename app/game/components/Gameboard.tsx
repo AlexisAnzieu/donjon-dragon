@@ -455,6 +455,7 @@ export default function GameBoard({
                       )
                     }
                     style={getTokenStyle(token)}
+                    isPublic={isPublic}
                   />
                 ))}
             </div>

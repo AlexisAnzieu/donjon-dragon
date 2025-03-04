@@ -1,6 +1,6 @@
 import { Token } from "@prisma/client";
 
-export type TokenType = "characters" | "enemies" | "npcs";
+export type TokenType = "characters" | "enemies" | "npcs" | "notes";
 export type MonsterSize = "TP" | "P" | "M" | "G" | "TG";
 
 export const DEFAULT_TOKEN_SIZE = 0.3;
@@ -9,6 +9,7 @@ export interface TokenState {
   characters: Token[];
   enemies: Token[];
   npcs: Token[];
+  notes: Token[];
 }
 
 export interface ContextMenuState {

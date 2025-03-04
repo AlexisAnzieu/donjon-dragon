@@ -28,8 +28,10 @@ interface TokenConfiguratorProps {
   maxHitPoint: number;
   size: number;
   icon?: string;
-  type: TokenType; // Add this prop
+  type: TokenType;
+  name: string;
   onChange: (field: string, value: number) => void;
+  onNameChange: (value: string) => void;
 }
 
 interface ActionButtonsProps {
@@ -113,7 +115,7 @@ const TokenTypeSelector = ({
   onChange,
 }: TokenTypeSelectorProps) => (
   <div className="flex gap-1 p-1 bg-gray-100 rounded-lg">
-    {(["enemies", "npcs"] as const).map((type) => (
+    {(["enemies", "npcs", "notes"] as const).map((type) => (
       <button
         key={type}
         onClick={() => onChange(type)}
@@ -123,7 +125,11 @@ const TokenTypeSelector = ({
             : "text-gray-600 hover:bg-gray-50"
         }`}
       >
-        {type === "enemies" ? "👹 Enemy" : "👤 NPC"}
+        {type === "enemies"
+          ? "👹 Enemy"
+          : type === "npcs"
+          ? "👤 NPC"
+          : "📝 Note"}
       </button>
     ))}
   </div>
@@ -134,61 +140,95 @@ const TokenConfigurator = ({
   size,
   icon,
   type,
+  name,
   onChange,
-}: TokenConfiguratorProps) => (
-  <div className="bg-gray-50 p-3 rounded-lg">
-    <div className="flex gap-4">
-      <div className="flex-shrink-0 relative">
-        {icon ? (
-          <Image
-            src={icon}
-            alt="Token"
-            width={80}
-            height={80}
-            className="w-20 h-20 rounded-lg object-cover shadow-sm border border-gray-200"
+  onNameChange,
+}: TokenConfiguratorProps) => {
+  return type === "notes" ? (
+    <div className="bg-gray-50 p-3 rounded-lg">
+      <div className="flex gap-4">
+        <div className="flex-1 space-y-3">
+          <textarea
+            value={name}
+            onChange={(e) => onNameChange(e.target.value)}
+            placeholder="Enter your note..."
+            className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm min-h-[80px]"
           />
-        ) : (
-          <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-3xl shadow-sm">
-            {type === "enemies" ? "👹" : "👤"}
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-500 text-lg">📏</span>
+            </div>
+            <input
+              type="number"
+              value={size}
+              onChange={(e) =>
+                onChange("size", Math.max(0.1, Math.min(1, +e.target.value)))
+              }
+              step="0.1"
+              min="0.1"
+              max="1"
+              className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              placeholder="Size"
+            />
           </div>
-        )}
-      </div>
-      <div className="flex-1 space-y-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
-            <span className="text-red-500 text-lg">♥️</span>
-          </div>
-          <input
-            type="number"
-            value={maxHitPoint}
-            onChange={(e) => onChange("maxHitPoint", +e.target.value)}
-            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-            min="1"
-            max="999"
-            placeholder="Hit Points"
-          />
-        </div>
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
-            <span className="text-blue-500 text-lg">📏</span>
-          </div>
-          <input
-            type="number"
-            value={size}
-            onChange={(e) =>
-              onChange("size", Math.max(0.1, Math.min(1, +e.target.value)))
-            }
-            step="0.1"
-            min="0.1"
-            max="1"
-            className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
-            placeholder="Size"
-          />
         </div>
       </div>
     </div>
-  </div>
-);
+  ) : (
+    <div className="bg-gray-50 p-3 rounded-lg">
+      <div className="flex gap-4">
+        <div className="flex-shrink-0 relative">
+          {icon ? (
+            <Image
+              src={icon}
+              alt="Token"
+              width={80}
+              height={80}
+              className="w-20 h-20 rounded-lg object-cover shadow-sm border border-gray-200"
+            />
+          ) : (
+            <div className="w-20 h-20 rounded-lg bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-3xl shadow-sm">
+              {type === "enemies" ? "👹" : "👤"}
+            </div>
+          )}
+        </div>
+        <div className="flex-1 space-y-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-red-100 flex items-center justify-center">
+              <span className="text-red-500 text-lg">♥️</span>
+            </div>
+            <input
+              type="number"
+              value={maxHitPoint}
+              onChange={(e) => onChange("maxHitPoint", +e.target.value)}
+              className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              min="1"
+              max="999"
+              placeholder="Hit Points"
+            />
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+              <span className="text-blue-500 text-lg">📏</span>
+            </div>
+            <input
+              type="number"
+              value={size}
+              onChange={(e) =>
+                onChange("size", Math.max(0.1, Math.min(1, +e.target.value)))
+              }
+              step="0.1"
+              min="0.1"
+              max="1"
+              className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              placeholder="Size"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Component: ActionButtons
 const ActionButtons = ({ onCancel, onSubmit }: ActionButtonsProps) => (
@@ -372,13 +412,17 @@ export function TokenForm({
             maxHitPoint={formState.maxHitPoint}
             size={formState.size}
             icon={formState.icon}
-            type={formState.type} // Add this prop
+            type={formState.type}
+            name={formState.name}
             onChange={(field, value) =>
               setFormState((prev) => ({
                 ...prev,
                 [field]: value,
                 ...(field === "maxHitPoint" ? { hitPoint: value } : {}),
               }))
+            }
+            onNameChange={(value) =>
+              setFormState((prev) => ({ ...prev, name: value }))
             }
           />
 

@@ -11,6 +11,7 @@ interface TokenProps {
   onContextMenu: (e: React.MouseEvent) => void;
   style: CSSProperties;
   zoom: number;
+  isPublic?: boolean;
 }
 
 const getTokenColor = (isDead: boolean, type: TokenType) => {
@@ -22,6 +23,8 @@ const getTokenColor = (isDead: boolean, type: TokenType) => {
       return "bg-red-500";
     case "npcs":
       return "bg-white";
+    case "notes":
+      return "bg-yellow-200";
   }
 };
 
@@ -34,7 +37,7 @@ const getHealthBarColor = (hitPoint: number, maxHitPoint: number) => {
 
 const TokenContent = ({ token }: { token: Token }) => (
   <span className="text-xl">
-    {token.hitPoint <= 0 ? (
+    {token.hitPoint <= 0 && token.type !== "notes" ? (
       "☠️"
     ) : token.icon?.startsWith("http") ? (
       <Image
@@ -48,6 +51,8 @@ const TokenContent = ({ token }: { token: Token }) => (
       token.icon
     ) : token.type === "enemies" ? (
       "👹"
+    ) : token.type === "notes" ? (
+      "📝"
     ) : (
       "👤"
     )}
@@ -61,7 +66,11 @@ export const TokenComponent = ({
   onContextMenu,
   style,
   zoom,
+  isPublic,
 }: TokenProps) => {
+  if (type === "notes" && isPublic) {
+    return null;
+  }
   const scale = Math.max(1 / zoom, token.size);
   const transformOrigin = { x: "-50%", y: "-50%" };
 
@@ -100,19 +109,24 @@ export const TokenComponent = ({
 
         {zoom > 1.7 && (
           <div
-            className="absolute -bottom-3 left-1/2 text-white text-center bg-gray-800/80 rounded"
+            className={`absolute -bottom-3 left-1/2 text-center rounded ${
+              type === "notes"
+                ? "bg-yellow-100 text-gray-800 p-2"
+                : "text-white bg-gray-800/80"
+            }`}
             style={{
               transform: `translateX(-50%) scale(${1 / scale})`,
               transformOrigin: "top center",
-              fontSize: "6px",
-              maxWidth: "60px",
-              maxHeight: "23px",
+              fontSize: type === "notes" ? "8px" : "6px",
+              maxWidth: type === "notes" ? "120px" : "60px",
+              maxHeight: type === "notes" ? "none" : "23px",
               display: "-webkit-box",
-              WebkitLineClamp: 3,
+              WebkitLineClamp: type === "notes" ? undefined : 3,
               WebkitBoxOrient: "vertical",
               overflow: "hidden",
-              lineHeight: 1.1,
-              padding: "1px 2px 1px 2px",
+              lineHeight: 1.2,
+              padding: type === "notes" ? "4px 6px" : "1px 2px 1px 2px",
+              whiteSpace: type === "notes" ? "pre-wrap" : "normal",
             }}
           >
             {token.name}
