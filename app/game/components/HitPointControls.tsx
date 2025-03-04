@@ -184,7 +184,9 @@ export function HitPointControls({
                           {tokenStates[token.id]?.isEditingName ? (
                             <input
                               type="text"
-                              className="w-24 bg-gray-600 rounded px-1"
+                              className={`bg-gray-600 rounded px-1 ${
+                                type === "notes" ? "w-full" : "w-24"
+                              }`}
                               value={
                                 tokenStates[token.id]?.tempName ?? token.name
                               }
@@ -212,7 +214,9 @@ export function HitPointControls({
                             />
                           ) : (
                             <span
-                              className="font-bold w-24 truncate cursor-pointer hover:text-purple-400"
+                              className={`font-bold truncate cursor-pointer hover:text-purple-400 ${
+                                type === "notes" ? "w-full" : "w-24"
+                              }`}
                               onClick={() =>
                                 setTokenStates((prev) => ({
                                   ...prev,
@@ -227,61 +231,65 @@ export function HitPointControls({
                               {token.name}
                             </span>
                           )}
-                          <div className="flex items-center gap-1">
-                            <input
-                              type="number"
-                              value={
-                                tokenStates[token.id]?.temp ??
-                                token.hitPoint ??
-                                0
-                              }
-                              onChange={(e) =>
-                                setTokenStates((prev) => ({
-                                  ...prev,
-                                  [token.id]: {
-                                    ...prev[token.id],
-                                    temp: +e.target.value,
-                                  },
-                                }))
-                              }
-                              onBlur={() => handleSave(token.id)}
-                              className="w-14 bg-transparent text-center"
-                            />
-                            <span>/</span>
-                            <input
-                              type="number"
-                              value={
-                                tokenStates[token.id]?.maxTemp ??
-                                token.maxHitPoint ??
-                                0
-                              }
-                              onChange={(e) =>
-                                setTokenStates((prev) => ({
-                                  ...prev,
-                                  [token.id]: {
-                                    ...prev[token.id],
-                                    maxTemp: +e.target.value,
-                                  },
-                                }))
-                              }
-                              onBlur={() => handleSave(token.id, true)}
-                              className="w-14 bg-transparent text-center"
-                            />
-                          </div>
-                          <div className="flex gap-1 ml-auto">
-                            <button
-                              className="px-2 py-1 bg-red-600 rounded"
-                              onClick={() => quickChange(token.id, -1)}
-                            >
-                              -
-                            </button>
-                            <button
-                              className="px-2 py-1 bg-green-600 rounded"
-                              onClick={() => quickChange(token.id, 1)}
-                            >
-                              +
-                            </button>
-                          </div>
+                          {type !== "notes" && (
+                            <>
+                              <div className="flex items-center gap-1">
+                                <input
+                                  type="number"
+                                  value={
+                                    tokenStates[token.id]?.temp ??
+                                    token.hitPoint ??
+                                    0
+                                  }
+                                  onChange={(e) =>
+                                    setTokenStates((prev) => ({
+                                      ...prev,
+                                      [token.id]: {
+                                        ...prev[token.id],
+                                        temp: +e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  onBlur={() => handleSave(token.id)}
+                                  className="w-14 bg-transparent text-center"
+                                />
+                                <span>/</span>
+                                <input
+                                  type="number"
+                                  value={
+                                    tokenStates[token.id]?.maxTemp ??
+                                    token.maxHitPoint ??
+                                    0
+                                  }
+                                  onChange={(e) =>
+                                    setTokenStates((prev) => ({
+                                      ...prev,
+                                      [token.id]: {
+                                        ...prev[token.id],
+                                        maxTemp: +e.target.value,
+                                      },
+                                    }))
+                                  }
+                                  onBlur={() => handleSave(token.id, true)}
+                                  className="w-14 bg-transparent text-center"
+                                />
+                              </div>
+                              <div className="flex gap-1 ml-auto">
+                                <button
+                                  className="px-2 py-1 bg-red-600 rounded"
+                                  onClick={() => quickChange(token.id, -1)}
+                                >
+                                  -
+                                </button>
+                                <button
+                                  className="px-2 py-1 bg-green-600 rounded"
+                                  onClick={() => quickChange(token.id, 1)}
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </>
+                          )}
                         </div>
                       </motion.div>
                     ))}
