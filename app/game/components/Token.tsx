@@ -24,7 +24,7 @@ const getTokenColor = (isDead: boolean, type: TokenType) => {
     case "npcs":
       return "bg-white";
     case "notes":
-      return "bg-yellow-200";
+      return "bg-yellow-600";
   }
 };
 
@@ -80,7 +80,7 @@ export const TokenComponent = ({
         onMouseDown={onMouseDown}
         onContextMenu={onContextMenu}
         className={`absolute w-10 h-10 rounded-full cursor-move flex items-center token justify-center text-white font-bold shadow-lg select-none ${getTokenColor(
-          token.hitPoint <= 0,
+          token.hitPoint <= 0 && token.type !== "notes",
           type
         )}`}
         style={style}
