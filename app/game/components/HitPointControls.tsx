@@ -12,12 +12,14 @@ interface HitPointControlsProps {
     isMax?: boolean
   ) => void;
   onNameChange?: (tokenId: string, newName: string) => void;
+  selectedTokenId?: string;
 }
 
 export function HitPointControls({
   tokens,
   onHitPointChange,
   onNameChange,
+  selectedTokenId,
 }: HitPointControlsProps) {
   const [tokenStates, setTokenStates] = useState<
     Record<
@@ -172,7 +174,11 @@ export function HitPointControls({
                     {tokenList.map((token) => (
                       <motion.div
                         key={token.id}
-                        className="bg-gray-700 rounded p-2"
+                        className={`bg-gray-700 rounded p-2 ${
+                          token.id === selectedTokenId
+                            ? "ring-2 ring-white ring-offset-2 ring-offset-gray-700"
+                            : ""
+                        }`}
                       >
                         <div className="flex items-center gap-2">
                           {tokenStates[token.id]?.isEditingName ? (

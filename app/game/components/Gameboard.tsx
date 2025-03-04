@@ -488,6 +488,7 @@ export default function GameBoard({
                           tokens={tokens}
                           onHitPointChange={handleHitPointChange}
                           onNameChange={handleNameChange}
+                          selectedTokenId={Array.from(selectedTokens)[0]}
                         />
                       </div>
                     )}
