@@ -7,6 +7,7 @@ import {
 } from "@/app/game/types/sound";
 import { MidiProvider } from "./MidiContext";
 import { LightPresetsProvider } from "./LightContext";
+import { WLEDProvider } from "./WLEDContext";
 
 export const SOUND_LIBRARIES_KEY = "soundLibraries";
 
@@ -233,5 +234,6 @@ const providers = [
   MidiProvider,
   FavoritesProvider,
   LightPresetsProvider,
+  WLEDProvider,
   // Add future providers here
 ];

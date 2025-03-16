@@ -1,7 +1,8 @@
 import { Token } from "@prisma/client";
 import { TokenType } from "../type";
 import groupBy from "lodash/groupBy";
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
+import { useWLED } from "../context/WLEDContext";
 import { motion, AnimatePresence } from "motion/react";
 
 interface HitPointControlsProps {
@@ -35,6 +36,35 @@ export function HitPointControls({
     >
   >({});
   const [searchTerm, setSearchTerm] = useState("");
+  const { updateEnemyHealth } = useWLED();
+
+  // Track enemy health changes
+  const [lastEnemyHealth, setLastEnemyHealth] = useState<{
+    hp: number;
+    maxHp: number;
+  } | null>(null);
+
+  useEffect(() => {
+    const enemies = tokens.filter((token) => token.type === "enemies");
+    if (enemies.length === 0) return;
+
+    const firstEnemy = enemies[0];
+    const currentHealth = {
+      hp: firstEnemy.hitPoint ?? 0,
+      maxHp: firstEnemy.maxHitPoint ?? 0,
+    };
+
+    // Only update if health values have changed
+    if (
+      !lastEnemyHealth ||
+      lastEnemyHealth.hp !== currentHealth.hp ||
+      lastEnemyHealth.maxHp !== currentHealth.maxHp
+    ) {
+      setLastEnemyHealth(currentHealth);
+      updateEnemyHealth(tokens);
+    }
+  }, [tokens, updateEnemyHealth, lastEnemyHealth]);
+
   const [collapsedTypes, setCollapsedTypes] = useState<Set<string>>(new Set());
 
   const filteredTokens = useMemo(() => {
