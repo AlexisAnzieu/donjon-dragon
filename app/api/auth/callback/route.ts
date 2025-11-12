@@ -7,7 +7,7 @@ import {
   getUserFromToken,
 } from "@/lib/auth";
 
-export const DEFAULT_REDIRECT_URL = "/dashboard";
+const DEFAULT_REDIRECT_URL = "/dashboard";
 
 function getWebsiteBaseUrl() {
   const base = process.env.WEBSITE_URL;
