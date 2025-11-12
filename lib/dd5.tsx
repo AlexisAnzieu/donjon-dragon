@@ -1,10 +1,7 @@
 import { Monster } from "@/app/api/monsters/route";
 
 export const API_URL = "https://www.dnd5eapi.co";
-const baseUrl =
-  process.env.NODE_ENV === "development"
-    ? "http://localhost:3000"
-    : process.env.WEBSITE_URL;
+const baseUrl = process.env.NEXT_PUBLIC_WEBSITE_URL;
 
 export const getMonsters = async (): Promise<Monster[]> => {
   const response = await fetch(`${baseUrl}/api/monsters`);
@@ -45,6 +42,9 @@ export const searchMonsters = async ({
 }: {
   slug: string;
 }): Promise<Monster[]> => {
+  console.log("coucou");
+  console.log({ baseUrl });
+
   const response = await fetch(`${baseUrl}/api/monsters`);
   const data = await response.json();
   const monsters = data.filter((monster: Monster) =>

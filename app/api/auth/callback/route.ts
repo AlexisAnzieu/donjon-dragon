@@ -10,9 +10,9 @@ import {
 const DEFAULT_REDIRECT_URL = "/dashboard";
 
 function getWebsiteBaseUrl() {
-  const base = process.env.WEBSITE_URL;
+  const base = process.env.NEXT_PUBLIC_WEBSITE_URL;
   if (!base) {
-    throw new Error("WEBSITE_URL environment variable is not set");
+    throw new Error("NEXT_PUBLIC_WEBSITE_URL environment variable is not set");
   }
   return base.replace(/\/$/, "");
 }

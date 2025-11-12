@@ -1,6 +1,8 @@
 const DEFAULT_RETURN_PATH = "/";
 
-function getRequiredEnv(key: "AUTH_URL" | "WEBSITE_URL" | "AUTH_WEBSITE_ID") {
+function getRequiredEnv(
+  key: "AUTH_URL" | "NEXT_PUBLIC_WEBSITE_URL" | "AUTH_WEBSITE_ID"
+) {
   const value = process.env[key];
   if (!value) {
     throw new Error(`${key} environment variable is not set`);
@@ -24,7 +26,7 @@ function normalizeReturnPath(target?: string | null) {
 }
 
 export function buildAuthRedirectUrl(returnPath?: string | null) {
-  const websiteUrl = getRequiredEnv("WEBSITE_URL");
+  const websiteUrl = getRequiredEnv("NEXT_PUBLIC_WEBSITE_URL");
   const authUrl = getRequiredEnv("AUTH_URL");
   const websiteId = getRequiredEnv("AUTH_WEBSITE_ID");
 

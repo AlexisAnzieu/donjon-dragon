@@ -46,7 +46,7 @@ async function deleteCampaign(formData: FormData) {
 }
 
 async function getUserData(userId: string) {
-  const baseUrl = process.env.WEBSITE_URL || "";
+  const baseUrl = process.env.NEXT_PUBLIC_WEBSITE_URL || "";
   const res = await fetch(`${baseUrl}/api/users?id=${userId}`, {
     cache: "no-store",
   });
