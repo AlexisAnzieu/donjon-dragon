@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { getUserFromCookie } from "@/lib/auth";
 import prisma from "@/prisma/db";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -9,14 +9,14 @@ export async function GET(
   const { name } = await params;
 
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const { id: userId } = await getUserFromCookie();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const setting = await prisma.setting.findFirst({
       where: {
-        userId: session.user.id,
+        userId,
         name,
       },
     });
@@ -34,8 +34,8 @@ export async function POST(
   const { name } = await params;
 
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const { id: userId } = await getUserFromCookie();
+    if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
@@ -44,7 +44,7 @@ export async function POST(
     const setting = await prisma.setting.upsert({
       where: {
         userId_name: {
-          userId: session.user.id,
+          userId,
           name,
         },
       },
@@ -52,7 +52,7 @@ export async function POST(
         value,
       },
       create: {
-        userId: session.user.id,
+        userId,
         name,
         value,
       },

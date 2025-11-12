@@ -1,58 +1,47 @@
-import prisma from "@/prisma/db";
-import { scryptSync } from "crypto";
-import NextAuth from "next-auth";
-import Credentials from "next-auth/providers/credentials";
+import { jwtVerify, SignJWT } from "jose";
+import { cookies } from "next/headers";
 
-export const { handlers, signIn, signOut, auth } = NextAuth({
-  providers: [
-    Credentials({
-      credentials: {
-        email: {},
-        password: {},
-      },
-      authorize: async (credentials) => {
-        let user = null;
+export const AUTH_COOKIE_NAME = "auth_token";
 
-        // Create scrypt hash of password
-        const hashedPassword = scryptSync(
-          credentials.password as string,
-          "",
-          64
-        ).toString("hex");
+type TokenPayload = {
+  email: string;
+  name: string;
+};
 
-        console.log(credentials);
+export type UnifiedTokenPayload = TokenPayload & {
+  cid: string;
+};
 
-        // logic to verify if the user exists
-        user = await prisma.user.findFirst({
-          where: {
-            email: credentials.email as string,
-            password: hashedPassword,
-          },
-        });
+export type InternalTokenPayload = TokenPayload & {
+  id: string;
+};
 
-        if (!user) {
-          throw new Error("Invalid credentials.");
-        }
+function getSecretKey() {
+  const secret = process.env.AUTH_SECRET;
+  if (!secret) {
+    throw new Error("AUTH_SECRET environment variable is not set");
+  }
+  return new TextEncoder().encode(secret);
+}
 
-        return user;
-      },
-    }),
-  ],
-  callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id as string;
-      }
-      return session;
-    },
-    async redirect({ baseUrl }) {
-      return baseUrl + "/dashboard";
-    },
-  },
-});
+export async function getUserFromToken<T>(token: string): Promise<T> {
+  const verified = await jwtVerify(token, getSecretKey());
+  return verified.payload as T;
+}
+
+export async function getUserFromCookie() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
+  if (!token) {
+    throw new Error("No auth token found in cookies");
+  }
+  return getUserFromToken<InternalTokenPayload>(token);
+}
+
+export async function createToken(payload: InternalTokenPayload) {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: "HS256" })
+    .setIssuedAt()
+    .setExpirationTime("365d")
+    .sign(getSecretKey());
+}

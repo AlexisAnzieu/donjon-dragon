@@ -1,10 +1,17 @@
-"use client";
-
 import { Search, Database } from "lucide-react";
 import Navigation from "./components/Navigation";
 import Footer from "./components/Footer";
+import { buildAuthRedirectUrl } from "@/lib/auth-redirect";
 
 export default function Home() {
+  let loginUrl = "/";
+
+  try {
+    loginUrl = buildAuthRedirectUrl("/dashboard");
+  } catch (error) {
+    console.error("Failed to build login URL for homepage CTA", error);
+  }
+
   return (
     <>
       <Navigation />
@@ -154,13 +161,13 @@ export default function Home() {
             </p>
             <div className="flex justify-center gap-4">
               <a
-                href="/signin"
+                href={loginUrl}
                 className="px-8 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
               >
                 Sign In
               </a>
               <a
-                href="/signup"
+                href={loginUrl}
                 className="px-8 py-3 bg-amber-100 text-red-900 rounded-lg border-2 border-red-600 hover:bg-amber-200 transition-colors duration-200"
               >
                 Create Account

@@ -6,12 +6,7 @@ import { usePathname } from "next/navigation";
 export default function LeftNavbar() {
   const pathname = usePathname();
 
-  const navItems = [
-    { href: "/dashboard", label: "Dashboard", icon: "📊" },
-    { href: "/dashboard/games", label: "Games", icon: "🎲" },
-    { href: "/dashboard/hosted", label: "Hosted Games", icon: "🎮" },
-    { href: "/dashboard/sounds", label: "Sound Library", icon: "🔊" },
-  ];
+  const navItems = [{ href: "/dashboard", label: "Dashboard", icon: "📊" }];
 
   return (
     <nav className="w-64 bg-gray-50 min-h-screen p-4">

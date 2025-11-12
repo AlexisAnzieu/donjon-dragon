@@ -24,8 +24,9 @@ model User {
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
   email        String         @unique
-  password     String
-  pseudo       String
+  name         String?
+  unifiedId    String?        @unique
+  pseudo       String?
   characters   Character[]
   hostedgames  Game[]
   soundLibrary SoundLibrary[]
