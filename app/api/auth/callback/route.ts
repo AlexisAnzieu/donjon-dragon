@@ -18,9 +18,6 @@ function getWebsiteBaseUrl() {
 }
 
 function toRelativePath(target: string) {
-  if (!target) {
-    return "/";
-  }
   if (target.startsWith("http://") || target.startsWith("https://")) {
     const { pathname, search, hash } = new URL(target);
     return `${pathname}${search}${hash}` || "/";
