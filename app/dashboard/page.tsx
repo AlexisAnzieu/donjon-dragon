@@ -6,6 +6,8 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import prisma from "@/prisma/db";
 
+export const dynamic = "force-dynamic";
+
 async function createNewCampaign(formData: FormData) {
   "use server";
   const userId = formData.get("userId") as string;
