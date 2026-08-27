@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { errors } from "jose";
 import { AUTH_COOKIE_NAME, getUserFromToken } from "./lib/auth";
-import { buildAuthRedirectUrl } from "./lib/auth-redirect";
 
 const PROTECTED_PATHS = ["/dashboard"];
 
@@ -18,19 +17,12 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  const redirectTarget = `${pathname}${search}`;
-  let authUrl: string;
-
-  try {
-    authUrl = buildAuthRedirectUrl(redirectTarget);
-  } catch (error) {
-    console.error("Failed to build auth redirect URL", error);
-    return new NextResponse("Authentication misconfigured", { status: 500 });
-  }
+  const loginUrl = new URL("/api/auth/login", req.url);
+  loginUrl.searchParams.set("redirectUrl", `${pathname}${search}`);
 
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
   if (!token) {
-    return NextResponse.redirect(authUrl);
+    return NextResponse.redirect(loginUrl);
   }
 
   try {
@@ -38,7 +30,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.next();
   } catch (error) {
     if (error instanceof errors.JWTExpired) {
-      return NextResponse.redirect(authUrl);
+      return NextResponse.redirect(loginUrl);
     }
     console.error("Auth token verification failed", error);
     return new NextResponse("Internal Server Error", { status: 500 });

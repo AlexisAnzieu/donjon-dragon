@@ -20,7 +20,8 @@ type Category = {
 
 function buildNavigation(
   isAuthenticated: boolean,
-  onLogout: () => void
+  onLogout: () => void,
+  loginUrl: string
 ) {
   const commonCategories: Category[] = [
     {
@@ -50,7 +51,8 @@ function buildNavigation(
       }
     : {
         title: "Se connecter",
-        href: "/dashboard",
+        href: loginUrl,
+        external: true,
       };
 
   return [...commonCategories, accountCategory];
@@ -58,23 +60,22 @@ function buildNavigation(
 
 type NavigationClientProps = {
   isAuthenticated: boolean;
+  loginUrl: string;
 };
 
 export default function NavigationClient({
   isAuthenticated,
+  loginUrl,
 }: NavigationClientProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
 
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/auth/logout", { method: "POST" });
-    } finally {
-      window.location.href = "/";
-    }
+  const handleLogout = () => {
+    // Full-page navigation so the provider can end its session too (single logout).
+    window.location.href = "/api/auth/logout";
   };
 
-  const categories = buildNavigation(isAuthenticated, handleLogout);
+  const categories = buildNavigation(isAuthenticated, handleLogout, loginUrl);
 
   const toggleDropdown = (title: string) =>
     setActiveDropdown(activeDropdown === title ? null : title);

@@ -1,14 +1,4 @@
-const DEFAULT_RETURN_PATH = "/";
-
-function getRequiredEnv(
-  key: "AUTH_URL" | "NEXT_PUBLIC_WEBSITE_URL" | "AUTH_WEBSITE_ID"
-) {
-  const value = process.env[key];
-  if (!value) {
-    throw new Error(`${key} environment variable is not set`);
-  }
-  return value;
-}
+const DEFAULT_RETURN_PATH = "/dashboard";
 
 function normalizeReturnPath(target?: string | null) {
   if (!target) {
@@ -25,20 +15,10 @@ function normalizeReturnPath(target?: string | null) {
   return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
 }
 
+// Local route that starts the OIDC authorization flow against the provider.
 export function buildAuthRedirectUrl(returnPath?: string | null) {
-  const websiteUrl = getRequiredEnv("NEXT_PUBLIC_WEBSITE_URL");
-  const authUrl = getRequiredEnv("AUTH_URL");
-  const websiteId = getRequiredEnv("AUTH_WEBSITE_ID");
-
-  const websiteOrigin = websiteUrl.replace(/\/$/, "");
-  const normalizedPath = normalizeReturnPath(returnPath);
-
-  const callbackUrl = new URL("/api/auth/callback", websiteOrigin);
-  callbackUrl.searchParams.set("redirectUrl", normalizedPath);
-
-  const loginUrl = new URL("/login", authUrl);
-  loginUrl.searchParams.set("id", websiteId);
-  loginUrl.searchParams.set("callbackUrl", callbackUrl.toString());
-
-  return loginUrl.toString();
+  const params = new URLSearchParams({
+    redirectUrl: normalizeReturnPath(returnPath),
+  });
+  return `/api/auth/login?${params.toString()}`;
 }
