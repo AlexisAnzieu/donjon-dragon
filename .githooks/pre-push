@@ -1,0 +1,24 @@
+#!/bin/sh
+# Deploy the PartyServer worker (npm run party:deploy) before pushing,
+# but only when the pushed commits change the worker (party/ or wrangler.jsonc).
+# Skip with: SKIP_PARTY_DEPLOY=1 git push
+
+if [ "$SKIP_PARTY_DEPLOY" = "1" ]; then
+  echo "pre-push: SKIP_PARTY_DEPLOY=1 set, skipping party:deploy."
+  exit 0
+fi
+
+pattern='^(party/|wrangler\.jsonc$)'
+
+if upstream=$(git rev-parse --abbrev-ref --symbolic-full-name '@{push}' 2>/dev/null); then
+  files=$(git diff --name-only "$upstream"...HEAD 2>/dev/null || true)
+else
+  files="party/" # no upstream yet (new branch) -> deploy to be safe
+fi
+
+if printf '%s\n' "$files" | grep -Eq "$pattern"; then
+  echo "pre-push: worker changed, running npm run party:deploy..."
+  npm run party:deploy
+else
+  echo "pre-push: no worker changes, skipping party:deploy."
+fi

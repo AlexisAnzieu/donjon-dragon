@@ -16,7 +16,7 @@ A modern web application for managing tabletop role-playing game sessions with r
 ## Tech Stack
 
 - **Frontend**: Next.js 13+, TypeScript, Tailwind CSS
-- **Backend**: Next.js API routes, PartyKit for WebSocket
+- **Backend**: Next.js API routes, PartyServer (Cloudflare Workers) for WebSocket
 - **Database**: MySQL with Prisma ORM
 - **Authentication**: NextAuth.js
 - **APIs**: Freesound, Cloudinary
@@ -40,7 +40,7 @@ A modern web application for managing tabletop role-playing game sessions with r
 │   ├── hooks/        # Custom hooks
 │   └── services/     # External services
 ├── lib/               # Utilities
-├── party/            # PartyKit server
+├── party/            # PartyServer (Cloudflare Workers) server
 ├── prisma/           # Database
 └── public/           # Static assets
 ```
@@ -72,7 +72,7 @@ npx prisma db push
 
 ```bash
 npm run dev          # Next.js
-npm run party:dev    # PartyKit
+npm run party:dev    # PartyServer (wrangler dev)
 ```
 
 ## Development

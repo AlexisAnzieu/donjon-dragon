@@ -118,13 +118,6 @@ export async function GET(req: NextRequest) {
       path: "/",
       sameSite: "lax",
     });
-    response.cookies.set("oidc_id_token", tokens.id_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      path: "/",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 12,
-    });
     for (const cookie of TEMP_COOKIES) {
       response.cookies.delete(cookie);
     }

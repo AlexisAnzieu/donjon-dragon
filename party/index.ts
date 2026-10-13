@@ -1,23 +1,35 @@
-import type * as Party from "partykit/server";
+import { routePartykitRequest, Server } from "partyserver";
+import type { Connection } from "partyserver";
 
-export default class Server implements Party.Server {
-  constructor(readonly room: Party.Room) {}
+type Env = {
+  Main: DurableObjectNamespace<GameServer>;
+};
 
-  async onConnect(conn: Party.Connection) {
+// Binding is named "Main" so it kebab-cases to the default "main" party,
+// keeping existing partysocket clients working without changes.
+export class GameServer extends Server<Env> {
+  onConnect(conn: Connection) {
     console.log("Client connected!", conn.id);
 
     conn.send(
-      JSON.stringify({ type: "welcome", message: "Welcome to the game!" })
+      JSON.stringify({ type: "welcome", message: "Welcome to the game!" }),
     );
   }
 
-  async onMessage(message: string) {
-    this.room.broadcast(message);
+  onMessage(_sender: Connection, message: string) {
+    this.broadcast(message);
   }
 
-  async onClose(conn: Party.Connection) {
+  onClose(conn: Connection) {
     console.log("Client disconnected!", conn.id);
   }
 }
 
-Server satisfies Party.Worker;
+export default {
+  async fetch(request, env): Promise<Response> {
+    return (
+      (await routePartykitRequest(request, env)) ||
+      new Response("Not Found", { status: 404 })
+    );
+  },
+} satisfies ExportedHandler<Env>;

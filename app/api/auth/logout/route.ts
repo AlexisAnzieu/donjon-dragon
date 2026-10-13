@@ -15,6 +15,5 @@ export async function GET() {
     process.env.NEXT_PUBLIC_WEBSITE_URL as string
   );
   res.cookies.set(AUTH_COOKIE_NAME, "", CLEAR);
-  res.cookies.set("oidc_id_token", "", CLEAR);
   return res;
 }

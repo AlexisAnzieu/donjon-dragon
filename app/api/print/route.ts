@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import EscPosEncoder from "esc-pos-encoder";
 import sharp from "sharp";
-import { createCanvas, Image } from "canvas";
+import { createCanvas, Image } from "@napi-rs/canvas";
 
 async function processImage(pictureUrl: string): Promise<Image> {
   const response = await fetch(pictureUrl);
